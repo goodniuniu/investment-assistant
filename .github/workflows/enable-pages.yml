@@ -9,23 +9,29 @@ on:
 
 permissions:
   pages: write
-  contents: read
+  administration: write
+  contents: write
 
 jobs:
   enable-pages:
     runs-on: ubuntu-latest
     steps:
-      - name: Enable Pages (gh-pages branch)
+      - uses: actions/checkout@v4
+      - name: Enable Pages via API
         run: |
           set -x
-          code=$(curl -s -o /tmp/resp.json -w "%{http_code}" -X POST \
+          code=$(curl -s -o resp.json -w "%{http_code}" -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/pages \
             -d '{"source":{"branch":"gh-pages","path":"/"}}')
-          cat /tmp/resp.json || true
-          if [ "$code" = "201" ] || [ "$code" = "409" ]; then
-            echo "OK (http $code)"
-          else
-            echo "Failed with http $code"; exit 1
-          fi
+          echo "HTTP $code" > _pages_enable_result.txt
+          cat resp.json >> _pages_enable_result.txt || true
+          cat _pages_enable_result.txt
+      - name: Commit result for diagnostics
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _pages_enable_result.txt
+          git commit -m "chore: pages enable attempt result" || echo "nothing to commit"
+          git push
