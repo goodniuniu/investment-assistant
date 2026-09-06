@@ -164,6 +164,20 @@ E:\MyOutput\AI_Project\个人发展-研究投资-20260906\
 > 心理自评未按题数归一化；P2×8：交易日退化取值、主力资金缺失伪装为 0、ma_alignment 缺均线语义、
 > ATR/volatility 重复计算、锚点不展开卡片、移动端 kb-side 粘性遮挡、指数口径标注等）。
 > 本地浏览器逐页断言渲染通过；数据已用修复后管线重跑；部署 commit `e12ae6e` 线上验证 200。
+>
+> **✅ 2026-09-06 三层架构升级（后续 AI）**：项目从"每日评论生成器"升级为"理论学习实践比对平台"。
+> - **闭环地基**：`data/analysis/history/` 每日留痕（fetch_market 自动追加，幂等）；
+>   `backfill_analysis.py` 已离线回填 91 个交易日；`data/meta/status.json` 新鲜度哨兵 + 首页 >10 天横幅；
+>   `ci.yml` 推送即跑 24 个 pytest 用例（`tests/`）。
+> - **比对核心**：新页 `pages/review.html`（信号×实际+5/+20日、规则战绩榜、情绪极端组对照）；
+>   `rules.py` 增 `RULES_META`（22 条规则的假设/适用环境）随 latest.json 下发；
+>   决策日记保存时快照当日市场；AI 头条归档进历史。
+> - **学习体验**：知识库间隔复习（invest_kb_review，SM-2 简化 7 档）；
+>   新页 `pages/mydata.html` 统一导出/导入/清除（本地键：invest_journal/invest_bias_checked/
+>   invest_checklist/invest_kb_review）；行情页宽基对照图；KLINE_TARGETS 扩至 5 指数
+>   （+中证500/科创50；港美股接口实测不可用）。
+> - 导航现为 7 项；回填样本标 backfilled 与实时样本区分；当前总体命中率约 32%（真实数据，
+>   规则并非都靠谱——这正是比对平台的意义）。
 
 ### ✅ 已完成
 
