@@ -158,6 +158,12 @@ E:\MyOutput\AI_Project\个人发展-研究投资-20260906\
 > 修复：新增 `.github/workflows/deploy-pages.yml`（push 到 main 即部署，含每日数据 commit）。
 > 验证：https://goodniuniu.github.io/investment-assistant/ 返回 200，全部页面/资源 200。
 > 另：曾尝试的 `enable-pages.yml`（GITHUB_TOKEN 调 Pages API）会 403，已删除；`gh-pages` 分支已清理。
+>
+> **✅ 2026-09-06 二次复盘（后续 AI）**：全项目代码审查完成，修复 12 项缺陷
+> （P1×4：跌停 20cm 双重计数、risk_level 对 0 值误判、市场宽度图 hidden 系列未实现导致双轴失真、
+> 心理自评未按题数归一化；P2×8：交易日退化取值、主力资金缺失伪装为 0、ma_alignment 缺均线语义、
+> ATR/volatility 重复计算、锚点不展开卡片、移动端 kb-side 粘性遮挡、指数口径标注等）。
+> 本地浏览器逐页断言渲染通过；数据已用修复后管线重跑；部署 commit `e12ae6e` 线上验证 200。
 
 ### ✅ 已完成
 
