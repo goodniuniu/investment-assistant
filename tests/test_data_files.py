@@ -52,6 +52,22 @@ def test_content_psychology_shape():
         assert q["bias"] in bias_ids, "自评题 %s 指向不存在的偏差" % q["id"]
 
 
+def test_content_books_shape():
+    b = _load("data/content/books.json")
+    assert len(b["books"]) == 50, "首批书单应为 50 本"
+    kids = {i["id"] for i in _load("data/content/knowledge.json")["items"]}
+    cats = {c["id"] for c in b["categories"]}
+    ids = set()
+    for x in b["books"]:
+        assert x["id"] not in ids, "书籍 id 重复: %s" % x["id"]
+        ids.add(x["id"])
+        assert x["category"] in cats
+        for f in ("title", "author", "summary", "guide", "practice", "key_ideas", "level"):
+            assert x.get(f), "书籍 %s 缺少字段 %s" % (x["id"], f)
+        for ref in x.get("knowledge") or []:
+            assert ref in kids, "书籍 %s 引用了不存在的知识条目 %s" % (x["id"], ref)
+
+
 def test_history_files_idempotent_dates():
     for sub in ("market/history", "analysis/history"):
         d = os.path.join(ROOT, "data", sub)

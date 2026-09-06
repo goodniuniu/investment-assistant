@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>投资书单 · 50 本经典导读与实践指引</title>
+<meta name="description" content="50 本投资经典书籍导读，每本都附有结合本站模块的实践指引：读书 → 上站验证 → 写进决策日记">
+<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="../index.html"><span class="dot"></span>投资辅助站</a>
+    <nav class="nav">
+      <a href="../index.html" data-nav="index">首页</a>
+      <a href="market.html" data-nav="market">行情看板</a>
+      <a href="review.html" data-nav="review">信号回看</a>
+      <a href="knowledge.html" data-nav="knowledge">知识库</a>
+      <a href="books.html" data-nav="books">书单</a>
+      <a href="mindset.html" data-nav="mindset">投资心理</a>
+      <a href="tools.html" data-nav="tools">决策工具</a>
+      <a href="mydata.html" data-nav="mydata">我的数据</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>投资书单</h1>
+    <p id="subhead">正在加载…</p>
+  </div>
+
+  <div id="notice"></div>
+
+  <div class="kb-layout">
+    <aside class="kb-side">
+      <input type="text" class="kb-search" id="search" placeholder="搜索书名、作者、标签…">
+      <div id="statusPanel"></div>
+      <div id="cats"></div>
+      <div class="small muted" style="margin-top:14px;line-height:1.6">
+        每本书含导读、核心要点与<strong>「上站实践」</strong>指引——把书中理念落到本站的具体模块里验证。
+      </div>
+    </aside>
+
+    <section>
+      <div id="items"></div>
+    </section>
+  </div>
+
+  <div id="disclaimer"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>书单为个人学习整理 · 阅读状态仅存于本地浏览器</span>
+    <span id="footerTime"></span>
+  </div>
+</footer>
+
+<script src="../assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  APP.mountNav('books');
+  document.getElementById('disclaimer').innerHTML = APP.disclaimer();
+
+  var DATA = null, activeCat = 'all', keyword = '', statusFilter = '';
+
+  // 阅读状态：wish 想读 / reading 在读 / done 已读
+  var LS_BS = 'invest_books_status';
+  function lsGet(k, def) {
+    try { return JSON.parse(localStorage.getItem(k)) || def; }
+    catch (e) { return def; }
+  }
+  function lsSet(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+  }
+  function stOf(id) { return lsGet(LS_BS, {})[id] || ''; }
+  var ST_TXT = { wish: '想读', reading: '在读', done: '已读' };
+
+  var MOD_LINKS = {
+    '行情看板': 'market.html', '信号回看': 'review.html', '知识库': 'knowledge.html',
+    '投资心理': 'mindset.html', '决策工具': 'tools.html', '我的数据': 'mydata.html',
+    '决策日记': 'mindset.html', '首页': '../index.html'
+  };
+
+  APP.load('data/content/books.json').then(function (d) {
+    if (!d || !d.books) {
+      document.getElementById('notice').innerHTML =
+        APP.dataNotice(false, '未找到 data/content/books.json');
+      return;
+    }
+    DATA = d;
+    document.getElementById('subhead').textContent =
+      '首批 ' + d.books.length + ' 本 · 覆盖 ' + d.categories.length + ' 个方向 · 每本附上站实践指引';
+    renderCats();
+    render();
+  });
+
+  function countBy(cid) {
+    return DATA.books.filter(function (b) { return b.category === cid; }).length;
+  }
+
+  function renderCats() {
+    var html = '<div class="kb-cat' + (activeCat === 'all' && !statusFilter ? ' active' : '') +
+      '" data-cat="all"><span>全部</span><span class="cnt">' + DATA.books.length + '</span></div>';
+    html += DATA.categories.map(function (c) {
+      return '<div class="kb-cat' + (activeCat === c.id ? ' active' : '') +
+        '" data-cat="' + c.id + '" title="' + APP.esc(c.desc) + '">' +
+        '<span>' + APP.esc(c.name) + '</span><span class="cnt">' + countBy(c.id) + '</span></div>';
+    }).join('');
+    document.getElementById('cats').innerHTML = html;
+    renderStatusPanel();
+  }
+
+  function renderStatusPanel() {
+    var st = lsGet(LS_BS, {});
+    var done = 0, reading = 0, wish = 0;
+    Object.keys(st).forEach(function (k) {
+      if (st[k] === 'done') done++;
+      else if (st[k] === 'reading') reading++;
+      else if (st[k] === 'wish') wish++;
+    });
+    var pct = Math.round(done / DATA.books.length * 100);
+    document.getElementById('statusPanel').innerHTML =
+      '<div class="card" style="margin:12px 0;padding:12px">' +
+      '<div style="font-weight:600;font-size:14px;margin-bottom:6px">📖 阅读进度</div>' +
+      '<div class="comp-row"><span class="muted">已读</span><span class="bar"><i style="width:' + pct + '%"></i></span>' +
+      '<span class="val">' + done + '/' + DATA.books.length + '</span></div>' +
+      '<div class="small" style="line-height:1.8;margin-top:6px">在读 ' + reading + ' · 想读 ' + wish + '</div>' +
+      '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">' +
+      '<button class="btn btn-sm" data-st="reading">只看在读</button>' +
+      '<button class="btn btn-sm" data-st="wish">只看想读</button>' +
+      '<button class="btn btn-sm" data-st="done">只看已读</button>' +
+      '<button class="btn btn-sm" data-st="">显示全部</button></div>' +
+      '</div>';
+    Array.prototype.forEach.call(document.querySelectorAll('#statusPanel [data-st]'), function (b) {
+      b.addEventListener('click', function () {
+        statusFilter = b.getAttribute('data-st');
+        activeCat = 'all';
+        renderCats();
+        render();
+      });
+    });
+  }
+
+  function filtered() {
+    var kw = keyword.trim().toLowerCase();
+    return DATA.books.filter(function (b) {
+      if (statusFilter && stOf(b.id) !== statusFilter) return false;
+      if (activeCat !== 'all' && b.category !== activeCat) return false;
+      if (!kw) return true;
+      var hay = [b.title, b.author, b.summary, b.id, (b.tags || []).join(' ')]
+        .join(' ').toLowerCase();
+      return hay.indexOf(kw) >= 0;
+    });
+  }
+
+  function catName(cid) {
+    var c = DATA.categories.filter(function (x) { return x.id === cid; })[0];
+    return c ? c.name : cid;
+  }
+
+  function stBadge(id) {
+    var s = stOf(id);
+    return s ? ' <span class="tag ' + (s === 'done' ? 'tag-bull' : s === 'reading' ? 'tag-warn' : 'tag-neutral') +
+      '">' + ST_TXT[s] + '</span>' : '';
+  }
+
+  // 把 practice 文本里的模块名自动转为链接
+  function linkifyPractice(text) {
+    var esc = APP.esc(text);
+    Object.keys(MOD_LINKS).forEach(function (m) {
+      var re = new RegExp(m, 'g');
+      esc = esc.replace(re, '<a href="' + MOD_LINKS[m] + '">' + m + '</a>');
+    });
+    return esc;
+  }
+
+  function render() {
+    var list = filtered();
+    if (!list.length) {
+      document.getElementById('items').innerHTML = APP.empty('没有符合条件的书籍');
+      return;
+    }
+    document.getElementById('items').innerHTML = list.map(function (b) {
+      return '<div class="kb-item" id="bk-' + b.id + '" data-id="' + b.id + '">' +
+        '<div class="kb-item-head">' +
+          '<span class="arrow">▶</span>' +
+          '<div style="flex:1">' +
+            '<div class="kb-item-title">《' + APP.esc(b.title) + '》' + stBadge(b.id) +
+              ' <span class="tag tag-neutral" style="margin-left:6px">' + APP.esc(catName(b.category)) + '</span>' +
+              ' <span class="tag ' + (b.level === '入门' ? 'tag-info' : 'tag-warn') + '">' + APP.esc(b.level) + '</span>' +
+            '</div>' +
+            '<div class="kb-item-sum">' + APP.esc(b.author) + ' — ' + APP.esc(b.summary) + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="kb-item-body">' +
+          '<div class="kb-sec"><h4>导读</h4><div style="line-height:1.85;font-size:14.5px;color:var(--text-2)">' +
+            APP.md2html(b.guide) + '</div></div>' +
+          '<div class="kb-sec"><h4>核心要点</h4><ul class="kb-points">' +
+            (b.key_ideas || []).map(function (p) { return '<li>' + APP.md2html(p) + '</li>'; }).join('') +
+          '</ul></div>' +
+          '<div class="kb-sec"><h4>🧭 上站实践</h4><div class="notice notice-info" style="margin:0">' +
+            linkifyPractice(b.practice) + '</div></div>' +
+          ((b.knowledge || []).length
+            ? '<div class="kb-sec"><h4>关联知识条目</h4><div class="kb-related">' +
+              (b.knowledge || []).map(function (r) {
+                return '<button class="kb-rel-link" data-goto="' + APP.esc(r) + '">' + APP.esc(r) + '</button>';
+              }).join('') + '</div></div>' : '') +
+          ((b.tags || []).length
+            ? '<div class="kb-tags">' + (b.tags || []).map(function (t) {
+                return '<span class="kb-tag">' + APP.esc(t) + '</span>';
+              }).join('') + '</div>' : '') +
+          '<div class="kb-review" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-strong);' +
+            'display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+            '<span class="small muted">阅读状态：</span>' +
+            ['wish', 'reading', 'done'].map(function (s) {
+              var on = stOf(b.id) === s;
+              return '<button class="btn btn-sm" data-set="' + s + '" data-id="' + b.id + '"' +
+                (on ? ' style="border-color:var(--accent);color:var(--accent)"' : '') + '>' + ST_TXT[s] + '</button>';
+            }).join('') +
+            '<span class="small muted" style="margin-left:auto">状态可在「我的数据」页统一备份</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    // 展开/收起
+    Array.prototype.forEach.call(document.querySelectorAll('.kb-item-head'), function (h) {
+      h.addEventListener('click', function () {
+        h.parentNode.classList.toggle('open');
+      });
+    });
+    // 阅读状态
+    Array.prototype.forEach.call(document.querySelectorAll('.kb-review [data-set]'), function (btn) {
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        var id = btn.getAttribute('data-id'), s = btn.getAttribute('data-set');
+        var st = lsGet(LS_BS, {});
+        if (st[id] === s) delete st[id]; // 再点一次取消
+        else st[id] = s;
+        lsSet(LS_BS, st);
+        render();
+        renderStatusPanel();
+      });
+    });
+    // 关联知识跳转
+    Array.prototype.forEach.call(document.querySelectorAll('.kb-rel-link'), function (btn) {
+      btn.addEventListener('click', function () {
+        location.href = 'knowledge.html#kb-' + btn.getAttribute('data-goto');
+      });
+    });
+  }
+
+  document.getElementById('search').addEventListener('input', function (e) {
+    keyword = e.target.value;
+    render();
+  });
+
+  document.getElementById('footerTime').textContent =
+    '本地更新时间 ' + new Date().toLocaleString('zh-CN');
+})();
+</script>
+</body>
+</html>

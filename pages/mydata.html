@@ -17,6 +17,7 @@
       <a href="market.html" data-nav="market">行情看板</a>
       <a href="review.html" data-nav="review">信号回看</a>
       <a href="knowledge.html" data-nav="knowledge">知识库</a>
+      <a href="books.html" data-nav="books">书单</a>
       <a href="mindset.html" data-nav="mindset">投资心理</a>
       <a href="tools.html" data-nav="tools">决策工具</a>
       <a href="mydata.html" data-nav="mydata">我的数据</a>
@@ -80,7 +81,8 @@
     { key: 'invest_journal',     name: '决策日记',   desc: '投资心理页 · 判断/理由/证伪/复盘', type: 'array' },
     { key: 'invest_bias_checked', name: '偏差自检',  desc: '投资心理页 · 10 类偏差卡片勾选状态', type: 'object' },
     { key: 'invest_checklist',   name: '纪律清单',   desc: '投资心理页 · 每日纪律打勾记录', type: 'object' },
-    { key: 'invest_kb_review',   name: '知识复习进度', desc: '知识库 · 间隔复习的阶段与到期日', type: 'object' }
+    { key: 'invest_kb_review',   name: '知识复习进度', desc: '知识库 · 间隔复习的阶段与到期日', type: 'object' },
+    { key: 'invest_books_status', name: '书单阅读状态', desc: '书单页 · 想读/在读/已读', type: 'object' }
   ];
 
   function lsGet(k, def) {
