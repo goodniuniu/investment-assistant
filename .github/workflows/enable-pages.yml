@@ -15,7 +15,7 @@ jobs:
   enable-pages:
     runs-on: ubuntu-latest
     steps:
-      - name: Enable Pages (source: gh-pages branch)
+      - name: Enable Pages (gh-pages branch)
         run: |
           set -x
           code=$(curl -s -o /tmp/resp.json -w "%{http_code}" -X POST \
