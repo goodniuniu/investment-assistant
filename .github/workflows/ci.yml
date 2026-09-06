@@ -1,0 +1,30 @@
+name: CI
+
+# 推送时运行测试与数据校验，防止畸形 JSON / 指标回归进入 main。
+# 黄金用例见 tests/；数据文件结构由 test_data_files.py 保证。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: 安装 pytest
+        run: pip install pytest
+      - name: 运行测试（指标黄金用例 + 规则引擎 + 数据结构校验）
+        run: python -m pytest tests/ -v
+      - name: 脚本语法检查
+        run: python -m py_compile scripts/fetch_market.py scripts/backfill_analysis.py scripts/ai_comment.py scripts/lib/*.py

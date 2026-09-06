@@ -34,21 +34,36 @@
   }
 
   // 读取按月归档的历史数据：从当前月份向前回溯若干个月
-  async function loadHistory(monthsBack) {
-    monthsBack = monthsBack || 6;
+  function monthsBackList(monthsBack) {
     const months = [];
     const now = new Date();
     for (let i = 0; i < monthsBack; i++) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       months.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'));
     }
-    const results = await Promise.all(
-      months.map(m => load('data/market/history/' + m + '.json'))
-    );
+    return months;
+  }
+
+  async function loadHistory(monthsBack) {
     const days = [];
+    const results = await Promise.all(
+      monthsBackList(monthsBack || 6).map(m => load('data/market/history/' + m + '.json'))
+    );
     results.forEach(r => { if (r && Array.isArray(r.days)) days.push.apply(days, r.days); });
     days.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
     // 去重（相邻月份文件可能有重叠）
+    const seen = new Set();
+    return days.filter(d => (seen.has(d.date) ? false : (seen.add(d.date), true)));
+  }
+
+  // 读取按月归档的分析结论（信号回看 / 规则命中率用）
+  async function loadAnalysisHistory(monthsBack) {
+    const days = [];
+    const results = await Promise.all(
+      monthsBackList(monthsBack || 12).map(m => load('data/analysis/history/' + m + '.json'))
+    );
+    results.forEach(r => { if (r && Array.isArray(r.days)) days.push.apply(days, r.days); });
+    days.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
     const seen = new Set();
     return days.filter(d => (seen.has(d.date) ? false : (seen.add(d.date), true)));
   }
@@ -415,8 +430,27 @@
       '</div>';
   }
 
+  // ---------------------------------------------------- 数据新鲜度哨兵
+  // trade_date 距今天超过阈值个自然日 → 提示数据可能过期（长假期间天然变长，阈值取 10 天）
+  function dataAgeDays(tradeDate) {
+    if (!tradeDate) return null;
+    const t = new Date(tradeDate + 'T23:59:59+08:00');
+    if (isNaN(t)) return null;
+    return Math.floor((Date.now() - t.getTime()) / 86400000);
+  }
+
+  function freshnessNotice(tradeDate) {
+    const days = dataAgeDays(tradeDate);
+    if (days === null || days <= 10) return '';
+    return '<div class="notice notice-warn"><strong>数据已 ' + days + ' 天未更新。</strong>' +
+      '今日数据应在每个交易日 18:30 后自动生成，长时间未更新通常说明抓取任务异常，' +
+      '请到仓库 Actions 页面检查「每日市场数据更新」的运行记录。</div>';
+  }
+
   global.APP = {
     prefix: prefix, asset: asset, load: load, loadHistory: loadHistory,
+    loadAnalysisHistory: loadAnalysisHistory, dataAgeDays: dataAgeDays,
+    freshnessNotice: freshnessNotice,
     fmt: fmt, cls: cls, md2html: md2html, esc: esc,
     chart: chart, mountNav: mountNav, disclaimer: disclaimer,
     empty: empty, dataNotice: dataNotice, svgEl: svgEl

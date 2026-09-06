@@ -1,0 +1,346 @@
+{
+  "month": "2026-06",
+  "days": [
+    {
+      "date": "2026-06-01",
+      "benchmark": null,
+      "sentiment": 65.4,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 6.2,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-02",
+      "benchmark": null,
+      "sentiment": 67.4,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 7.2,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-03",
+      "benchmark": null,
+      "sentiment": 69.1,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 7.7,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-04",
+      "benchmark": null,
+      "sentiment": 56.7,
+      "sentiment_label": "中性",
+      "risk_level": "low",
+      "risk_score": 6.5,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-05",
+      "benchmark": null,
+      "sentiment": 61.6,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 8.1,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-08",
+      "benchmark": null,
+      "sentiment": 50.8,
+      "sentiment_label": "中性",
+      "risk_level": "low",
+      "risk_score": 8.5,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-09",
+      "benchmark": null,
+      "sentiment": 45.4,
+      "sentiment_label": "中性",
+      "risk_level": "low",
+      "risk_score": 10.7,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-10",
+      "benchmark": null,
+      "sentiment": 40.4,
+      "sentiment_label": "偏冷",
+      "risk_level": "low",
+      "risk_score": 10.3,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-11",
+      "benchmark": null,
+      "sentiment": 37.9,
+      "sentiment_label": "偏冷",
+      "risk_level": "low",
+      "risk_score": 9.3,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-12",
+      "benchmark": null,
+      "sentiment": 63.6,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 9.7,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-15",
+      "benchmark": null,
+      "sentiment": 69.9,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 14.6,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-16",
+      "benchmark": null,
+      "sentiment": 61.4,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 12.2,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-17",
+      "benchmark": null,
+      "sentiment": 61.9,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 12.6,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        },
+        {
+          "id": "macd_golden",
+          "type": "bull",
+          "title": "MACD 金叉"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-18",
+      "benchmark": null,
+      "sentiment": 76.1,
+      "sentiment_label": "偏热",
+      "risk_level": "low",
+      "risk_score": 21.6,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-22",
+      "benchmark": null,
+      "sentiment": 79.6,
+      "sentiment_label": "偏热",
+      "risk_level": "low",
+      "risk_score": 27.6,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-23",
+      "benchmark": null,
+      "sentiment": 67.4,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 15.8,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-24",
+      "benchmark": null,
+      "sentiment": 63.9,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 15.8,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-25",
+      "benchmark": null,
+      "sentiment": 73.5,
+      "sentiment_label": "偏热",
+      "risk_level": "low",
+      "risk_score": 23.3,
+      "signals": [
+        {
+          "id": "ma_bull",
+          "type": "bull",
+          "title": "均线多头排列"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-26",
+      "benchmark": null,
+      "sentiment": 64.0,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 20.0,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-29",
+      "benchmark": null,
+      "sentiment": 65.2,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 20.5,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-06-30",
+      "benchmark": null,
+      "sentiment": 69.7,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 22.5,
+      "signals": [
+        {
+          "id": "ma_bull",
+          "type": "bull",
+          "title": "均线多头排列"
+        }
+      ],
+      "backfilled": true
+    }
+  ]
+}

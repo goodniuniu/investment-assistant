@@ -26,6 +26,128 @@ THRESHOLDS = {
 }
 
 
+# ---------------------------------------------------------------- 规则元数据
+# 供「信号回看」页展示：每条规则的理论假设与适用环境，并支撑命中率统计。
+# assumption：这条规则背后的理论假设；scope：它在什么环境下更可能成立/失效。
+RULES_META = {
+    "ma_bull": {
+        "name": "均线多头排列",
+        "assumption": "趋势具有自我强化性，各周期平均成本同步上移时惯性延续概率较高",
+        "scope": "趋势市有效；震荡市中排列反复形成又破坏",
+    },
+    "ma_bear": {
+        "name": "均线空头排列",
+        "assumption": "套牢盘供给使反弹承压，下跌趋势自我延续",
+        "scope": "趋势市有效；底部区域会滞后于拐点",
+    },
+    "ma_mixed": {
+        "name": "均线交织",
+        "assumption": "各周期成本一致意味着多空均衡，方向选择推迟",
+        "scope": "中性描述，不构成方向预测",
+    },
+    "macd_golden": {
+        "name": "MACD 金叉",
+        "assumption": "短期与长期均线组距离转正，动能方向反转",
+        "scope": "趋势市可靠；震荡市假信号频繁",
+    },
+    "macd_dead": {
+        "name": "MACD 死叉",
+        "assumption": "上涨动能衰竭，回调概率上升",
+        "scope": "单一死叉信号弱，需结合趋势结构",
+    },
+    "rsi_overbought": {
+        "name": "RSI 超买",
+        "assumption": "短期涨幅过快存在均值回归压力",
+        "scope": "强势市会钝化，不应单独作为做空依据",
+    },
+    "rsi_oversold": {
+        "name": "RSI 超卖",
+        "assumption": "短期跌幅过快存在技术性反弹需求",
+        "scope": "熊市中会连续超卖，反弹高度有限",
+    },
+    "vol_up_price_up": {
+        "name": "放量上涨",
+        "assumption": "量价配合，增量资金入场推动的上涨更可持续",
+        "scope": "量价关系经典假设，高位放量需警惕出货",
+    },
+    "vol_up_price_down": {
+        "name": "放量下跌",
+        "assumption": "抛压沉重且有人接盘，分歧加大往往预示调整",
+        "scope": "恐慌性放量下跌后常出现修复，但趋势性下跌中是中继",
+    },
+    "vol_dry": {
+        "name": "缩量",
+        "assumption": "成交萎缩意味着分歧减少，往往接近阶段拐点",
+        "scope": "地量见地价是统计倾向而非定律",
+    },
+    "breadth_hot": {
+        "name": "普涨（宽度热）",
+        "assumption": "上涨家数占比高代表普涨行情，赚钱效应扩散",
+        "scope": "极端高位普涨后常见拥挤回落",
+    },
+    "breadth_cold": {
+        "name": "普跌（宽度冷）",
+        "assumption": "普跌意味着系统性抛压，情绪接近冰点",
+        "scope": "冰点区常对应中期底部区域，但精确时点不可知",
+    },
+    "index_divergence_breadth": {
+        "name": "指数与宽度背离",
+        "assumption": "指数靠权重支撑而多数股票下跌，上涨基础不牢",
+        "scope": "背离可以持续很久，是警示而非时点信号",
+    },
+    "limit_up_hot": {
+        "name": "涨停潮",
+        "assumption": "涨停家数与连板高度反映短线风险偏好亢奋",
+        "scope": "情绪周期顶部区域观察指标",
+    },
+    "limit_up_cold": {
+        "name": "涨停冰点",
+        "assumption": "短线资金离场，题材情绪降至冰点",
+        "scope": "常对应情绪周期底部，反转领先指标之一",
+    },
+    "vol_high": {
+        "name": "高波动",
+        "assumption": "波动率均值回归：极高波动率往往伴随风险释放",
+        "scope": "波动率聚集效应下，高波动后短期仍可能维持高波动",
+    },
+    "vol_low": {
+        "name": "低波动",
+        "assumption": "波动率压缩后往往选择方向，低波动酝酿变盘",
+        "scope": "变盘方向不由波动率本身决定",
+    },
+    "amount_hot": {
+        "name": "天量成交",
+        "assumption": "成交额极端放大代表分歧或过热",
+        "scope": "牛市初中期的天量可延续，末段天量常为顶部特征",
+    },
+    "amount_cold": {
+        "name": "地量成交",
+        "assumption": "成交额极端萎缩代表参与意愿枯竭",
+        "scope": "常出现在长期阴跌之后的中期底部区域",
+    },
+    "margin_hot": {
+        "name": "融资快速攀升",
+        "assumption": "杠杆资金加速入场，情绪偏亢奋",
+        "scope": "杠杆是放大器，顶部区域风险信号",
+    },
+    "margin_cold": {
+        "name": "融资快速回落",
+        "assumption": "去杠杆进行中，抛压来自强制减压",
+        "scope": "去杠杆末端常对应市场底部",
+    },
+    "fund_outflow": {
+        "name": "主力资金大幅净流出",
+        "assumption": "大单方向代表机构/主力态度",
+        "scope": "主力资金口径有争议，只宜作情绪佐证",
+    },
+    "fund_inflow": {
+        "name": "主力资金大幅净流入",
+        "assumption": "大单净流入代表增量资金意愿",
+        "scope": "单日流向噪音大，连续多日才有意义",
+    },
+}
+
+
 def _clamp(v, lo=0.0, hi=100.0):
     return max(lo, min(hi, v))
 
@@ -630,4 +752,5 @@ def build(ctx):
         "signals": signals,
         "psychology": psychology_alerts(ctx, senti),
         "discipline": discipline_checklist(ctx, senti, level),
+        "rules_meta": RULES_META,
     }

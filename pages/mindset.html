@@ -14,9 +14,11 @@
     <nav class="nav">
       <a href="../index.html" data-nav="index">首页</a>
       <a href="market.html" data-nav="market">行情看板</a>
+      <a href="review.html" data-nav="review">信号回看</a>
       <a href="knowledge.html" data-nav="knowledge">知识库</a>
       <a href="mindset.html" data-nav="mindset">投资心理</a>
       <a href="tools.html" data-nav="tools">决策工具</a>
+      <a href="mydata.html" data-nav="mydata">我的数据</a>
     </nav>
   </div>
 </header>
@@ -123,8 +125,10 @@
   }
 
   // ---------------------------------------------- 市场实时提醒
+  var liveAnalysis = null; // 供决策日记保存时附上当日市场快照
   APP.load('data/analysis/latest.json').then(function (a) {
     if (!a || !a.trade_date) return;
+    liveAnalysis = a;
     var psy = a.psychology || [];
     if (!psy.length) return;
     document.getElementById('liveCard').style.display = '';
@@ -349,11 +353,19 @@
                     r.reason && '理由：' + r.reason,
                     r.falsify && '证伪：' + r.falsify,
                     r.note && '复盘：' + r.note].filter(Boolean).join('\n');
+        // 记录时的市场快照：复盘时对照"我当时怎么想 vs 当时市场什么状态"
+        var mk = r.market;
+        var mkLine = mk ? '<div class="small muted" style="margin-top:4px">记录时市场：' +
+          APP.esc(mk.trade_date || '') + ' · 情绪 ' + (mk.sentiment === null || mk.sentiment === undefined ? '—' : mk.sentiment) +
+          (mk.sentiment_label ? '（' + APP.esc(mk.sentiment_label) + '）' : '') +
+          (mk.risk_level ? ' · 风险 ' + APP.esc(mk.risk_level) : '') +
+          (mk.signals && mk.signals.length ? ' · 当日信号：' + APP.esc(mk.signals.join('、')) : '') +
+          '</div>' : '';
         return '<div class="journal-item"><div class="journal-meta"><strong>' +
           APP.esc(meta) + '</strong>' +
           '<button class="journal-del" data-i="' + i + '">删除</button></div>' +
           (body ? '<div class="journal-text">' + APP.esc(body) + '</div>' : '') +
-          '</div>';
+          mkLine + '</div>';
       }).join('');
 
       Array.prototype.forEach.call(document.querySelectorAll('.journal-del'), function (b) {
@@ -375,6 +387,16 @@
         if (el) rec[f.key] = el.value;
       });
       if (!rec.date) rec.date = new Date().toISOString().slice(0, 10);
+      // 附上保存时刻的市场快照（若有），复盘时可对照决策环境
+      if (liveAnalysis && liveAnalysis.trade_date) {
+        rec.market = {
+          trade_date: liveAnalysis.trade_date,
+          sentiment: (liveAnalysis.sentiment || {}).score,
+          sentiment_label: liveAnalysis.sentiment_label,
+          risk_level: liveAnalysis.risk_level,
+          signals: (liveAnalysis.signals || []).map(function (s) { return s.title; })
+        };
+      }
       var list = lsGet(LS_J, []);
       list.push(rec);
       lsSet(LS_J, list);

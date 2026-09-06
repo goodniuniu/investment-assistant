@@ -1,0 +1,79 @@
+{
+  "month": "2026-09",
+  "days": [
+    {
+      "date": "2026-09-01",
+      "benchmark": null,
+      "sentiment": 41.9,
+      "sentiment_label": "偏冷",
+      "risk_level": "low",
+      "risk_score": 6.0,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-09-02",
+      "benchmark": null,
+      "sentiment": 28.4,
+      "sentiment_label": "低迷",
+      "risk_level": "low",
+      "risk_score": 10.6,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        },
+        {
+          "id": "macd_dead",
+          "type": "bear",
+          "title": "MACD 死叉"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-09-03",
+      "benchmark": null,
+      "sentiment": 27.7,
+      "sentiment_label": "低迷",
+      "risk_level": "low",
+      "risk_score": 11.5,
+      "signals": [
+        {
+          "id": "ma_bear",
+          "type": "bear",
+          "title": "均线空头排列"
+        }
+      ],
+      "backfilled": true
+    },
+    {
+      "date": "2026-09-04",
+      "benchmark": null,
+      "sentiment": 30.4,
+      "sentiment_label": "偏冷",
+      "risk_level": "low",
+      "risk_score": 7.5,
+      "signals": [
+        {
+          "id": "ma_bear",
+          "type": "bear",
+          "title": "均线空头排列"
+        },
+        {
+          "id": "amount_hot",
+          "type": "neutral",
+          "title": "成交额高企"
+        }
+      ],
+      "backfilled": true
+    }
+  ]
+}

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的数据 · 本地记录管理</title>
+<meta name="description" content="决策日记、情绪自评、知识复习进度的统一备份、迁移与清除">
+<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="../index.html"><span class="dot"></span>投资辅助站</a>
+    <nav class="nav">
+      <a href="../index.html" data-nav="index">首页</a>
+      <a href="market.html" data-nav="market">行情看板</a>
+      <a href="review.html" data-nav="review">信号回看</a>
+      <a href="knowledge.html" data-nav="knowledge">知识库</a>
+      <a href="mindset.html" data-nav="mindset">投资心理</a>
+      <a href="tools.html" data-nav="tools">决策工具</a>
+      <a href="mydata.html" data-nav="mydata">我的数据</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>我的数据</h1>
+    <p>所有个人记录都保存在这台浏览器的 localStorage 中，不上传任何服务器。换电脑 / 换浏览器 / 重装系统前，请先导出备份。</p>
+  </div>
+
+  <div id="notice"></div>
+
+  <div class="card">
+    <h2 class="card-title">数据总览</h2>
+    <div class="chart-box"><table class="tbl" id="storeTable"></table></div>
+  </div>
+
+  <div class="grid" style="grid-template-columns: 1fr 1fr; gap:16px; align-items:start;">
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">📦 导出全部</h2>
+      <p class="small muted">把下面列出的全部本地记录打包成一个 JSON 文件下载。</p>
+      <button class="btn" id="btnExport">导出备份文件</button>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">📥 导入恢复</h2>
+      <p class="small muted">选择此前导出的备份文件，<strong>将覆盖</strong>当前浏览器中的同名记录。</p>
+      <input type="file" id="fileImport" accept=".json,application/json"
+             style="padding:6px;border:1px solid var(--border-strong);border-radius:6px;width:100%">
+      <div id="importMsg" class="small" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="card-title">危险操作</h2>
+    <p class="small muted">清除后无法恢复（除非已导出备份）。逐项清除或一键清空：</p>
+    <div id="clearZone" style="display:flex;gap:10px;flex-wrap:wrap"></div>
+  </div>
+
+  <div id="disclaimer"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>本地记录 · 隐私不离开浏览器</span>
+    <span id="footerTime"></span>
+  </div>
+</footer>
+
+<script src="../assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  APP.mountNav('mydata');
+  document.getElementById('disclaimer').innerHTML = APP.disclaimer();
+
+  // 全站用到的 localStorage 键集中登记（新增功能时在此补一行）
+  var STORES = [
+    { key: 'invest_journal',     name: '决策日记',   desc: '投资心理页 · 判断/理由/证伪/复盘', type: 'array' },
+    { key: 'invest_bias_checked', name: '偏差自检',  desc: '投资心理页 · 10 类偏差卡片勾选状态', type: 'object' },
+    { key: 'invest_checklist',   name: '纪律清单',   desc: '投资心理页 · 每日纪律打勾记录', type: 'object' },
+    { key: 'invest_kb_review',   name: '知识复习进度', desc: '知识库 · 间隔复习的阶段与到期日', type: 'object' }
+  ];
+
+  function lsGet(k, def) {
+    try { return JSON.parse(localStorage.getItem(k)) || def; }
+    catch (e) { return def; }
+  }
+  function countOf(k) {
+    var v = lsGet(k, null);
+    if (v === null) return 0;
+    if (Array.isArray(v)) return v.length;
+    return Object.keys(v).length;
+  }
+
+  function render() {
+    document.getElementById('storeTable').innerHTML =
+      '<thead><tr><th>记录</th><th>存储键</th><th class="num">条目数</th><th>说明</th></tr></thead><tbody>' +
+      STORES.map(function (s) {
+        var n = countOf(s.key);
+        return '<tr><td><strong>' + s.name + '</strong></td>' +
+          '<td class="mono small">' + s.key + '</td>' +
+          '<td class="num mono">' + n + '</td>' +
+          '<td class="small muted">' + APP.esc(s.desc) + '</td></tr>';
+      }).join('') + '</tbody>';
+
+    document.getElementById('clearZone').innerHTML =
+      STORES.filter(function (s) { return countOf(s.key) > 0; }).map(function (s) {
+        return '<button class="btn btn-sm" data-clear="' + s.key + '">清除「' + s.name + '」</button>';
+      }).join('') +
+      '<button class="btn btn-sm" data-clear="__all__" style="color:var(--danger)">⚠ 一键清空全部</button>';
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-clear]'), function (b) {
+      b.addEventListener('click', function () {
+        var k = b.getAttribute('data-clear');
+        var msg = k === '__all__' ? '确定清空全部本地记录吗？此操作不可恢复。'
+                               : '确定清除这项记录吗？此操作不可恢复。';
+        if (!window.confirm(msg)) return;
+        if (k === '__all__') STORES.forEach(function (s) { localStorage.removeItem(s.key); });
+        else localStorage.removeItem(k);
+        render();
+      });
+    });
+  }
+  render();
+
+  // ---- 导出 ----
+  document.getElementById('btnExport').addEventListener('click', function () {
+    var dump = {
+      app: 'investment-assistant',
+      exported_at: new Date().toISOString(),
+      stores: {}
+    };
+    STORES.forEach(function (s) {
+      var raw = localStorage.getItem(s.key);
+      if (raw !== null) dump.stores[s.key] = JSON.parse(raw);
+    });
+    var blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'invest-mydata-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+  });
+
+  // ---- 导入 ----
+  document.getElementById('fileImport').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0];
+    var msg = document.getElementById('importMsg');
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var dump = JSON.parse(r.result);
+        if (dump.app !== 'investment-assistant' || !dump.stores) {
+          msg.innerHTML = '<span style="color:var(--danger)">这不是本站导出的备份文件。</span>';
+          return;
+        }
+        var restored = 0;
+        STORES.forEach(function (s) {
+          if (dump.stores[s.key] !== undefined) {
+            localStorage.setItem(s.key, JSON.stringify(dump.stores[s.key]));
+            restored++;
+          }
+        });
+        msg.innerHTML = '<span class="up">✓ 已恢复 ' + restored + ' 项记录（'
+          + APP.esc(dump.exported_at || '') + ' 的备份）</span>';
+        render();
+      } catch (err) {
+        msg.innerHTML = '<span style="color:var(--danger)">文件解析失败：' + APP.esc(err.message) + '</span>';
+      }
+    };
+    r.readAsText(f, 'utf-8');
+  });
+
+  document.getElementById('footerTime').textContent =
+    '本地更新时间 ' + new Date().toLocaleString('zh-CN');
+})();
+</script>
+</body>
+</html>

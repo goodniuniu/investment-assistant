@@ -33,6 +33,8 @@ DATA_DIR = os.path.join(ROOT, "data")
 MARKET_DIR = os.path.join(DATA_DIR, "market")
 HIST_DIR = os.path.join(MARKET_DIR, "history")
 ANALYSIS_DIR = os.path.join(DATA_DIR, "analysis")
+ANALYSIS_HIST_DIR = os.path.join(ANALYSIS_DIR, "history")
+META_DIR = os.path.join(DATA_DIR, "meta")
 CST = timezone(timedelta(hours=8))
 
 
@@ -208,6 +210,55 @@ def build_context(snapshot):
 
 
 # ---------------------------------------------------------------- 历史归档
+def append_analysis_history(analysis, backfilled=False):
+    """
+    把当日分析结论（情绪/风险/信号摘要）追加到 data/analysis/history/YYYY-MM.json。
+    这是「信号回看 / 规则命中率」的数据基础：每日结论必须留痕才能比对。
+    同一交易日重复运行时覆盖旧记录，保证幂等。
+    """
+    date = analysis.get("trade_date")
+    if not date:
+        return False
+    path = os.path.join(ANALYSIS_HIST_DIR, "%s.json" % date[:7])
+    data = _read_json(path) or {"month": date[:7], "days": []}
+
+    record = {
+        "date": date,
+        "benchmark": analysis.get("benchmark"),
+        "sentiment": (analysis.get("sentiment") or {}).get("score"),
+        "sentiment_label": analysis.get("sentiment_label"),
+        "risk_level": analysis.get("risk_level"),
+        "risk_score": analysis.get("risk_score"),
+        "signals": [{"id": s.get("id"), "type": s.get("type"), "title": s.get("title")}
+                    for s in (analysis.get("signals") or [])],
+        "ai_headline": (analysis.get("ai") or {}).get("headline"),
+    }
+    if backfilled:
+        # 回填数据缺少当日融资/资金流等维度，命中率统计时单列，避免与实时数据混淆
+        record["backfilled"] = True
+
+    days = data.get("days") or []
+    days = [d for d in days if d.get("date") != date]
+    days.append(record)
+    days.sort(key=lambda d: d.get("date") or "")
+    data["days"] = days
+    _write_json(path, data)
+    return True
+
+
+def write_status(snapshot, errors, analysis):
+    """数据新鲜度哨兵：记录本次成功生成的时间与质量，供前端判断数据是否过期。"""
+    status = {
+        "last_success_at": datetime.now(CST).isoformat(timespec="seconds"),
+        "trade_date": snapshot.get("trade_date"),
+        "errors": errors,
+        "ok": not errors,
+        "sentiment": (analysis.get("sentiment") or {}).get("score"),
+        "risk_level": analysis.get("risk_level"),
+    }
+    _write_json(os.path.join(META_DIR, "status.json"), status)
+
+
 def append_history(snapshot, analysis):
     """
     把当日精简指标追加到 data/market/history/YYYY-MM.json。
@@ -338,6 +389,8 @@ def main():
     _write_json(os.path.join(MARKET_DIR, "latest.json"), trim_for_disk(snapshot))
     _write_json(os.path.join(ANALYSIS_DIR, "latest.json"), analysis)
     append_history(snapshot, analysis)
+    append_analysis_history(analysis)
+    write_status(snapshot, errors, analysis)
 
     s = analysis.get("sentiment") or {}
     _log("情绪温度 %s（%s）｜风险 %s｜识别信号 %d 条"

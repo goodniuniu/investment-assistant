@@ -14,9 +14,11 @@
     <nav class="nav">
       <a href="../index.html" data-nav="index">首页</a>
       <a href="market.html" data-nav="market">行情看板</a>
+      <a href="review.html" data-nav="review">信号回看</a>
       <a href="knowledge.html" data-nav="knowledge">知识库</a>
       <a href="mindset.html" data-nav="mindset">投资心理</a>
       <a href="tools.html" data-nav="tools">决策工具</a>
+      <a href="mydata.html" data-nav="mydata">我的数据</a>
     </nav>
   </div>
 </header>
@@ -32,6 +34,7 @@
   <div class="kb-layout">
     <aside class="kb-side">
       <input type="text" class="kb-search" id="search" placeholder="搜索条目、标签…">
+      <div id="reviewPanel"></div>
       <div id="cats"></div>
       <div class="small muted" style="margin-top:14px;line-height:1.6">
         点击标题展开正文。<br>每个条目含核心要点、常见陷阱与关联阅读。
@@ -62,6 +65,52 @@
 
   var DATA = null, activeCat = 'all', keyword = '';
 
+  // ---------------------------------------------- 间隔复习（简易 SM-2）
+  var LS_RV = 'invest_kb_review';
+  var RV_INTERVALS = [1, 3, 7, 14, 30, 60, 120]; // 天
+  function lsGet(k, def) {
+    try { return JSON.parse(localStorage.getItem(k)) || def; }
+    catch (e) { return def; }
+  }
+  function lsSet(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+  }
+  function today() { return new Date().toISOString().slice(0, 10); }
+  function addDays(n) {
+    var d = new Date();
+    d.setDate(d.getDate() + n);
+    return d.toISOString().slice(0, 10);
+  }
+  function rvState() { return lsGet(LS_RV, {}); }
+  function isDue(id) {
+    var r = rvState()[id];
+    return r ? r.due <= today() : false; // 从未学过的条目不强制，点击"开始学习"才入队
+  }
+  function gradeItem(id, good) {
+    var st = rvState();
+    var r = st[id] || { box: 0 };
+    r.box = good ? Math.min(r.box + 1, RV_INTERVALS.length - 1) : 0;
+    r.due = addDays(RV_INTERVALS[r.box]);
+    r.last = today();
+    st[id] = r;
+    lsSet(LS_RV, st);
+  }
+  function updateReviewPanel() {
+    if (!DATA) return;
+    var st = rvState();
+    var learned = Object.keys(st).length;
+    var due = DATA.items.filter(function (i) { return isDue(i.id); }).length;
+    var mastered = Object.keys(st).filter(function (k) { return st[k].box >= 5; }).length;
+    document.getElementById('reviewPanel').innerHTML =
+      '<div class="card" style="margin:12px 0;padding:12px">' +
+      '<div style="font-weight:600;font-size:14px;margin-bottom:6px">📚 间隔复习</div>' +
+      '<div class="small" style="line-height:1.8">已入队 ' + learned + ' / ' + DATA.items.length +
+      ' · 已掌握 ' + mastered + '</div>' +
+      '<div class="kb-cat' + (activeCat === '__due__' ? ' active' : '') + '" data-cat="__due__" ' +
+      'style="margin-top:8px"><span>今日待复习</span><span class="cnt">' + due + '</span></div>' +
+      '</div>';
+  }
+
   APP.load('data/content/knowledge.json').then(function (d) {
     if (!d || !d.items) {
       document.getElementById('notice').innerHTML =
@@ -74,6 +123,7 @@
     document.getElementById('count').textContent = '共 ' + d.items.length + ' 条';
     renderCats();
     render();
+    updateReviewPanel();
     // 支持从其他页面跳转定位：knowledge.html#kb-<id>
     if (location.hash && location.hash.indexOf('#kb-') === 0) {
       focusItem(location.hash.slice(4));
@@ -94,20 +144,23 @@
         '<span>' + APP.esc(c.name) + '</span><span class="cnt">' + countBy(c.id) + '</span></div>';
     }).join('');
     document.getElementById('cats').innerHTML = html;
-
-    Array.prototype.forEach.call(document.querySelectorAll('.kb-cat'), function (el) {
-      el.addEventListener('click', function () {
-        activeCat = el.getAttribute('data-cat');
-        renderCats();
-        render();
-      });
-    });
+    updateReviewPanel(); // 面板中的"今日待复习"高亮随分类切换刷新
   }
+
+  // 分类/复习过滤统一用事件委托，面板重渲染后点击仍有效
+  document.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('.kb-cat') : null;
+    if (!el) return;
+    activeCat = el.getAttribute('data-cat');
+    renderCats();
+    render();
+  });
 
   function filtered() {
     var kw = keyword.trim().toLowerCase();
     return DATA.items.filter(function (i) {
-      if (activeCat !== 'all' && i.category !== activeCat) return false;
+      if (activeCat === '__due__' && !isDue(i.id)) return false;
+      if (activeCat !== 'all' && activeCat !== '__due__' && i.category !== activeCat) return false;
       if (!kw) return true;
       var hay = [i.title, i.summary, i.id, (i.tags || []).join(' ')]
         .join(' ').toLowerCase();
@@ -155,6 +208,13 @@
             ? '<div class="kb-tags">' + (i.tags || []).map(function (t) {
                 return '<span class="kb-tag">' + APP.esc(t) + '</span>';
               }).join('') + '</div>' : '') +
+          '<div class="kb-review" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-strong);' +
+            'display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+            '<span class="small muted rv-state" data-id="' + APP.esc(i.id) + '">' + rvLabel(i.id) + '</span>' +
+            '<span style="flex:1"></span>' +
+            '<button class="btn btn-sm" data-grade="bad"  data-id="' + APP.esc(i.id) + '">😅 再想想</button>' +
+            '<button class="btn btn-sm" data-grade="good" data-id="' + APP.esc(i.id) + '">✅ 记住了</button>' +
+          '</div>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -163,6 +223,15 @@
     Array.prototype.forEach.call(document.querySelectorAll('.kb-item-head'), function (h) {
       h.addEventListener('click', function () {
         h.parentNode.classList.toggle('open');
+      });
+    });
+    // 复习评分
+    Array.prototype.forEach.call(document.querySelectorAll('.kb-review [data-grade]'), function (b) {
+      b.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        gradeItem(b.getAttribute('data-id'), b.getAttribute('data-grade') === 'good');
+        render();
+        updateReviewPanel();
       });
     });
     // 关联跳转
@@ -186,6 +255,14 @@
     el.style.transition = 'box-shadow .3s';
     el.style.boxShadow = '0 0 0 3px var(--accent-soft)';
     setTimeout(function () { el.style.boxShadow = ''; }, 1800);
+  }
+
+  function rvLabel(id) {
+    var r = rvState()[id];
+    if (!r) return '未入队 · 阅读后点「记住了/再想想」开始复习';
+    var n = RV_INTERVALS[r.box];
+    return r.box >= 5 ? '已掌握（' + n + ' 天后再巩固）' :
+      '第 ' + (r.box + 1) + ' 阶 · ' + (r.due <= today() ? '今日到期' : r.due + ' 复习');
   }
 
   document.getElementById('search').addEventListener('input', function (e) {

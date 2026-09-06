@@ -15,9 +15,11 @@
     <nav class="nav">
       <a href="index.html" data-nav="index">首页</a>
       <a href="pages/market.html" data-nav="market">行情看板</a>
+      <a href="pages/review.html" data-nav="review">信号回看</a>
       <a href="pages/knowledge.html" data-nav="knowledge">知识库</a>
       <a href="pages/mindset.html" data-nav="mindset">投资心理</a>
       <a href="pages/tools.html" data-nav="tools">决策工具</a>
+      <a href="pages/mydata.html" data-nav="mydata">我的数据</a>
     </nav>
   </div>
 </header>
@@ -66,6 +68,11 @@
       <div style="font-size:15px;font-weight:600;margin-top:4px">趋势与结构分析</div>
       <div class="stat-extra">K线、均线、板块轮动、情绪历史</div>
     </a>
+    <a class="stat" href="pages/review.html" style="text-decoration:none;color:inherit">
+      <div class="stat-label">信号回看</div>
+      <div style="font-size:15px;font-weight:600;margin-top:4px">规则战绩与复盘</div>
+      <div class="stat-extra">历史信号对照实际涨跌、命中率排行</div>
+    </a>
     <a class="stat" href="pages/knowledge.html" style="text-decoration:none;color:inherit">
       <div class="stat-label">投资知识库</div>
       <div style="font-size:15px;font-weight:600;margin-top:4px">54 个知识条目</div>
@@ -80,6 +87,11 @@
       <div class="stat-label">决策工具</div>
       <div style="font-size:15px;font-weight:600;margin-top:4px">仓位与风险计算</div>
       <div class="stat-extra">凯利公式、回撤、止盈止损</div>
+    </a>
+    <a class="stat" href="pages/mydata.html" style="text-decoration:none;color:inherit">
+      <div class="stat-label">我的数据</div>
+      <div style="font-size:15px;font-weight:600;margin-top:4px">本地记录管理</div>
+      <div class="stat-extra">决策日记、自评、复习进度的备份迁移</div>
     </a>
   </div>
 
@@ -106,7 +118,8 @@
   ]).then(function (res) {
     var analysis = res[0], market = res[1];
     var ok = !!(analysis && analysis.trade_date);
-    document.getElementById('notice').innerHTML = APP.dataNotice(ok);
+    document.getElementById('notice').innerHTML =
+      APP.dataNotice(ok) + (ok ? APP.freshnessNotice(analysis.trade_date) : '');
     if (!ok) {
       document.getElementById('subhead').textContent = '暂无数据';
       return;

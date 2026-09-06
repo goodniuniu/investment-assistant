@@ -14,9 +14,11 @@
     <nav class="nav">
       <a href="../index.html" data-nav="index">首页</a>
       <a href="market.html" data-nav="market">行情看板</a>
+      <a href="review.html" data-nav="review">信号回看</a>
       <a href="knowledge.html" data-nav="knowledge">知识库</a>
       <a href="mindset.html" data-nav="mindset">投资心理</a>
       <a href="tools.html" data-nav="tools">决策工具</a>
+      <a href="mydata.html" data-nav="mydata">我的数据</a>
     </nav>
   </div>
 </header>
@@ -50,6 +52,19 @@
       <span><i style="background:#0e9f6e"></i>MA60</span>
       <span style="margin-left:8px;color:var(--text-3)">下方为成交量（红涨绿跌）</span>
     </div>
+  </div>
+
+  <!-- 宽基对照 -->
+  <div class="card">
+    <h2 class="card-title">宽基指数对照
+      <span class="sub">区间归一化（起点 = 0%）</span>
+      <select id="benchRange" style="margin-left:auto;font-size:13px;padding:4px 8px;border:1px solid var(--border-strong);border-radius:6px">
+        <option value="60">近 60 日</option>
+        <option value="120" selected>近 120 日</option>
+      </select>
+    </h2>
+    <div class="chart-box" id="benchChart"></div>
+    <div class="chart-legend" id="benchLegend"></div>
   </div>
 
   <!-- 技术指标 -->
@@ -220,6 +235,53 @@
       }
       sel.addEventListener('change', drawK);
       drawK();
+
+      // ---------------- 宽基对照 ----------------
+      var BENCH_COLORS = { '1.000001': '#4a5058', '1.000300': '#2563eb', '0.399905': '#e8912d',
+                           '0.399006': '#d0342c', '1.000688': '#8b5cf6' };
+      function drawBench() {
+        var n = +document.getElementById('benchRange').value;
+        var series = [], legend = '';
+        // 以基准指数的日期为横轴，其余指数按日期对齐（缺失日跳过该点）
+        var baseRows = kl['1.000001'] || kl[keys[0]];
+        if (!baseRows) return;
+        var dates = baseRows.slice(-n).map(function (r) { return r.date; });
+        var priceByDate = {};
+        Object.keys(kl).forEach(function (k) {
+          if (!kl[k]) return;
+          priceByDate[k] = {};
+          kl[k].forEach(function (r) { priceByDate[k][r.date] = r.close; });
+        });
+        keys.forEach(function (k) {
+          var vals = dates.map(function (d) { return priceByDate[k][d]; });
+          var base = vals.find(function (v) { return v; });
+          if (!base) return;
+          series.push({
+            name: KLINE_NAMES[k] || k, color: BENCH_COLORS[k] || '#8b5cf6',
+            data: vals.map(function (v) { return { y: v ? (v / base - 1) * 100 : null }; })
+          });
+        });
+        if (!series.length) {
+          document.getElementById('benchChart').innerHTML = APP.empty('暂无对照数据');
+          return;
+        }
+        var step = Math.max(1, Math.ceil(dates.length / 7));
+        document.getElementById('benchChart').innerHTML = '';
+        document.getElementById('benchChart').appendChild(APP.chart.line({
+          width: 900, height: 300,
+          series: series,
+          xLabels: dates.map(function (d, i) {
+            return i % step === 0 ? { i: i, text: APP.fmt.md(d) } : null;
+          }).filter(Boolean),
+          yFmt: function (v) { return v.toFixed(0) + '%'; },
+          yZeroLine: 0
+        }));
+        document.getElementById('benchLegend').innerHTML = series.map(function (s) {
+          return '<span><i style="background:' + s.color + '"></i>' + s.name + '</span>';
+        }).join('');
+      }
+      document.getElementById('benchRange').addEventListener('change', drawBench);
+      drawBench();
     } else {
       document.getElementById('kchart').innerHTML = APP.empty('暂无 K 线数据');
     }

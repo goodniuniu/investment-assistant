@@ -61,7 +61,8 @@ def rsi(closes, n=14):
         avg_g = (avg_g * (n - 1) + gains[i]) / n
         avg_l = (avg_l * (n - 1) + losses[i]) / n
         if avg_l == 0:
-            out.append(100.0)
+            # 完全无波动时 RSI 取 50（0/0 的惯例约定），有涨无跌为 100
+            out.append(100.0 if avg_g > 0 else 50.0)
         else:
             rs = avg_g / avg_l
             out.append(100 - 100 / (1 + rs))

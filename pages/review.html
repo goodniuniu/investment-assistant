@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>信号回看 · 规则战绩与复盘</title>
+<meta name="description" content="历史信号对照实际涨跌，统计每条规则的命中率——让理论接受现实检验">
+<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="../index.html"><span class="dot"></span>投资辅助站</a>
+    <nav class="nav">
+      <a href="../index.html" data-nav="index">首页</a>
+      <a href="market.html" data-nav="market">行情看板</a>
+      <a href="review.html" data-nav="review">信号回看</a>
+      <a href="knowledge.html" data-nav="knowledge">知识库</a>
+      <a href="mindset.html" data-nav="mindset">投资心理</a>
+      <a href="tools.html" data-nav="tools">决策工具</a>
+      <a href="mydata.html" data-nav="mydata">我的数据</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>信号回看 · 让理论接受检验</h1>
+    <p id="subhead">正在加载数据…</p>
+  </div>
+
+  <div id="notice"></div>
+
+  <!-- 总览 -->
+  <div class="grid grid-4" id="sumStats"></div>
+
+  <!-- 规则战绩榜 -->
+  <div class="card">
+    <h2 class="card-title">规则战绩榜
+      <span class="sub">每条规则的理论假设 × 实际命中率（按 +5 个交易日基准涨跌判定）</span>
+    </h2>
+    <div class="chart-box"><table class="tbl" id="ruleTable"></table></div>
+    <p class="small muted" style="margin-top:10px">
+      点击行可展开该规则的假设与适用环境。命中率排序的前提是样本量——<strong>样本少于 5 次的规则，
+      其命中率不具统计意义</strong>，仅作记录。回填样本缺少融资融券/主力资金维度，与实时样本分开标注。
+    </p>
+  </div>
+
+  <!-- 命中率图 -->
+  <div class="grid" style="grid-template-columns: 1fr 1fr; gap:16px; align-items:start;">
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">各规则命中率 <span class="sub">样本 ≥ 5</span></h2>
+      <div id="hitChart"></div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">情绪温度 vs 其后走势</h2>
+      <div id="sentiChart"></div>
+      <p class="small muted" style="margin-top:8px">
+        观察极端情绪（&lt;20 或 &gt;80）之后市场实际走向，检验「别人恐惧我贪婪」在本阶段市场的成色。
+      </p>
+    </div>
+  </div>
+
+  <!-- 信号时间线 -->
+  <div class="card">
+    <h2 class="card-title">信号时间线
+      <span class="sub">每条历史信号 + 其后 5 / 20 个交易日基准实际涨跌</span>
+    </h2>
+    <div style="margin-bottom:10px">
+      <label class="small muted" style="margin-right:14px">
+        <input type="checkbox" id="onlyEval" checked> 只看可评估信号
+      </label>
+      <select id="ruleFilter" style="padding:4px 8px;border:1px solid var(--border-strong);border-radius:6px"></select>
+    </div>
+    <div class="chart-box"><table class="tbl" id="sigTable"></table></div>
+  </div>
+
+  <div id="disclaimer"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>历史信号由规则引擎每日留痕 · 回看与复盘是学习闭环的最后一环</span>
+    <span id="footerTime"></span>
+  </div>
+</footer>
+
+<script src="../assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  APP.mountNav('review');
+  document.getElementById('disclaimer').innerHTML = APP.disclaimer();
+
+  Promise.all([
+    APP.loadAnalysisHistory(12),
+    APP.load('data/market/latest.json'),
+    APP.load('data/analysis/latest.json')
+  ]).then(function (res) {
+    var days = res[0] || [], market = res[1], latest = res[2] || {};
+    if (!days.length) {
+      document.getElementById('notice').innerHTML =
+        APP.dataNotice(false, '暂无历史分析数据。分析历史从启用留痕之日起累积，也可运行 scripts/backfill_analysis.py 回填。');
+      document.getElementById('subhead').textContent = '暂无数据';
+      return;
+    }
+
+    // 基准 K 线：用于计算信号发出后的实际涨跌（与实时管线同口径）
+    var kl = (market && market.klines) || {};
+    var benchId = kl['1.000300'] ? '1.000300' : (kl['1.000001'] ? '1.000001' : Object.keys(kl)[0]);
+    var krows = kl[benchId] || [];
+    var kmap = {};
+    krows.forEach(function (r, i) { kmap[r.date] = i; });
+    var benchName = benchId === '1.000300' ? '沪深300' : '上证指数';
+
+    function fwdRet(date, n) {
+      var i = kmap[date];
+      if (i === undefined || i + n >= krows.length || !krows[i].close || !krows[i + n].close) return null;
+      return (krows[i + n].close / krows[i].close - 1) * 100;
+    }
+    function maturity(date, n) {
+      var i = kmap[date];
+      if (i === undefined) return 'outside';       // K 线未覆盖（更早的历史）
+      if (i + n >= krows.length) return 'pending'; // 尚未走完 n 个交易日
+      return 'ready';
+    }
+
+    // 逐信号展开评估
+    var entries = [];
+    days.forEach(function (d) {
+      (d.signals || []).forEach(function (s) {
+        if (!s || !s.id) return;
+        var r5 = fwdRet(d.date, 5), r20 = fwdRet(d.date, 20);
+        var m5 = maturity(d.date, 5);
+        var verdict = 'skip';
+        if (s.type === 'bull' && m5 === 'ready') verdict = r5 > 0 ? 'hit' : 'miss';
+        if (s.type === 'bear' && m5 === 'ready') verdict = r5 < 0 ? 'hit' : 'miss';
+        entries.push({
+          date: d.date, id: s.id, title: s.title, type: s.type,
+          sentiment: d.sentiment, sentiLabel: d.sentiment_label,
+          aiHeadline: d.ai_headline || null,
+          backfilled: !!d.backfilled,
+          r5: r5, r20: maturity(d.date, 20) === 'ready' ? r20 : null,
+          m5: m5, verdict: verdict
+        });
+      });
+    });
+    entries.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+
+    var meta = latest.rules_meta || {};
+    var evalAble = entries.filter(function (e) { return e.m5 === 'ready' && e.type !== 'neutral'; });
+    var hits = evalAble.filter(function (e) { return e.verdict === 'hit'; });
+    var bulls = evalAble.filter(function (e) { return e.type === 'bull'; });
+    var bears = evalAble.filter(function (e) { return e.type === 'bear'; });
+    function rate(list) { return list.length ? Math.round(list.filter(function (e) { return e.verdict === 'hit'; }).length / list.length * 100) : null; }
+
+    document.getElementById('subhead').textContent =
+      '历史留痕 ' + days.length + ' 天 · 基准 ' + benchName + ' · K 线覆盖 ' +
+      (krows.length ? krows[0].date + ' 起' : '无');
+
+    // ---- 总览 ----
+    var sum = [
+      { label: '信号总数', value: entries.length, cls: '', extra: '含未成熟与样本外' },
+      { label: '可评估样本', value: evalAble.length, cls: '', extra: '方向性信号且已走完 5 日' },
+      { label: '总体命中率', value: evalAble.length ? rate(evalAble) + '%' : '—',
+        cls: evalAble.length && rate(evalAble) >= 50 ? 'up' : 'down', extra: '按 +5 日基准涨跌判定' },
+      { label: '平均 +5 日涨幅', value: evalAble.length ? APP.fmt.signed(
+          evalAble.reduce(function (s, e) { return s + (e.r5 || 0); }, 0) / evalAble.length, 2) + '%' : '—',
+        cls: '', extra: '全部可评估样本均值' }
+    ];
+    document.getElementById('sumStats').innerHTML = sum.map(function (x) {
+      return '<div class="stat"><div class="stat-label">' + x.label + '</div>' +
+        '<div class="stat-value ' + x.cls + '">' + x.value + '</div>' +
+        '<div class="stat-extra">' + APP.esc(x.extra) + '</div></div>';
+    }).join('');
+
+    // ---- 规则战绩榜 ----
+    var byRule = {};
+    entries.forEach(function (e) {
+      var r = byRule[e.id] = byRule[e.id] || { id: e.id, total: 0, eval: 0, hit: 0, r5sum: 0, backfilled: 0 };
+      r.total++;
+      if (e.backfilled) r.backfilled++;
+      if (e.m5 === 'ready' && e.type !== 'neutral') { r.eval++; r.r5sum += e.r5 || 0; if (e.verdict === 'hit') r.hit++; }
+    });
+    var rulesArr = Object.keys(byRule).map(function (k) { return byRule[k]; })
+      .sort(function (a, b) { return b.total - a.total; });
+
+    document.getElementById('ruleTable').innerHTML =
+      '<thead><tr><th>规则</th><th class="num">样本</th><th class="num">可评估</th>' +
+      '<th class="num">命中</th><th class="num">命中率</th><th class="num">平均+5日</th></tr></thead><tbody>' +
+      rulesArr.map(function (r) {
+        var m = meta[r.id] || {};
+        var hitRate = r.eval ? Math.round(r.hit / r.eval * 100) : null;
+        var avg5 = r.eval ? (r.r5sum / r.eval) : null;
+        return '<tr class="rule-row" data-rule="' + APP.esc(r.id) + '" style="cursor:pointer">' +
+          '<td><strong>' + APP.esc(m.name || r.id) + '</strong>' +
+          (r.backfilled ? ' <span class="tag tag-neutral">回填' + r.backfilled + '</span>' : '') +
+          '<div class="small muted" style="margin-top:3px">' + APP.esc(m.assumption || '') + '</div>' +
+          '<div class="small muted rule-detail" style="display:none;margin-top:4px;color:var(--text-3)">适用环境：' +
+          APP.esc(m.scope || '—') + '</div></td>' +
+          '<td class="num mono">' + r.total + '</td>' +
+          '<td class="num mono">' + r.eval + '</td>' +
+          '<td class="num mono">' + r.hit + '</td>' +
+          '<td class="num mono ' + (hitRate === null ? '' : hitRate >= 50 ? 'up' : 'down') + '">' +
+            (hitRate === null ? '—' : hitRate + '%') + (r.eval < 5 ? ' <span class="tag tag-neutral">样本不足</span>' : '') + '</td>' +
+          '<td class="num mono ' + APP.cls(avg5) + '">' + APP.fmt.pct(avg5) + '</td></tr>';
+      }).join('') + '</tbody>';
+
+    Array.prototype.forEach.call(document.querySelectorAll('.rule-row'), function (tr) {
+      tr.addEventListener('click', function () {
+        var d = tr.querySelector('.rule-detail');
+        if (d) d.style.display = d.style.display === 'none' ? '' : 'none';
+      });
+    });
+
+    // ---- 命中率条形图（样本≥5）----
+    var bars = rulesArr.filter(function (r) { return r.eval >= 5; })
+      .map(function (r) {
+        return { name: (meta[r.id] || {}).name || r.id,
+                 value: Math.round(r.hit / r.eval * 100) };
+      });
+    document.getElementById('hitChart').innerHTML = bars.length
+      ? '' : APP.empty('暂无样本量足够的规则（需 ≥5 次可评估）');
+    if (bars.length) {
+      document.getElementById('hitChart').appendChild(APP.chart.bars(bars, {
+        width: 480, fmt: function (v) { return v + '%'; }
+      }));
+    }
+
+    // ---- 情绪 vs 其后走势 ----
+    var sentiPts = [];
+    days.forEach(function (d) {
+      var i = kmap[d.date];
+      if (i === undefined || i + 5 >= krows.length || d.sentiment === null || d.sentiment === undefined) return;
+      sentiPts.push({ x: d.date, y: d.sentiment, r5: (krows[i + 5].close / krows[i].close - 1) * 100 });
+    });
+    if (sentiPts.length > 2) {
+      // 极端情绪分组：冰点(<20) vs 亢奋(>80) vs 其他，对比其后 5 日平均涨跌
+      var groups = { '情绪冰点(<20)': [], '情绪亢奋(>80)': [], '中性区间': [] };
+      sentiPts.forEach(function (p) {
+        if (p.y < 20) groups['情绪冰点(<20)'].push(p.r5);
+        else if (p.y > 80) groups['情绪亢奋(>80)'].push(p.r5);
+        else groups['中性区间'].push(p.r5);
+      });
+      var gbars = Object.keys(groups).map(function (k) {
+        var arr = groups[k];
+        return { name: k, value: arr.length ? arr.reduce(function (a, b) { return a + b; }, 0) / arr.length : 0,
+                 note: arr.length };
+      }).filter(function (g) { return g.note > 0; });
+      document.getElementById('sentiChart').appendChild(APP.chart.bars(gbars, {
+        width: 480, fmt: function (v) { return APP.fmt.signed(v, 2) + '%'; }
+      }));
+      document.getElementById('sentiChart').appendChild(document.createElement('div')).innerHTML =
+        '<p class="small muted">样本：' + gbars.map(function (g) { return g.name + ' ' + g.note + ' 天'; }).join(' · ') + '</p>';
+    } else {
+      document.getElementById('sentiChart').innerHTML = APP.empty('历史样本不足');
+    }
+
+    // ---- 信号时间线 ----
+    var ruleFilter = document.getElementById('ruleFilter');
+    ruleFilter.innerHTML = '<option value="">全部规则</option>' + rulesArr.map(function (r) {
+      return '<option value="' + APP.esc(r.id) + '">' + APP.esc((meta[r.id] || {}).name || r.id) + '</option>';
+    }).join('');
+
+    function verdictBadge(e) {
+      if (e.type === 'neutral') return '<span class="tag tag-neutral">中性·不计</span>';
+      if (e.m5 === 'outside') return '<span class="tag tag-neutral">样本外</span>';
+      if (e.m5 === 'pending') return '<span class="tag tag-neutral">未成熟</span>';
+      return e.verdict === 'hit'
+        ? '<span class="tag tag-bull">命中</span>'
+        : '<span class="tag tag-bear">未中</span>';
+    }
+    function renderTimeline() {
+      var only = document.getElementById('onlyEval').checked;
+      var fid = ruleFilter.value;
+      var rows = entries.filter(function (e) {
+        if (fid && e.id !== fid) return false;
+        if (only && !(e.m5 === 'ready' && e.type !== 'neutral')) return false;
+        return true;
+      }).slice(0, 200);
+      document.getElementById('sigTable').innerHTML =
+        '<thead><tr><th>日期</th><th>信号</th><th>方向</th><th>当时情绪</th>' +
+        '<th class="num">+5日</th><th class="num">+20日</th><th>结果</th></tr></thead><tbody>' +
+        (rows.length ? rows.map(function (e) {
+          return '<tr><td class="mono">' + e.date +
+            (e.backfilled ? ' <span class="tag tag-neutral" title="回填样本：缺少融资/资金流维度">回填</span>' : '') +
+            (e.aiHeadline ? '<div class="small muted" title="当日 AI 解读观点">🤖 ' + APP.esc(e.aiHeadline) + '</div>' : '') + '</td>' +
+            '<td>' + APP.esc(e.title) + '</td>' +
+            '<td><span class="tag ' + (e.type === 'bull' ? 'tag-bull' : e.type === 'bear' ? 'tag-bear' : 'tag-neutral') + '">' +
+              (e.type === 'bull' ? '偏多' : e.type === 'bear' ? '偏空' : '中性') + '</span></td>' +
+            '<td class="mono">' + (e.sentiment === null || e.sentiment === undefined ? '—' : e.sentiment) +
+              '<span class="small muted"> ' + APP.esc(e.sentiLabel || '') + '</span></td>' +
+            '<td class="num mono ' + APP.cls(e.r5) + '">' + APP.fmt.pct(e.r5) + '</td>' +
+            '<td class="num mono ' + APP.cls(e.r20) + '">' + APP.fmt.pct(e.r20) + '</td>' +
+            '<td>' + verdictBadge(e) + '</td></tr>';
+        }).join('') : '<tr><td colspan="7">' + APP.empty('没有符合条件的信号') + '</td></tr>') +
+        '</tbody>';
+    }
+    ruleFilter.addEventListener('change', renderTimeline);
+    document.getElementById('onlyEval').addEventListener('change', renderTimeline);
+    renderTimeline();
+
+    document.getElementById('footerTime').textContent =
+      '本地更新时间 ' + new Date().toLocaleString('zh-CN');
+  });
+})();
+</script>
+</body>
+</html>
