@@ -9,7 +9,6 @@ on:
 
 permissions:
   pages: write
-  administration: write
   contents: write
 
 jobs:
