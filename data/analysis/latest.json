@@ -110,7 +110,7 @@
     }
   ],
   "trade_date": "2026-09-04",
-  "generated_at": "2026-09-06T09:13:02+08:00",
+  "generated_at": "2026-09-06T11:18:03+08:00",
   "benchmark": "沪深300",
   "market_snapshot": {
     "last_close": 4548.05,
@@ -155,7 +155,7 @@
   },
   "context": {
     "trade_date": "2026-09-04",
-    "generated_at": "2026-09-06T09:13:02+08:00",
+    "generated_at": "2026-09-06T11:18:03+08:00",
     "errors": [],
     "last_date": "2026-09-04",
     "last_close": 4548.05,
