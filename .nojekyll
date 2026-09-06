@@ -1,0 +1,4 @@
+# 此文件存在以告知 GitHub Pages 不要使用 Jekyll 编译该站点。
+# 项目是纯静态 HTML/CSS/JS，禁用 Jekyll 可以避免任何以下划线开头的
+# 目录（如未来可能建的 _partials/_includes）被 Jekyll 跳过，
+# 并避免 Liquid 模板语法与页面中的代码示例冲突。
