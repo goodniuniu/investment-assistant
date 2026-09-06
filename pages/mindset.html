@@ -255,7 +255,7 @@
 
     document.getElementById('quizSubmit').addEventListener('click', function () {
       var total = 0, answered = 0;
-      var biasScore = {};
+      var biasSum = {}, biasCnt = {};
       qs.forEach(function (q) {
         var v = answers[q.id];
         if (!v) return;
@@ -263,7 +263,8 @@
         // 反向题：得分越高代表心理状态越健康，需反转
         var s = q.reverse ? (6 - v) : v;
         total += s;
-        biasScore[q.bias] = (biasScore[q.bias] || 0) + s;
+        biasSum[q.bias] = (biasSum[q.bias] || 0) + s;
+        biasCnt[q.bias] = (biasCnt[q.bias] || 0) + 1;
       });
       if (!answered) {
         document.getElementById('quizResult').innerHTML =
@@ -271,10 +272,14 @@
         return;
       }
       var interp = quiz.interpretation || {};
-      var lv = total <= (interp.low ? interp.low.max : 24) ? interp.low
-             : total <= (interp.medium ? interp.medium.max : 40) ? interp.medium : interp.high;
-      // 找出得分最高的偏差类型
-      var top = Object.keys(biasScore).sort(function (a, b) { return biasScore[b] - biasScore[a]; })[0];
+      // 部分作答时按已答题折算成满分口径，再套用解释阈值
+      var scaled = Math.round(total / (answered * 5) * qs.length * 5);
+      var lv = scaled <= (interp.low ? interp.low.max : 24) ? interp.low
+             : scaled <= (interp.medium ? interp.medium.max : 40) ? interp.medium : interp.high;
+      // 找出平均分最高的偏差类型（题数分布不均，不能用总分）
+      var top = Object.keys(biasSum).sort(function (a, b) {
+        return biasSum[b] / biasCnt[b] - biasSum[a] / biasCnt[a];
+      })[0];
       var topBias = (d.biases || []).filter(function (b) { return b.id === top; })[0];
 
       document.getElementById('quizResult').innerHTML =
@@ -392,14 +397,17 @@
       a.click();
     });
 
-    // 锚点定位
-    if (location.hash && location.hash.indexOf('#bias-') === 0) {
+    // 锚点定位：页面加载与 hash 变化时都展开目标卡片（否则跳转后只看到收起的标题）
+    function openBiasFromHash() {
+      if (!location.hash || location.hash.indexOf('#bias-') !== 0) return;
       var el = document.querySelector(location.hash);
       if (el) {
         el.classList.add('open');
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
+    openBiasFromHash();
+    window.addEventListener('hashchange', openBiasFromHash);
   });
 })();
 </script>

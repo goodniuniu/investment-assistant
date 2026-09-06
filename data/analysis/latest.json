@@ -38,7 +38,7 @@
   "sentiment_label": "低迷",
   "sentiment_desc": "市场悲观，抛压主导，但也意味着定价开始有吸引力",
   "risk_level": "low",
-  "risk_score": 11.2,
+  "risk_score": 6.2,
   "signals": [
     {
       "id": "ma_bear",
@@ -110,7 +110,7 @@
     }
   ],
   "trade_date": "2026-09-04",
-  "generated_at": "2026-09-06T11:18:03+08:00",
+  "generated_at": "2026-09-06T12:34:04+08:00",
   "benchmark": "沪深300",
   "market_snapshot": {
     "last_close": 4548.05,
@@ -155,7 +155,7 @@
   },
   "context": {
     "trade_date": "2026-09-04",
-    "generated_at": "2026-09-06T11:18:03+08:00",
+    "generated_at": "2026-09-06T12:34:04+08:00",
     "errors": [],
     "last_date": "2026-09-04",
     "last_close": 4548.05,

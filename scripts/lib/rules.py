@@ -601,9 +601,11 @@ def risk_level(ctx, sentiment):
     if score is not None:
         # 极度亢奋与极度低迷都意味着风险上升（方向不同）
         score_risk = max(0, abs(score - 50) - 18) / 32 * 100
-    vol_risk = _lin(vol, 15, 40) or 30
+    _v = _lin(vol, 15, 40)
+    vol_risk = 30 if _v is None else _v
     margin = ctx.get("margin_change_5d_pct")
-    lev_risk = _lin(abs(margin or 0), 0.5, 2.5) or 20
+    _l = _lin(abs(margin) if margin is not None else None, 0.5, 2.5)
+    lev_risk = 20 if _l is None else _l
     total = score_risk * 0.4 + vol_risk * 0.35 + lev_risk * 0.25
     if total >= 55:
         return "high", round(total, 1)

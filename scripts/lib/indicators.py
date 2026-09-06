@@ -170,9 +170,10 @@ def ma_alignment(closes, mas):
     均线排列判断。mas 为 [(周期, 值), ...] 按周期从小到大。
     返回 'bull'(多头排列) / 'bear'(空头排列) / 'mixed'(交织) / None
     """
-    vals = [v for _, v in mas if v is not None]
-    if len(vals) < 3 or closes is None or not closes:
+    if closes is None or not closes or len(mas) < 3 or any(v is None for _, v in mas):
+        # 任一关键均线缺失（历史不足）时不给排列结论，保证"多/空头排列"语义完整
         return None
+    vals = [v for _, v in mas]
     last = closes[-1]
     up = all(a > b for a, b in zip(vals, vals[1:])) and last > vals[0]
     down = all(a < b for a, b in zip(vals, vals[1:])) and last < vals[0]
@@ -236,8 +237,10 @@ def summarize(rows):
     r = rsi(closes, 14)
     result["rsi14"] = round(r[-1], 2) if r and r[-1] is not None else None
 
-    result["atr14"] = round(atr(rows, 14), 2) if atr(rows, 14) else None
-    result["volatility20"] = round(volatility(closes, 20), 2) if volatility(closes, 20) else None
+    _atr14 = atr(rows, 14)
+    result["atr14"] = round(_atr14, 2) if _atr14 else None
+    _vol20 = volatility(closes, 20)
+    result["volatility20"] = round(_vol20, 2) if _vol20 else None
     result["volume_ratio"] = volume_ratio(rows, 5)
     result["consecutive"] = consecutive(closes)
 

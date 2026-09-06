@@ -252,10 +252,11 @@ def limit_up_pool(trade_date):
 
 def limit_down_count():
     """
-    跌停家数。东财跌停池接口不稳定，改用全A按涨幅升序取前 60 只，
-    统计跌幅 <= -9.7% 的家数（覆盖 10cm 板跌停；20cm 板跌停另计）。
+    跌停家数。东财跌停池接口不稳定，改用全A按涨幅升序取前 200 只，
+    统计跌幅 <= -9.7% 的家数。count 为总家数（10cm/20cm 板跌停均满足该阈值，
+    不重复累计）；count_20 为其中 20cm 板的细分，count_10 = count - count_20。
     """
-    path = ("/clist/get?pn=1&pz=60&po=0&np=1&fltt=2&invt=2&fid=f3&ut=%s"
+    path = ("/clist/get?pn=1&pz=200&po=0&np=1&fltt=2&invt=2&fid=f3&ut=%s"
             "&fs=m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23&fields=f3,f12,f14" % UT)
     js = http.get_json_any(_push2(path))
     if not js or not isinstance(js.get("data"), dict):
@@ -263,7 +264,7 @@ def limit_down_count():
     diff = js["data"].get("diff") or []
     n10 = sum(1 for d in diff if (_num(d.get("f3")) is not None and _num(d.get("f3")) <= -9.7))
     n20 = sum(1 for d in diff if (_num(d.get("f3")) is not None and _num(d.get("f3")) <= -19.7))
-    return {"count": n10 + n20, "count_10": n10, "count_20": n20}
+    return {"count": n10, "count_10": n10 - n20, "count_20": n20}
 
 
 def market_fund_flow():

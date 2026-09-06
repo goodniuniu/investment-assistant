@@ -333,6 +333,8 @@ table.tbl th.num { text-align: right; }
 @media (max-width: 860px) { .kb-layout { grid-template-columns: 1fr; } }
 
 .kb-side { position: sticky; top: 76px; }
+/* 单列布局下取消粘性，避免侧栏遮挡正文 */
+@media (max-width: 860px) { .kb-side { position: static; } }
 .kb-search {
   width: 100%;
   padding: 9px 12px;

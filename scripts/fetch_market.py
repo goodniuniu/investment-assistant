@@ -79,10 +79,12 @@ def fetch_all():
             errors.append("kline:%s" % name)
         time.sleep(0.3)
 
-    # 以主基准（上证指数）的最新交易日为准
+    # 以主基准（上证指数）的最新交易日为准；上证缺失时退化为任一可用 K 线
     trade_date = None
     if "1.000001" in klines:
         trade_date = klines["1.000001"]["rows"][-1]["date"]
+    elif klines:
+        trade_date = next(iter(klines.values()))["rows"][-1]["date"]
     elif snap and snap.get("indexes"):
         trade_date = datetime.now(CST).strftime("%Y-%m-%d")
     _log("   最新交易日：%s" % trade_date)
@@ -188,7 +190,8 @@ def build_context(snapshot):
         ctx["limit_down_count"] = snapshot["limit_down"].get("count")
 
     if snapshot.get("fund_flow"):
-        ctx["main_flow_yi"] = round((snapshot["fund_flow"][-1].get("main") or 0) / 1e8, 1)
+        _main = snapshot["fund_flow"][-1].get("main")
+        ctx["main_flow_yi"] = round(_main / 1e8, 1) if _main is not None else None
 
     margin = snapshot.get("margin") or {}
     series = margin.get("series") or []
@@ -220,6 +223,8 @@ def append_history(snapshot, analysis):
     cyb = next((i for i in (snapshot.get("indexes") or []) if i.get("code") == "399006"), None)
     hs300 = next((i for i in (snapshot.get("indexes") or []) if i.get("code") == "000300"), None)
     b = snapshot.get("breadth") or {}
+    flow_latest = snapshot.get("fund_flow") or [{}]
+    _main = flow_latest[-1].get("main")
 
     record = {
         "date": date,
@@ -234,8 +239,7 @@ def append_history(snapshot, analysis):
         "limit_up": (snapshot.get("limit_up") or {}).get("count"),
         "limit_down": (snapshot.get("limit_down") or {}).get("count"),
         "max_streak": (snapshot.get("limit_up") or {}).get("max_streak"),
-        "main_flow_yi": round((snapshot["fund_flow"][-1].get("main") or 0) / 1e8, 1)
-                        if snapshot.get("fund_flow") else None,
+        "main_flow_yi": round(_main / 1e8, 1) if _main is not None else None,
         "sentiment": (analysis.get("sentiment") or {}).get("score"),
         "risk_level": analysis.get("risk_level"),
     }

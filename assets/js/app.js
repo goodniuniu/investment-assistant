@@ -153,6 +153,10 @@
      * opts: { width, height, pad, series:[{name,color,data:[{x,y}],fill}], xLabels, yFmt, yZeroLine }
      */
     line: function (opts) {
+      // hidden: true 的系列不绘制、不参与 Y 轴范围计算（用于切换叠加指标）
+      opts = Object.assign({}, opts, {
+        series: (opts.series || []).filter(function (s) { return !s.hidden; })
+      });
       const W = opts.width || 900, H = opts.height || 260;
       const pad = Object.assign({ t: 14, r: 52, b: 26, l: 46 }, opts.pad || {});
       const svg = createSvg(W, H);

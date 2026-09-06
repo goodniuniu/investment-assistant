@@ -225,7 +225,8 @@
     }
 
     // ---------------- 技术指标 ----------------
-    document.getElementById('techBase').textContent = '基准 ' + (analysis.benchmark || '');
+    document.getElementById('techBase').textContent =
+      '基准 ' + (analysis.benchmark || '') + '（概览中的当日涨跌为上证指数口径）';
     var ma = s.ma || {};
     var tech = [
       { l: 'RSI(14)', v: APP.fmt.num(s.rsi14, 1),
