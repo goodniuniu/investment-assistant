@@ -152,6 +152,13 @@ E:\MyOutput\AI_Project\个人发展-研究投资-20260906\
 
 ## §5 · 当前状态（截至 2026-09-06 11:30 CST）
 
+> **✅ 2026-09-06 更新：Pages 问题已解决（后续 AI）。**
+> 根因：用户在设置里选的 Source 是 **GitHub Actions**，这种模式下 GitHub 不会自动部署，
+> 必须有一个 workflow 调 `actions/deploy-pages` 推送站点产物，而仓库里此前没有部署 workflow。
+> 修复：新增 `.github/workflows/deploy-pages.yml`（push 到 main 即部署，含每日数据 commit）。
+> 验证：https://goodniuniu.github.io/investment-assistant/ 返回 200，全部页面/资源 200。
+> 另：曾尝试的 `enable-pages.yml`（GITHUB_TOKEN 调 Pages API）会 403，已删除；`gh-pages` 分支已清理。
+
 ### ✅ 已完成
 
 | 项 | 验证证据 |
