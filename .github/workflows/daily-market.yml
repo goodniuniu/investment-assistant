@@ -1,0 +1,79 @@
+name: 每日市场数据更新
+
+# 架构说明：
+# GitHub Pages 只能托管静态文件，没有后端。因此「后台定期获取」由本工作流承担：
+# 定时运行抓取脚本 → 把结果写成 JSON 提交回仓库 → 网页直接读取这些 JSON。
+#
+# 时间说明：cron 使用 UTC。北京 18:30 = UTC 10:30。
+# 选择收盘后 3.5 小时，是因为融资融券、涨停池等数据在收盘后一段时间才稳定。
+
+on:
+  schedule:
+    # 周一至周五，北京时间 18:30
+    - cron: '30 10 * * 1-5'
+  # 允许手动触发（Actions 页面 → Run workflow）
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '强制覆盖已存在的当日数据'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 抓取并分析市场数据
+        env:
+          TZ: Asia/Shanghai
+          # 以下三个 Secret 均为可选。未配置时脚本自动降级为纯规则引擎输出。
+          # 配置路径：仓库 Settings → Secrets and variables → Actions → New repository secret
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_BASE_URL: ${{ secrets.AI_BASE_URL }}
+          AI_MODEL: ${{ secrets.AI_MODEL }}
+        run: |
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            python scripts/fetch_market.py --interval 2.5 --force
+          else
+            python scripts/fetch_market.py --interval 2.5
+          fi
+
+      - name: 提交数据变更
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A data/
+          # 交易日未变化时脚本会跳过写入，此时暂存区为空，不产生提交
+          if git diff --quiet --cached; then
+            echo "数据无变化，跳过提交"
+          else
+            DATE=$(date -u -d '+8 hours' '+%Y-%m-%d %H:%M')
+            git commit -m "chore(data): 更新市场数据 ${DATE} CST"
+            git push
+          fi
+
+      - name: 输出摘要
+        if: always()
+        run: |
+          echo "### 本次运行结果" >> $GITHUB_STEP_SUMMARY
+          if [ -f data/analysis/latest.json ]; then
+            echo "- 交易日：$(python -c "import json;print(json.load(open('data/analysis/latest.json'))['trade_date'])")" >> $GITHUB_STEP_SUMMARY
+            echo "- 情绪温度：$(python -c "import json;d=json.load(open('data/analysis/latest.json'));print(d['sentiment']['score'], d['sentiment_label'])")" >> $GITHUB_STEP_SUMMARY
+            echo "- 风险等级：$(python -c "import json;print(json.load(open('data/analysis/latest.json'))['risk_level'])")" >> $GITHUB_STEP_SUMMARY
+            echo "- 识别信号：$(python -c "import json;print(len(json.load(open('data/analysis/latest.json'))['signals']))") 条" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- 未生成分析结果，请检查上方日志" >> $GITHUB_STEP_SUMMARY
+          fi

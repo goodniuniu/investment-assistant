@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>决策工具 · 仓位与风险计算</title>
+<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="../index.html"><span class="dot"></span>投资辅助站</a>
+    <nav class="nav">
+      <a href="../index.html" data-nav="index">首页</a>
+      <a href="market.html" data-nav="market">行情看板</a>
+      <a href="knowledge.html" data-nav="knowledge">知识库</a>
+      <a href="mindset.html" data-nav="mindset">投资心理</a>
+      <a href="tools.html" data-nav="tools">决策工具</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>决策工具</h1>
+    <p>把模糊的「该买多少」变成可计算的数字。所有计算在你的浏览器本地完成。</p>
+  </div>
+
+  <div class="notice notice-mute">
+    这些工具的作用是<strong>量化你的风险敞口</strong>，而不是告诉你买什么。
+    真正决定长期结果的，是你在最坏情况下依然能坚持的仓位。
+  </div>
+
+  <div class="grid grid-2" style="align-items:start">
+
+    <!-- 1. 单笔风险与仓位 -->
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">单笔风险与仓位计算</h2>
+      <p class="small muted" style="margin:-8px 0 14px">
+        先确定这笔交易最多亏多少，再反推能买多少。这是「风险优先」的思考顺序。
+      </p>
+      <div class="field">
+        <label>总资金（元）</label>
+        <input type="number" id="t1_capital" value="100000" min="0" step="1000">
+      </div>
+      <div class="field">
+        <label>单笔最大亏损占总资金比例（%）</label>
+        <input type="number" id="t1_riskpct" value="2" min="0" max="100" step="0.1">
+        <div class="hint">常见取值 1%-3%。超过 3% 时，连续几次止损就会显著侵蚀本金。</div>
+      </div>
+      <div class="field">
+        <label>买入价（元）</label>
+        <input type="number" id="t1_buy" value="10" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>止损价（元）</label>
+        <input type="number" id="t1_stop" value="9.2" min="0" step="0.01">
+      </div>
+      <button class="btn btn-primary" id="t1_calc">计算</button>
+      <div id="t1_out"></div>
+    </div>
+
+    <!-- 2. 波动率调整仓位 -->
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">波动率调整仓位</h2>
+      <p class="small muted" style="margin:-8px 0 14px">
+        波动率翻倍，同等名义仓位承担的实际风险也翻倍。据此反向调整仓位，可维持恒定的风险敞口。
+      </p>
+      <div class="field">
+        <label>基准仓位（%）</label>
+        <input type="number" id="t2_base" value="60" min="0" max="100" step="1">
+        <div class="hint">你在正常波动环境下愿意持有的股票仓位。</div>
+      </div>
+      <div class="field">
+        <label>建仓时的年化波动率（%）</label>
+        <input type="number" id="t2_vol0" value="18" min="0" step="0.1">
+      </div>
+      <div class="field">
+        <label>当前年化波动率（%）</label>
+        <input type="number" id="t2_vol1" value="15.3" min="0" step="0.1">
+        <div class="hint">可从看板页读取当前市场的 20 日年化波动率。</div>
+      </div>
+      <button class="btn btn-primary" id="t2_calc">计算</button>
+      <div id="t2_out"></div>
+    </div>
+
+    <!-- 3. 凯利公式 -->
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">凯利公式下注比例</h2>
+      <p class="small muted" style="margin:-8px 0 14px">
+        给出最大化长期复合增长的理论比例。实践中普遍建议使用半凯利或更低——
+        因为你对胜率与赔率的估计一定存在误差。
+      </p>
+      <div class="field">
+        <label>胜率（%）</label>
+        <input type="number" id="t3_win" value="55" min="0" max="100" step="1">
+      </div>
+      <div class="field">
+        <label>赔率（盈利金额 ÷ 亏损金额）</label>
+        <input type="number" id="t3_odds" value="1.5" min="0" step="0.1">
+        <div class="hint">例如平均盈利 15%、平均亏损 10%，则赔率 = 1.5。</div>
+      </div>
+      <div class="field">
+        <label>总资金（元）</label>
+        <input type="number" id="t3_capital" value="100000" min="0" step="1000">
+      </div>
+      <button class="btn btn-primary" id="t3_calc">计算</button>
+      <div id="t3_out"></div>
+    </div>
+
+    <!-- 4. 盈亏比与保本胜率 -->
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">盈亏比与保本胜率</h2>
+      <p class="small muted" style="margin:-8px 0 14px">
+        盈亏比决定了你需要多高的胜率才能不亏。很多人只看胜率，忽略了更关键的赔率。
+      </p>
+      <div class="field">
+        <label>买入价（元）</label>
+        <input type="number" id="t4_buy" value="10" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>止损价（元）</label>
+        <input type="number" id="t4_stop" value="9.2" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>目标价（元）</label>
+        <input type="number" id="t4_target" value="12.5" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>你的预期胜率（%，可留空）</label>
+        <input type="number" id="t4_win" placeholder="用于评估期望值" min="0" max="100" step="1">
+      </div>
+      <button class="btn btn-primary" id="t4_calc">计算</button>
+      <div id="t4_out"></div>
+    </div>
+
+    <!-- 5. 回撤与回本 -->
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">回撤与回本计算</h2>
+      <p class="small muted" style="margin:-8px 0 14px">
+        亏损与回本在数学上是非对称的：跌 50% 需要涨 100% 才能回本。
+      </p>
+      <div class="field">
+        <label>持仓成本价（元）</label>
+        <input type="number" id="t5_cost" value="12" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>当前价（元）</label>
+        <input type="number" id="t5_now" value="9" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>预计年化收益率（%，用于估算回本时间）</label>
+        <input type="number" id="t5_annual" value="10" min="0" step="0.5">
+      </div>
+      <button class="btn btn-primary" id="t5_calc">计算</button>
+      <div id="t5_out"></div>
+    </div>
+
+    <!-- 6. 分批建仓计划 -->
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">分批建仓计划</h2>
+      <p class="small muted" style="margin:-8px 0 14px">
+        分批的价值不在于提高收益，而在于保留纠错能力与心理余地。
+      </p>
+      <div class="field">
+        <label>计划投入总额（元）</label>
+        <input type="number" id="t6_total" value="100000" min="0" step="1000">
+      </div>
+      <div class="field">
+        <label>分批次数</label>
+        <input type="number" id="t6_n" value="4" min="1" max="20" step="1">
+      </div>
+      <div class="field">
+        <label>每下跌一档加仓幅度（%）</label>
+        <input type="number" id="t6_step" value="8" min="0" step="1">
+        <div class="hint">第一笔按现价买入，之后每下跌该幅度加仓一档。</div>
+      </div>
+      <div class="field">
+        <label>起始价格（元）</label>
+        <input type="number" id="t6_price" value="10" min="0" step="0.01">
+      </div>
+      <button class="btn btn-primary" id="t6_calc">生成计划</button>
+      <div id="t6_out"></div>
+    </div>
+
+  </div>
+
+  <div id="disclaimer"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>计算结果仅供参考，不构成投资建议</span>
+    <span>所有计算在浏览器本地完成，数据不会上传</span>
+  </div>
+</footer>
+
+<script src="../assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  APP.mountNav('tools');
+  document.getElementById('disclaimer').innerHTML = APP.disclaimer();
+
+  function val(id) { return parseFloat(document.getElementById(id).value); }
+  function money(v) { return Number(v).toLocaleString('zh-CN', { maximumFractionDigits: 0 }); }
+
+  function result(el, rows, note) {
+    document.getElementById(el).innerHTML =
+      '<div class="hr"></div>' +
+      rows.map(function (r) {
+        return '<div style="display:flex;justify-content:space-between;gap:12px;padding:6px 0;' +
+          'border-bottom:1px solid #f4f6f8;font-size:14px">' +
+          '<span class="muted">' + r[0] + '</span>' +
+          '<span class="mono" style="font-weight:600;color:' + (r[2] || 'var(--text)') + '">' + r[1] + '</span></div>';
+      }).join('') +
+      (note ? '<div class="notice notice-info" style="margin-top:12px;margin-bottom:0">' +
+        APP.md2html(note) + '</div>' : '');
+  }
+
+  // 1. 单笔风险
+  document.getElementById('t1_calc').addEventListener('click', function () {
+    var cap = val('t1_capital'), rp = val('t1_riskpct'), buy = val('t1_buy'), stop = val('t1_stop');
+    if (!(cap > 0 && buy > 0 && stop > 0)) { result('t1_out', [['请输入有效数值', '—']]); return; }
+    if (stop >= buy) { result('t1_out', [['错误', '止损价必须低于买入价'], ['', '', 'var(--up)']]); return; }
+    var lossPerShare = buy - stop;
+    var lossPct = lossPerShare / buy * 100;
+    var maxLoss = cap * rp / 100;
+    var shares = Math.floor(maxLoss / lossPerShare / 100) * 100; // 取整到 100 股
+    var amount = shares * buy;
+    result('t1_out', [
+      ['单股最大亏损', APP.fmt.num(lossPerShare, 2) + ' 元（' + APP.fmt.num(lossPct, 2) + '%）'],
+      ['单笔最大亏损预算', money(maxLoss) + ' 元'],
+      ['可买股数（取整到手）', money(shares) + ' 股', 'var(--accent)'],
+      ['占用资金', money(amount) + ' 元'],
+      ['占总资金比例', APP.fmt.num(amount / cap * 100, 1) + '%', 'var(--accent)']
+    ], '若止损幅度过窄（如小于 3%），在震荡市中会被随机波动频繁扫损。此时应减少仓位而非放宽止损。');
+  });
+
+  // 2. 波动率调整
+  document.getElementById('t2_calc').addEventListener('click', function () {
+    var base = val('t2_base'), v0 = val('t2_vol0'), v1 = val('t2_vol1');
+    if (!(base > 0 && v0 > 0 && v1 > 0)) { result('t2_out', [['请输入有效数值', '—']]); return; }
+    var adj = Math.min(150, base * (v0 / v1));
+    var risk0 = base * v0, risk1 = adj * v1;
+    result('t2_out', [
+      ['波动率变化', APP.fmt.num(v1 - v0, 1) + ' 个百分点（' + APP.fmt.pct((v1 / v0 - 1) * 100, 1) + '）'],
+      ['建议调整后仓位', APP.fmt.num(adj, 1) + '%', 'var(--accent)'],
+      ['调整前风险敞口', APP.fmt.num(risk0, 0)],
+      ['调整后风险敞口', APP.fmt.num(risk1, 0), 'var(--accent)']
+    ], v1 > v0
+      ? '波动率上升，应降低仓位以维持相同的风险敞口。若维持原仓位，你承担的实际风险已经扩大了。'
+      : '波动率下降，可适度提高仓位。注意波动率具有均值回归特性，极端低波动后往往回升。');
+  });
+
+  // 3. 凯利
+  document.getElementById('t3_calc').addEventListener('click', function () {
+    var p = val('t3_win') / 100, b = val('t3_odds'), cap = val('t3_capital');
+    if (!(p >= 0 && p <= 1 && b > 0 && cap > 0)) { result('t3_out', [['请输入有效数值', '—']]); return; }
+    var q = 1 - p;
+    var f = (b * p - q) / b;
+    if (f <= 0) {
+      result('t3_out', [['全凯利比例', APP.fmt.num(f * 100, 1) + '%', 'var(--down)'],
+        ['结论', '期望为负，不应下注', 'var(--down)']],
+        '期望收益为负时，凯利公式给出负比例，意味着**这笔交易没有正期望值**。' +
+        '此时最优策略是不参与——不交易也是一种决策。');
+      return;
+    }
+    var half = f / 2, quarter = f / 4;
+    result('t3_out', [
+      ['全凯利比例', APP.fmt.num(f * 100, 1) + '%', 'var(--up)'],
+      ['半凯利（推荐）', APP.fmt.num(half * 100, 1) + '%　= ' + money(cap * half) + ' 元', 'var(--accent)'],
+      ['1/4 凯利（保守）', APP.fmt.num(quarter * 100, 1) + '%　= ' + money(cap * quarter) + ' 元'],
+      ['期望收益率（每笔）', APP.fmt.num((b * p - q) * 100, 2) + '%']
+    ], '**实践中建议使用半凯利或更低**。原因有三：胜率与赔率的估计必然有误差；' +
+       '全凯利会导致净值剧烈波动，多数人无法坚持；重大亏损可能让你失去继续参与的资格。');
+  });
+
+  // 4. 盈亏比
+  document.getElementById('t4_calc').addEventListener('click', function () {
+    var buy = val('t4_buy'), stop = val('t4_stop'), tgt = val('t4_target');
+    var wEl = document.getElementById('t4_win');
+    var w = wEl.value === '' ? null : parseFloat(wEl.value);
+    if (!(buy > 0 && stop > 0 && tgt > 0)) { result('t4_out', [['请输入有效数值', '—']]); return; }
+    if (stop >= buy) { result('t4_out', [['错误', '止损价应低于买入价'], ['', '', 'var(--up)']]); return; }
+    if (tgt <= buy) { result('t4_out', [['错误', '目标价应高于买入价'], ['', '', 'var(--up)']]); return; }
+    var risk = buy - stop, reward = tgt - buy;
+    var ratio = reward / risk;
+    var be = 1 / (1 + ratio) * 100;  // 保本胜率
+    var rows = [
+      ['潜在风险（每股）', APP.fmt.num(risk, 2) + ' 元（' + APP.fmt.num(risk / buy * 100, 2) + '%）'],
+      ['潜在收益（每股）', APP.fmt.num(reward, 2) + ' 元（' + APP.fmt.num(reward / buy * 100, 2) + '%）'],
+      ['盈亏比', ratio.toFixed(2) + ' : 1', ratio >= 2 ? 'var(--down)' : ratio < 1 ? 'var(--up)' : ''],
+      ['保本胜率', APP.fmt.num(be, 1) + '%', 'var(--accent)']
+    ];
+    var note;
+    if (w === null) {
+      note = '保本胜率 ' + APP.fmt.num(be, 1) + '% 意味着：你的胜率必须高于这个数字才能盈利。' +
+             '若你无法估计自己的胜率，说明这笔交易缺乏依据。';
+    } else if (w > be) {
+      var ev = (w / 100) * reward - (1 - w / 100) * risk;
+      note = '你的预期胜率 ' + APP.fmt.num(w, 0) + '% 高于保本胜率，' +
+             '每笔期望收益为 **' + APP.fmt.num(ev, 2) + ' 元/股**（正期望）。' +
+             '但仍需确认：这个胜率估计来自历史统计，还是主观感觉？';
+    } else {
+      note = '**你的预期胜率低于保本胜率，这笔交易长期期望为负。**' +
+             '要么提高盈亏比（放宽目标价或收紧止损），要么放弃这笔交易。';
+    }
+    result('t4_out', rows, note);
+  });
+
+  // 5. 回撤
+  document.getElementById('t5_calc').addEventListener('click', function () {
+    var cost = val('t5_cost'), now = val('t5_now'), ann = val('t5_annual');
+    if (!(cost > 0 && now > 0)) { result('t5_out', [['请输入有效数值', '—']]); return; }
+    var dd = (cost - now) / cost * 100;
+    var need = dd <= 0 ? 0 : (1 / (1 - dd / 100) - 1) * 100;
+    var years = (ann > 0 && need > 0) ? Math.log(1 + need / 100) / Math.log(1 + ann / 100) : 0;
+    result('t5_out', [
+      ['当前盈亏', APP.fmt.pct(-dd, 2), dd > 0 ? 'var(--down)' : 'var(--up)'],
+      ['回本所需涨幅', APP.fmt.num(need, 1) + '%', 'var(--accent)'],
+      ['按 ' + APP.fmt.num(ann, 1) + '% 年化，回本需', years > 0 ? APP.fmt.num(years, 1) + ' 年' : '已回本']
+    ], dd > 0
+      ? '亏损与回本在数学上不对称：跌 ' + APP.fmt.num(dd, 0) + '% 需要涨 ' +
+        APP.fmt.num(need, 0) + '% 才能回本。**控制回撤比追求收益更重要**，' +
+        '因为回撤越大，回本难度呈非线性上升。'
+      : '当前处于盈利状态。请确认继续持有的理由，是基于价值判断，还是基于「已经赚了」——后者不是理由。');
+  });
+
+  // 6. 分批建仓
+  document.getElementById('t6_calc').addEventListener('click', function () {
+    var total = val('t6_total'), n = Math.floor(val('t6_n')), step = val('t6_step'), p0 = val('t6_price');
+    if (!(total > 0 && n >= 1 && p0 > 0)) { result('t6_out', [['请输入有效数值', '—']]); return; }
+    var per = total / n;
+    var rows = [];
+    var sumAmt = 0, sumShares = 0;
+    for (var i = 0; i < n; i++) {
+      var price = p0 * Math.pow(1 - step / 100, i);
+      var shares = Math.floor(per / price / 100) * 100;
+      var amt = shares * price;
+      sumAmt += amt; sumShares += shares;
+      rows.push(['第 ' + (i + 1) + ' 档 @ ' + APP.fmt.num(price, 2) + ' 元',
+        money(shares) + ' 股　' + money(amt) + ' 元']);
+    }
+    var avg = sumShares ? sumAmt / sumShares : 0;
+    result('t6_out', rows.concat([
+      ['合计投入', money(sumAmt) + ' 元', 'var(--accent)'],
+      ['平均成本', APP.fmt.num(avg, 3) + ' 元', 'var(--accent)'],
+      ['较起始价折让', APP.fmt.num((avg / p0 - 1) * 100, 2) + '%']
+    ]), '计划投入 ' + money(total) + ' 元，实际因整手取整会有出入。' +
+        '**分批的意义在于保留余地**：即使第一笔买入后继续下跌，你仍有资金和心态执行后续计划。');
+  });
+
+  // 首屏自动计算一次，便于直接看到结果形态
+  ['t1', 't2', 't3', 't4', 't5', 't6'].forEach(function (p) {
+    document.getElementById(p + '_calc').click();
+  });
+})();
+</script>
+</body>
+</html>

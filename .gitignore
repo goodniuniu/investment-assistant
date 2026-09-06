@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# WorkBuddy IDE 内部目录（与 GitHub Pages 运行时无关）
+.workbuddy/
+
+# 临时调试产物
+_screenshots/
+_*.log
+*.tmp

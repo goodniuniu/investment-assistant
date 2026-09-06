@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>行情看板 · 趋势与结构分析</title>
+<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="../index.html"><span class="dot"></span>投资辅助站</a>
+    <nav class="nav">
+      <a href="../index.html" data-nav="index">首页</a>
+      <a href="market.html" data-nav="market">行情看板</a>
+      <a href="knowledge.html" data-nav="knowledge">知识库</a>
+      <a href="mindset.html" data-nav="mindset">投资心理</a>
+      <a href="tools.html" data-nav="tools">决策工具</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>行情看板与趋势分析</h1>
+    <p id="subhead">正在加载数据…</p>
+  </div>
+
+  <div id="notice"></div>
+
+  <!-- AI 解读（若已启用） -->
+  <div class="card" id="aiCard" style="display:none">
+    <h2 class="card-title">AI 深度解读
+      <span class="tag tag-info" id="aiModel"></span>
+    </h2>
+    <div id="aiBody"></div>
+  </div>
+
+  <!-- K 线图 -->
+  <div class="card">
+    <h2 class="card-title">
+      指数 K 线
+      <select id="idxSel" style="margin-left:auto;font-size:13px;padding:4px 8px;border:1px solid var(--border-strong);border-radius:6px"></select>
+    </h2>
+    <div class="chart-box" id="kchart"></div>
+    <div class="chart-legend">
+      <span><i style="background:#e8912d"></i>MA5</span>
+      <span><i style="background:#2563eb"></i>MA20</span>
+      <span><i style="background:#0e9f6e"></i>MA60</span>
+      <span style="margin-left:8px;color:var(--text-3)">下方为成交量（红涨绿跌）</span>
+    </div>
+  </div>
+
+  <!-- 技术指标 -->
+  <div class="card">
+    <h2 class="card-title">技术指标面板 <span class="sub" id="techBase"></span></h2>
+    <div class="grid grid-4" id="techStats"></div>
+    <div class="hr"></div>
+    <table class="tbl" id="techTable"></table>
+  </div>
+
+  <div class="grid grid-2" style="align-items:start">
+    <!-- 情绪历史 -->
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">情绪温度历史</h2>
+      <div class="chart-box" id="sentChart"></div>
+    </div>
+    <!-- 市场宽度 -->
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">涨跌家数与成交额</h2>
+      <div class="chart-box" id="breadthChart"></div>
+    </div>
+  </div>
+
+  <!-- 板块轮动 -->
+  <div class="card">
+    <h2 class="card-title">板块表现
+      <span class="sub">按涨幅排序，条形长度代表相对强弱</span>
+    </h2>
+    <div class="grid grid-2" style="align-items:start">
+      <div>
+        <div class="small muted" style="margin-bottom:6px">行业板块（前 12）</div>
+        <div class="chart-box" id="indChart"></div>
+      </div>
+      <div>
+        <div class="small muted" style="margin-bottom:6px">概念板块（前 12）</div>
+        <div class="chart-box" id="conChart"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 资金与杠杆 -->
+  <div class="card">
+    <h2 class="card-title">资金与杠杆</h2>
+    <div class="grid grid-4" id="fundStats"></div>
+    <div class="hr"></div>
+    <div class="chart-box" id="flowChart"></div>
+    <div class="chart-legend"><span><i style="background:#d0342c"></i>主力净流入（亿元）</span></div>
+  </div>
+
+  <!-- 涨跌停 -->
+  <div class="card">
+    <h2 class="card-title">涨跌停与情绪结构</h2>
+    <div class="grid grid-4" id="ztStats"></div>
+    <div class="hr"></div>
+    <div id="ztIndustry" class="small muted"></div>
+  </div>
+
+  <!-- 完整信号 -->
+  <div class="card">
+    <h2 class="card-title">信号详解与知识点 <span class="sub">每个信号都对应可复习的知识条目</span></h2>
+    <div id="allSignals"></div>
+  </div>
+
+  <!-- 纪律清单 -->
+  <div class="card">
+    <h2 class="card-title">纪律检查清单</h2>
+    <div id="discipline"></div>
+  </div>
+
+  <div id="disclaimer"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>数据由 GitHub Actions 定时抓取 · 仅用于学习研究</span>
+    <span id="errors"></span>
+  </div>
+</footer>
+
+<script src="../assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  APP.mountNav('market');
+  document.getElementById('disclaimer').innerHTML = APP.disclaimer();
+
+  var KLINE_NAMES = {
+    '1.000001': '上证指数', '0.399006': '创业板指', '1.000300': '沪深300',
+    '0.399905': '中证500', '1.000688': '科创50'
+  };
+
+  function computeMA(rows) {
+    function ma(n) {
+      var out = [], sum = 0;
+      for (var i = 0; i < rows.length; i++) {
+        sum += rows[i].close;
+        if (i >= n) sum -= rows[i - n].close;
+        out.push(i >= n - 1 ? sum / n : null);
+      }
+      return out;
+    }
+    var m5 = ma(5), m10 = ma(10), m20 = ma(20), m60 = ma(60);
+    return rows.map(function (r, i) {
+      return {
+        date: r.date, open: r.open, close: r.close, high: r.high, low: r.low,
+        volume: r.volume, ma5: m5[i], ma10: m10[i], ma20: m20[i], ma60: m60[i]
+      };
+    });
+  }
+
+  Promise.all([
+    APP.load('data/analysis/latest.json'),
+    APP.load('data/market/latest.json'),
+    APP.loadHistory(6)
+  ]).then(function (res) {
+    var analysis = res[0], market = res[1], history = res[2];
+    var ok = !!(analysis && analysis.trade_date);
+    document.getElementById('notice').innerHTML = APP.dataNotice(ok);
+    if (!ok) { document.getElementById('subhead').textContent = '暂无数据'; return; }
+
+    var s = analysis.market_snapshot || {};
+    document.getElementById('subhead').textContent =
+      '交易日 ' + analysis.trade_date + ' · 数据由规则引擎' +
+      (analysis.engine === 'hybrid' ? '与 AI 共同' : '') + '生成';
+
+    // ---------------- AI 解读 ----------------
+    if (analysis.ai && analysis.ai.commentary) {
+      var ai = analysis.ai;
+      document.getElementById('aiCard').style.display = '';
+      document.getElementById('aiModel').textContent = ai.provider + ' / ' + ai.model;
+      var html = '';
+      if (ai.headline) html += '<p style="font-size:16px;font-weight:600;margin:0 0 12px">' + APP.esc(ai.headline) + '</p>';
+      html += '<div style="line-height:1.85;font-size:14.5px;color:var(--text-2)">' +
+        APP.esc(ai.commentary).replace(/\n\n+/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>') + '</div>';
+      if (ai.watchpoints && ai.watchpoints.length) {
+        html += '<div class="kb-sec"><h4>后续观察要点</h4><ul class="kb-points">' +
+          ai.watchpoints.map(function (w) { return '<li>' + APP.esc(w) + '</li>'; }).join('') +
+          '</ul></div>';
+      }
+      if (ai.contradictions) {
+        html += '<div class="notice notice-warn" style="margin-top:12px"><strong>数据中的矛盾之处：</strong>' +
+          APP.esc(ai.contradictions) + '</div>';
+      }
+      if (ai.lesson_focus) {
+        html += '<div class="notice notice-info" style="margin-top:12px"><strong>今日建议复习：</strong>' +
+          APP.esc(ai.lesson_focus) + '</div>';
+      }
+      document.getElementById('aiBody').innerHTML = html;
+    }
+
+    // ---------------- K 线图 ----------------
+    var kl = (market && market.klines) || {};
+    var keys = Object.keys(kl).filter(function (k) { return kl[k] && kl[k].length > 1; });
+    var sel = document.getElementById('idxSel');
+    if (keys.length) {
+      sel.innerHTML = keys.map(function (k) {
+        return '<option value="' + k + '">' + (KLINE_NAMES[k] || k) + '</option>';
+      }).join('');
+      // 默认选中沪深300（与规则引擎基准一致）
+      if (keys.indexOf('1.000300') >= 0) sel.value = '1.000300';
+
+      function drawK() {
+        var rows = computeMA(kl[sel.value]);
+        document.getElementById('kchart').innerHTML = '';
+        document.getElementById('kchart').appendChild(APP.chart.candles(rows, {
+          width: 900, height: 330, maKeys: ['ma5', 'ma20', 'ma60']
+        }));
+      }
+      sel.addEventListener('change', drawK);
+      drawK();
+    } else {
+      document.getElementById('kchart').innerHTML = APP.empty('暂无 K 线数据');
+    }
+
+    // ---------------- 技术指标 ----------------
+    document.getElementById('techBase').textContent = '基准 ' + (analysis.benchmark || '');
+    var ma = s.ma || {};
+    var tech = [
+      { l: 'RSI(14)', v: APP.fmt.num(s.rsi14, 1),
+        c: s.rsi14 >= 70 ? 'up' : s.rsi14 <= 30 ? 'down' : '',
+        e: s.rsi14 >= 70 ? '超买区' : s.rsi14 <= 30 ? '超卖区' : '中性区' },
+      { l: '年化波动率', v: APP.fmt.num(s.volatility20, 1) + '%',
+        c: s.volatility20 >= 30 ? 'down' : '', e: '20 日滚动' },
+      { l: '量比', v: APP.fmt.num(s.volume_ratio, 2),
+        c: s.volume_ratio >= 1.5 ? 'up' : s.volume_ratio <= 0.7 ? 'down' : '', e: '对比 5 日均量' },
+      { l: '年内价格分位', v: APP.fmt.num(s.price_percentile_250, 1) + '%',
+        c: s.price_percentile_250 >= 80 ? 'up' : s.price_percentile_250 <= 20 ? 'down' : '',
+        e: '近 250 交易日' }
+    ];
+    document.getElementById('techStats').innerHTML = tech.map(function (x) {
+      return '<div class="stat"><div class="stat-label">' + x.l + '</div>' +
+        '<div class="stat-value ' + x.c + '">' + x.v + '</div>' +
+        '<div class="stat-extra">' + x.e + '</div></div>';
+    }).join('');
+
+    var alignTxt = { bull: '多头排列', bear: '空头排列', mixed: '均线交织' };
+    var alignCls = { bull: 'up', bear: 'down', mixed: 'flat' };
+    var macd = s.macd || {};
+    var techRows = [
+      ['均线排列', '<span class="' + alignCls[s.ma_alignment] + '">' +
+        (alignTxt[s.ma_alignment] || '—') + '</span>', '价格与各周期均线的相对位置'],
+      ['MA5 / MA20', APP.fmt.num(ma.ma5, 0) + ' / ' + APP.fmt.num(ma.ma20, 0), '短期与中期成本'],
+      ['MA60', APP.fmt.num(ma.ma60, 0), '中期趋势分界'],
+      ['MACD (DIF/DEA)', APP.fmt.num(macd.dif, 2) + ' / ' + APP.fmt.num(macd.dea, 2),
+        macd.cross === 'golden' ? '金叉' : macd.cross === 'dead' ? '死叉' : '无交叉'],
+      ['近 20 日涨幅', APP.fmt.pct(s.ret20), '中期动量'],
+      ['近 60 日涨幅', APP.fmt.pct(s.ret60), '季度动量'],
+      ['年内最大回撤', APP.fmt.num(s.max_drawdown_250, 2) + '%', '近 250 日最坏回撤'],
+      ['主力资金', APP.fmt.signed(s.main_flow_yi, 0) + ' 亿', '当日净流入']
+    ];
+    document.getElementById('techTable').innerHTML =
+      '<thead><tr><th style="width:150px">指标</th><th style="width:170px">数值</th><th>说明</th></tr></thead><tbody>' +
+      techRows.map(function (r) {
+        return '<tr><td>' + r[0] + '</td><td class="mono">' + r[1] + '</td>' +
+          '<td class="muted small">' + r[2] + '</td></tr>';
+      }).join('') + '</tbody>';
+
+    // ---------------- 情绪历史 ----------------
+    if (history.length) {
+      var hd = history.slice(-60);
+      document.getElementById('sentChart').appendChild(APP.chart.line({
+        width: 520, height: 250,
+        series: [{ name: '情绪温度', color: '#2563eb', data: hd.map(function (d) { return { x: d.date, y: d.sentiment }; }), fill: true }],
+        xLabels: hd.filter(function (d, i) { return i % Math.max(1, Math.ceil(hd.length / 6)) === 0; })
+          .map(function (d, i, arr) { return { i: hd.indexOf(d), text: APP.fmt.md(d.date) }; }),
+        yMin: 0, yMax: 100, yZeroLine: 50
+      }));
+      if (history.length === 1) {
+        document.getElementById('sentChart').insertAdjacentHTML('afterend',
+          '<p class="small muted" style="margin:6px 0 0">目前仅有 1 个交易日的数据，' +
+          '随着定时任务每日运行，曲线会逐渐积累。</p>');
+      }
+    } else {
+      document.getElementById('sentChart').innerHTML = APP.empty('暂无历史数据');
+    }
+
+    // ---------------- 市场宽度 ----------------
+    if (history.length > 1) {
+      var hd2 = history.slice(-40);
+      document.getElementById('breadthChart').appendChild(APP.chart.line({
+        width: 520, height: 250,
+        series: [
+          { name: '上涨占比', color: '#d0342c', data: hd2.map(function (d) { return { x: d.date, y: d.up_ratio }; }) },
+          { name: '成交额', color: '#8b5cf6', data: hd2.map(function (d) { return { x: d.date, y: d.amount_yi }; }), hidden: true }
+        ],
+        xLabels: hd2.filter(function (d, i) { return i % Math.max(1, Math.ceil(hd2.length / 6)) === 0; })
+          .map(function (d) { return { i: hd2.indexOf(d), text: APP.fmt.md(d.date) }; }),
+        yMin: 0, yZeroLine: 50
+      }));
+    } else {
+      document.getElementById('breadthChart').innerHTML = APP.empty('暂无历史数据');
+    }
+
+    // ---------------- 板块 ----------------
+    function drawSectors(elId, list) {
+      var el = document.getElementById(elId);
+      if (!list || !list.length) { el.innerHTML = APP.empty('暂无数据'); return; }
+      var items = list.slice(0, 12).map(function (x) {
+        return { name: x.name, value: x.pct };
+      });
+      el.appendChild(APP.chart.bars(items, {
+        width: 430, rowH: 25,
+        fmt: function (v) { return APP.fmt.pct(v, 2); }
+      }));
+    }
+    drawSectors('indChart', (market && market.sectors || {}).industry);
+    drawSectors('conChart', (market && market.sectors || {}).concept);
+
+    // ---------------- 资金与杠杆 ----------------
+    var margin = (market && market.margin) || {};
+    var ml = margin.latest || {};
+    var fund = [
+      { l: '主力净流入', v: APP.fmt.signed(s.main_flow_yi, 0) + ' 亿',
+        c: APP.cls(s.main_flow_yi), e: '当日' },
+      { l: '融资余额', v: APP.fmt.int(s.margin_balance_yi) + ' 亿', c: '',
+        e: '5 日变化 ' + APP.fmt.pct(s.margin_change_5d_pct, 2) },
+      { l: '融资净买入', v: APP.fmt.signed(s.margin_net_buy_yi, 0) + ' 亿',
+        c: APP.cls(s.margin_net_buy_yi), e: '当日' },
+      { l: '融资余额占比', v: APP.fmt.num(ml.balance_ratio, 2) + '%', c: '',
+        e: '占流通市值' }
+    ];
+    document.getElementById('fundStats').innerHTML = fund.map(function (x) {
+      return '<div class="stat"><div class="stat-label">' + x.l + '</div>' +
+        '<div class="stat-value ' + x.c + '" style="font-size:19px">' + x.v + '</div>' +
+        '<div class="stat-extra">' + x.e + '</div></div>';
+    }).join('');
+
+    var flow = (market && market.fund_flow) || [];
+    if (flow.length > 1) {
+      document.getElementById('flowChart').appendChild(APP.chart.line({
+        width: 900, height: 200,
+        series: [{ name: '主力净流入', color: '#d0342c',
+          data: flow.map(function (f) { return { x: f.date, y: f.main ? +(f.main / 1e8).toFixed(1) : null }; }),
+          fill: true }],
+        xLabels: flow.filter(function (f, i) { return i % Math.max(1, Math.ceil(flow.length / 8)) === 0; })
+          .map(function (f) { return { i: flow.indexOf(f), text: APP.fmt.md(f.date) }; }),
+        yZeroLine: 0,
+        yFmt: function (v) { return v.toFixed(0); }
+      }));
+    } else {
+      document.getElementById('flowChart').innerHTML = APP.empty('暂无资金流数据');
+    }
+
+    // ---------------- 涨跌停 ----------------
+    var zt = (market && market.limit_up) || {};
+    var dt = (market && market.limit_down) || {};
+    var ztStats = [
+      { l: '涨停家数', v: zt.count != null ? zt.count : '—', c: 'up', e: '封板股票数' },
+      { l: '跌停家数', v: dt.count != null ? dt.count : '—', c: 'down', e: '含 20cm 板' },
+      { l: '最高连板', v: (zt.max_streak || 0) + ' 板', c: '', e: '短线情绪高度' },
+      { l: '涨停/跌停比', v: (zt.count && dt.count) ? (zt.count / dt.count).toFixed(1) : '—',
+        c: '', e: '赚钱效应对比' }
+    ];
+    document.getElementById('ztStats').innerHTML = ztStats.map(function (x) {
+      return '<div class="stat"><div class="stat-label">' + x.l + '</div>' +
+        '<div class="stat-value ' + x.c + '">' + x.v + '</div>' +
+        '<div class="stat-extra">' + x.e + '</div></div>';
+    }).join('');
+
+    var ztInd = zt.industries || [];
+    document.getElementById('ztIndustry').innerHTML = ztInd.length
+      ? '<strong>涨停股行业分布：</strong>' + ztInd.map(function (i) {
+          return APP.esc(i.name) + ' ' + i.count + ' 只';
+        }).join('　·　')
+      : '';
+
+    // ---------------- 完整信号 ----------------
+    var sigs = analysis.signals || [];
+    document.getElementById('allSignals').innerHTML = sigs.length
+      ? sigs.map(function (g) {
+          var tagCls = g.type === 'bull' ? 'tag-bull' : g.type === 'bear' ? 'tag-bear' : 'tag-neutral';
+          var tagTxt = g.type === 'bull' ? '偏多' : g.type === 'bear' ? '偏空' : '中性';
+          var links = (g.knowledge || []).map(function (kid) {
+            return '<a class="btn btn-sm" href="knowledge.html#kb-' + kid + '">' +
+              '知识点：' + APP.esc(kid.replace(/^[a-z]+-/, '')) + '</a>';
+          }).join('');
+          return '<div class="signal ' + g.type + '">' +
+            '<div class="signal-head"><span class="tag ' + tagCls + '">' + tagTxt + '</span>' +
+            '<span class="signal-title">' + APP.esc(g.title) + '</span></div>' +
+            '<div class="signal-evidence">' + APP.esc(g.evidence) + '</div>' +
+            '<div class="signal-lesson">' + APP.md2html(g.lesson) + '</div>' +
+            (links ? '<div class="signal-actions">' + links + '</div>' : '') +
+            '</div>';
+        }).join('')
+      : APP.empty('今日未识别到显著信号');
+
+    // ---------------- 纪律清单 ----------------
+    var disc = analysis.discipline || [];
+    document.getElementById('discipline').innerHTML = disc.length
+      ? disc.map(function (d, i) {
+          return '<div class="check-item">' +
+            '<input type="checkbox" id="d' + i + '">' +
+            '<label for="d' + i + '" style="cursor:pointer">' +
+            '<strong>' + APP.esc(d.title) + '</strong><br>' +
+            '<span class="muted">' + APP.md2html(d.detail) + '</span>' +
+            (d.knowledge ? ' <a href="knowledge.html#kb-' + d.knowledge + '">相关知识点</a>' : '') +
+            '</label></div>';
+        }).join('')
+      : APP.empty('暂无');
+
+    // ---------------- 错误提示 ----------------
+    var errs = analysis.data_errors || [];
+    document.getElementById('errors').innerHTML = errs.length
+      ? '<span class="tag tag-warn">部分数据缺失：' + errs.join(', ') + '</span>'
+      : '';
+  });
+})();
+</script>
+</body>
+</html>

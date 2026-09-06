@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>投资心理 · 认知偏差与情绪管理</title>
+<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="../index.html"><span class="dot"></span>投资辅助站</a>
+    <nav class="nav">
+      <a href="../index.html" data-nav="index">首页</a>
+      <a href="market.html" data-nav="market">行情看板</a>
+      <a href="knowledge.html" data-nav="knowledge">知识库</a>
+      <a href="mindset.html" data-nav="mindset">投资心理</a>
+      <a href="tools.html" data-nav="tools">决策工具</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>投资心理</h1>
+    <p>你最大的对手不是市场，而是镜子里的那个人。所有记录仅保存在你的浏览器本地。</p>
+  </div>
+
+  <div id="notice"></div>
+
+  <!-- 当前市场环境下的提醒 -->
+  <div class="card" id="liveCard" style="display:none">
+    <h2 class="card-title">基于今日市场环境的提醒
+      <span class="sub">由规则引擎根据当前数据自动生成</span>
+    </h2>
+    <div id="live"></div>
+  </div>
+
+  <!-- 偏差卡片 -->
+  <div class="card">
+    <h2 class="card-title">认知偏差卡片
+      <span class="sub">每张卡片含自检清单与应对策略，勾选你认为符合的项</span>
+    </h2>
+    <div class="grid grid-2" style="align-items:start" id="biases"></div>
+  </div>
+
+  <!-- 交易前检查清单 -->
+  <div class="card">
+    <h2 class="card-title" id="ckTitle">交易前检查清单</h2>
+    <p class="small muted" id="ckDesc" style="margin:-8px 0 14px"></p>
+    <div class="grid grid-2" style="align-items:start">
+      <div>
+        <div class="small" style="font-weight:600;margin-bottom:6px">买入前</div>
+        <div id="ckBuy"></div>
+      </div>
+      <div>
+        <div class="small" style="font-weight:600;margin-bottom:6px">卖出前</div>
+        <div id="ckSell"></div>
+      </div>
+    </div>
+    <div class="hr"></div>
+    <button class="btn" id="ckReset">重置勾选</button>
+    <span class="small muted" id="ckProgress" style="margin-left:10px"></span>
+  </div>
+
+  <!-- 情绪自评 -->
+  <div class="card">
+    <h2 class="card-title">投资情绪自评 <span class="sub">诚实作答才有意义</span></h2>
+    <p class="small muted" style="margin:-8px 0 14px">每题选择 1（完全不符合）到 5（完全符合）。</p>
+    <div id="quiz"></div>
+    <div class="hr"></div>
+    <button class="btn btn-primary" id="quizSubmit">查看结果</button>
+    <button class="btn" id="quizReset">重做</button>
+    <div id="quizResult"></div>
+  </div>
+
+  <!-- 决策日记 -->
+  <div class="card">
+    <h2 class="card-title">决策与情绪日记
+      <span class="sub">对抗后见之明偏差最有效的工具</span>
+    </h2>
+    <div class="grid grid-2" style="align-items:start">
+      <div>
+        <form id="jForm"></form>
+        <button class="btn btn-primary" id="jSave">保存记录</button>
+        <button class="btn" id="jExport">导出 JSON</button>
+      </div>
+      <div>
+        <div class="small" style="font-weight:600;margin-bottom:8px">历史记录 <span class="muted" id="jCount"></span></div>
+        <div id="jList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="disclaimer"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>所有记录保存在浏览器 localStorage，不会上传</span>
+    <span>清空浏览器数据将同时清除记录，建议定期导出</span>
+  </div>
+</footer>
+
+<script src="../assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  APP.mountNav('mindset');
+  document.getElementById('disclaimer').innerHTML = APP.disclaimer();
+
+  var LS_BIAS = 'invest_bias_checked';
+  var LS_CK = 'invest_checklist';
+  var LS_J = 'invest_journal';
+
+  function lsGet(k, def) {
+    try { return JSON.parse(localStorage.getItem(k)) || def; }
+    catch (e) { return def; }
+  }
+  function lsSet(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+  }
+
+  // ---------------------------------------------- 市场实时提醒
+  APP.load('data/analysis/latest.json').then(function (a) {
+    if (!a || !a.trade_date) return;
+    var psy = a.psychology || [];
+    if (!psy.length) return;
+    document.getElementById('liveCard').style.display = '';
+    document.getElementById('live').innerHTML =
+      '<div class="notice notice-mute">当前情绪温度 <strong>' +
+      (a.sentiment ? a.sentiment.score : '—') + '（' + APP.esc(a.sentiment_label || '') +
+      '）</strong>，' + APP.esc(a.sentiment_desc || '') + '</div>' +
+      psy.map(function (p) {
+        var lvl = p.level === 'high' ? 'tag-high' : p.level === 'medium' ? 'tag-warn' : 'tag-neutral';
+        var lvlTxt = p.level === 'high' ? '高' : p.level === 'medium' ? '中' : '低';
+        return '<div class="signal" style="border-left-color:' +
+          (p.level === 'high' ? 'var(--danger)' : p.level === 'medium' ? 'var(--warn)' : 'var(--border-strong)') + '">' +
+          '<div class="signal-head"><span class="tag ' + lvl + '">触发概率 ' + lvlTxt + '</span>' +
+          '<a class="btn btn-sm" href="#bias-' + p.bias + '">查看该偏差</a></div>' +
+          '<div class="signal-lesson">' + APP.md2html(p.text) + '</div></div>';
+      }).join('');
+  });
+
+  // ---------------------------------------------- 偏差卡片
+  APP.load('data/content/psychology.json').then(function (d) {
+    if (!d) {
+      document.getElementById('notice').innerHTML =
+        APP.dataNotice(false, '未找到 data/content/psychology.json');
+      return;
+    }
+    var checked = lsGet(LS_BIAS, {});
+
+    document.getElementById('biases').innerHTML = (d.biases || []).map(function (b) {
+      return '<div class="bias-card" id="bias-' + b.id + '">' +
+        '<div class="bias-head">' +
+          '<div class="bias-name">' + APP.esc(b.name) +
+            '<span class="bias-alias">' + APP.esc(b.alias) + '</span></div>' +
+          '<div class="bias-one">「' + APP.esc(b.one_liner) + '」</div>' +
+        '</div>' +
+        '<div class="bias-body">' +
+          '<div class="bias-desc">' + APP.md2html(b.description) + '</div>' +
+          '<div class="kb-sec"><h4>自检清单</h4>' +
+            (b.symptoms || []).map(function (s, i) {
+              var on = (checked[b.id] || {})[i] ? ' checked' : '';
+              return '<label class="check-item"><input type="checkbox" data-bias="' + b.id +
+                '" data-idx="' + i + '"' + on + '><span>' + APP.esc(s) + '</span></label>';
+            }).join('') +
+          '</div>' +
+          '<div class="kb-sec"><h4>应对策略</h4>' +
+            (b.antidote || []).map(function (a) {
+              return '<div class="antidote">' + APP.md2html(a) + '</div>';
+            }).join('') +
+          '</div>' +
+          '<div class="kb-tags"><span class="kb-tag">易触发场景：' + APP.esc(b.trigger || '') + '</span>' +
+            '<a class="kb-rel-link" href="knowledge.html#kb-' + b.id + '">知识库中的完整讲解</a></div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    Array.prototype.forEach.call(document.querySelectorAll('.bias-head'), function (h) {
+      h.addEventListener('click', function () { h.parentNode.classList.toggle('open'); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('input[data-bias]'), function (cb) {
+      cb.addEventListener('change', function () {
+        var c = lsGet(LS_BIAS, {});
+        var id = cb.getAttribute('data-bias'), i = cb.getAttribute('data-idx');
+        c[id] = c[id] || {};
+        c[id][i] = cb.checked;
+        lsSet(LS_BIAS, c);
+      });
+    });
+
+    // ---------------------------------------------- 检查清单
+    var ck = d.checklist || {};
+    document.getElementById('ckTitle').textContent = ck.title || '交易前检查清单';
+    document.getElementById('ckDesc').textContent = ck.desc || '';
+    var ckState = lsGet(LS_CK, {});
+
+    function renderCk(list, elId) {
+      document.getElementById(elId).innerHTML = list.map(function (x) {
+        var on = ckState[x.id] ? ' checked' : '';
+        return '<label class="check-item"><input type="checkbox" data-ck="' + x.id + '"' + on + '>' +
+          '<span>' + APP.esc(x.text) + '</span></label>';
+      }).join('');
+    }
+    renderCk(ck.before_buy || [], 'ckBuy');
+    renderCk(ck.before_sell || [], 'ckSell');
+
+    function updateProgress() {
+      var all = (ck.before_buy || []).concat(ck.before_sell || []);
+      var done = all.filter(function (x) { return ckState[x.id]; }).length;
+      document.getElementById('ckProgress').textContent = '已完成 ' + done + ' / ' + all.length + ' 项';
+    }
+    updateProgress();
+
+    Array.prototype.forEach.call(document.querySelectorAll('input[data-ck]'), function (cb) {
+      cb.addEventListener('change', function () {
+        ckState[cb.getAttribute('data-ck')] = cb.checked;
+        lsSet(LS_CK, ckState);
+        updateProgress();
+      });
+    });
+    document.getElementById('ckReset').addEventListener('click', function () {
+      ckState = {}; lsSet(LS_CK, ckState);
+      renderCk(ck.before_buy || [], 'ckBuy');
+      renderCk(ck.before_sell || [], 'ckSell');
+      updateProgress();
+    });
+
+    // ---------------------------------------------- 情绪自评
+    var quiz = d.assessment || {};
+    var qs = quiz.questions || [];
+    document.getElementById('quiz').innerHTML = qs.map(function (q, i) {
+      var opts = '';
+      for (var v = 1; v <= 5; v++) {
+        opts += '<button type="button" class="quiz-opt" data-q="' + q.id + '" data-v="' + v + '">' + v + '</button>';
+      }
+      return '<div class="quiz-row"><div class="quiz-q">' + (i + 1) + '. ' + APP.esc(q.text) +
+        '</div><div class="quiz-opts">' + opts + '</div></div>';
+    }).join('');
+
+    var answers = {};
+    Array.prototype.forEach.call(document.querySelectorAll('.quiz-opt'), function (b) {
+      b.addEventListener('click', function () {
+        var qid = b.getAttribute('data-q');
+        answers[qid] = +b.getAttribute('data-v');
+        Array.prototype.forEach.call(
+          document.querySelectorAll('.quiz-opt[data-q="' + qid + '"]'),
+          function (x) { x.classList.remove('sel'); });
+        b.classList.add('sel');
+      });
+    });
+
+    document.getElementById('quizSubmit').addEventListener('click', function () {
+      var total = 0, answered = 0;
+      var biasScore = {};
+      qs.forEach(function (q) {
+        var v = answers[q.id];
+        if (!v) return;
+        answered++;
+        // 反向题：得分越高代表心理状态越健康，需反转
+        var s = q.reverse ? (6 - v) : v;
+        total += s;
+        biasScore[q.bias] = (biasScore[q.bias] || 0) + s;
+      });
+      if (!answered) {
+        document.getElementById('quizResult').innerHTML =
+          '<div class="notice notice-warn" style="margin-top:14px">请先作答至少一题。</div>';
+        return;
+      }
+      var interp = quiz.interpretation || {};
+      var lv = total <= (interp.low ? interp.low.max : 24) ? interp.low
+             : total <= (interp.medium ? interp.medium.max : 40) ? interp.medium : interp.high;
+      // 找出得分最高的偏差类型
+      var top = Object.keys(biasScore).sort(function (a, b) { return biasScore[b] - biasScore[a]; })[0];
+      var topBias = (d.biases || []).filter(function (b) { return b.id === top; })[0];
+
+      document.getElementById('quizResult').innerHTML =
+        '<div class="notice ' + (lv === interp.high ? 'notice-warn' : 'notice-info') +
+        '" style="margin-top:14px"><strong>得分 ' + total + ' / ' + (qs.length * 5) +
+        '（已答 ' + answered + ' 题）· ' + APP.esc(lv.title || '') + '</strong><br>' +
+        APP.esc(lv.text || '') + '</div>' +
+        (topBias
+          ? '<div class="card" style="margin-top:12px;margin-bottom:0">' +
+            '<div class="card-title">最需关注的偏差：' + APP.esc(topBias.name) +
+            ' <a class="btn btn-sm" href="#bias-' + topBias.id + '">展开卡片</a></div>' +
+            '<div class="kb-sec"><h4>针对你的应对策略</h4>' +
+            (topBias.antidote || []).map(function (a) {
+              return '<div class="antidote">' + APP.md2html(a) + '</div>';
+            }).join('') + '</div></div>'
+          : '');
+    });
+
+    document.getElementById('quizReset').addEventListener('click', function () {
+      answers = {};
+      Array.prototype.forEach.call(document.querySelectorAll('.quiz-opt'),
+        function (x) { x.classList.remove('sel'); });
+      document.getElementById('quizResult').innerHTML = '';
+    });
+
+    // ---------------------------------------------- 决策日记
+    var fields = (d.journal || {}).fields || [];
+    document.getElementById('jForm').innerHTML = fields.map(function (f) {
+      var inp;
+      if (f.type === 'textarea') {
+        inp = '<textarea id="j_' + f.key + '"></textarea>';
+      } else if (f.type === 'select') {
+        inp = '<select id="j_' + f.key + '">' + (f.options || []).map(function (o) {
+          return '<option>' + APP.esc(o) + '</option>';
+        }).join('') + '</select>';
+      } else if (f.type === 'range') {
+        inp = '<input type="range" id="j_' + f.key + '" min="' + (f.min || 0) +
+          '" max="' + (f.max || 5) + '" step="' + (f.step || 1) + '" ' +
+          'value="' + Math.round(((f.min || 0) + (f.max || 5)) / 2) + '" ' +
+          'oninput="document.getElementById(\'j_' + f.key + '_v\').textContent=this.value">' +
+          '<div class="hint">当前：<span id="j_' + f.key + '_v">' +
+          Math.round(((f.min || 0) + (f.max || 5)) / 2) + '</span></div>';
+      } else {
+        inp = '<input type="' + f.type + '" id="j_' + f.key + '">';
+      }
+      return '<div class="field"><label>' + APP.esc(f.label) + '</label>' + inp + '</div>';
+    }).join('');
+
+    // 日期默认为今天
+    var dateEl = document.getElementById('j_date');
+    if (dateEl && !dateEl.value) {
+      dateEl.value = new Date().toISOString().slice(0, 10);
+    }
+
+    function loadJournal() {
+      var list = lsGet(LS_J, []);
+      list.sort(function (a, b) { return (a.date < b.date ? 1 : a.date > b.date ? -1 : 0); });
+      document.getElementById('jCount').textContent = '(' + list.length + ' 条)';
+      if (!list.length) {
+        document.getElementById('jList').innerHTML = APP.empty('暂无记录，从左侧开始记录第一条');
+        return;
+      }
+      document.getElementById('jList').innerHTML = list.map(function (r, i) {
+        var meta = [r.date, r.mood, r.action].filter(Boolean).join(' · ');
+        if (r.confidence) meta += ' · 把握 ' + r.confidence + '%';
+        var body = [r.judgement && '判断：' + r.judgement,
+                    r.reason && '理由：' + r.reason,
+                    r.falsify && '证伪：' + r.falsify,
+                    r.note && '复盘：' + r.note].filter(Boolean).join('\n');
+        return '<div class="journal-item"><div class="journal-meta"><strong>' +
+          APP.esc(meta) + '</strong>' +
+          '<button class="journal-del" data-i="' + i + '">删除</button></div>' +
+          (body ? '<div class="journal-text">' + APP.esc(body) + '</div>' : '') +
+          '</div>';
+      }).join('');
+
+      Array.prototype.forEach.call(document.querySelectorAll('.journal-del'), function (b) {
+        b.addEventListener('click', function () {
+          var list2 = lsGet(LS_J, []);
+          list2.sort(function (a, b2) { return (a.date < b2.date ? 1 : a.date > b2.date ? -1 : 0); });
+          list2.splice(+b.getAttribute('data-i'), 1);
+          lsSet(LS_J, list2);
+          loadJournal();
+        });
+      });
+    }
+    loadJournal();
+
+    document.getElementById('jSave').addEventListener('click', function () {
+      var rec = { _id: Date.now() };
+      fields.forEach(function (f) {
+        var el = document.getElementById('j_' + f.key);
+        if (el) rec[f.key] = el.value;
+      });
+      if (!rec.date) rec.date = new Date().toISOString().slice(0, 10);
+      var list = lsGet(LS_J, []);
+      list.push(rec);
+      lsSet(LS_J, list);
+      // 保留日期，清空其余内容
+      var d0 = rec.date;
+      fields.forEach(function (f) {
+        var el = document.getElementById('j_' + f.key);
+        if (el && f.type !== 'select' && f.type !== 'range') el.value = '';
+        if (el && f.type === 'date') el.value = d0;
+      });
+      loadJournal();
+    });
+
+    document.getElementById('jExport').addEventListener('click', function () {
+      var blob = new Blob([JSON.stringify(lsGet(LS_J, []), null, 2)],
+        { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'invest-journal-' + new Date().toISOString().slice(0, 10) + '.json';
+      a.click();
+    });
+
+    // 锚点定位
+    if (location.hash && location.hash.indexOf('#bias-') === 0) {
+      var el = document.querySelector(location.hash);
+      if (el) {
+        el.classList.add('open');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

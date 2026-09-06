@@ -1,0 +1,212 @@
+{
+  "sentiment": {
+    "score": 27.4,
+    "components": [
+      {
+        "name": "momentum",
+        "score": 37.0,
+        "weight": 22.0
+      },
+      {
+        "name": "breadth",
+        "score": 38.1,
+        "weight": 20.0
+      },
+      {
+        "name": "volume",
+        "score": 21.6,
+        "weight": 13.0
+      },
+      {
+        "name": "profit_effect",
+        "score": 25.0,
+        "weight": 20.0
+      },
+      {
+        "name": "leverage",
+        "score": 38.8,
+        "weight": 10.0
+      },
+      {
+        "name": "fund_flow",
+        "score": 0.0,
+        "weight": 15.0
+      }
+    ],
+    "coverage": 100.0
+  },
+  "sentiment_label": "低迷",
+  "sentiment_desc": "市场悲观，抛压主导，但也意味着定价开始有吸引力",
+  "risk_level": "low",
+  "risk_score": 11.2,
+  "signals": [
+    {
+      "id": "ma_bear",
+      "type": "bear",
+      "title": "均线空头排列",
+      "evidence": "MA5=4577、MA10=4583、MA20=4624、MA60=4723，收盘 4548",
+      "lesson": "均线自上而下排列且价格位于最下方，意味着各周期买入者普遍被套，每一次反弹都会遇到解套盘的抛压，趋势具有自我延续性。空头排列中抢反弹的难度显著高于上升趋势中回调买入——因为你面对的不是暂时的获利回吐，而是持续的解套供给。空头排列的终结信号通常是：指数不再创新低、成交量萎缩、随后放量收复短期均线。",
+      "knowledge": [
+        "tech-moving-average",
+        "tech-trend",
+        "risk-drawdown"
+      ]
+    },
+    {
+      "id": "amount_hot",
+      "type": "neutral",
+      "title": "成交额高企",
+      "evidence": "两市合计成交 20307 亿元",
+      "lesson": "天量成交意味着大量换手——有人买就有人卖，分歧巨大。天量往往出现在趋势的中后段而非起点。它不构成看空理由，但提示你：此时市场定价已充分反映当前信息，继续大幅上行需要**新增的**资金或**超预期的**基本面。把成交额与指数位置结合看，比单独看成交额更有意义。",
+      "knowledge": [
+        "sentiment-fund-flow",
+        "tech-volume-price"
+      ]
+    },
+    {
+      "id": "fund_outflow",
+      "type": "bear",
+      "title": "主力资金大幅净流出",
+      "evidence": "主力资金净流出 434 亿元",
+      "lesson": "资金流数据由逐笔成交按单子大小分类统计而来，它反映的是**大单的方向**，机构真实意图无法直接观测——大单可以通过拆单隐藏，也可以通过对倒制造假象。因此资金流是参考而非结论。持续净流出结合价格下跌，才是较为可靠的弱势信号；若资金流出而价格不跌，则说明承接力量强，反而值得关注。",
+      "knowledge": [
+        "sentiment-fund-flow",
+        "tech-volume-price"
+      ]
+    }
+  ],
+  "psychology": [
+    {
+      "bias": "behavior-loss-aversion",
+      "level": "high",
+      "text": "亏损带来的痛苦约为同等盈利快感的两倍，这在低迷期会被放大到让人无法理性思考。若你已经不敢打开账户，请先把「要不要卖」这个问题推迟 24 小时，并把决策标准写成文字：卖出理由应该是**逻辑变了**，而不是**价格跌了**。"
+    },
+    {
+      "bias": "behavior-recency",
+      "level": "medium",
+      "text": "连续下跌后，大脑会默认这种状态将永远持续。请主动回看历史：每一次市场冰点之后都出现了修复，区别只在于耗时。把当前情绪温度与一年前的读数做对比，用数据校正直觉。"
+    }
+  ],
+  "discipline": [
+    {
+      "title": "核对仓位与风险预算",
+      "detail": "当前波动率 15.3%。若波动率较你建仓时明显抬升，同等仓位承担的风险已经变大，应考虑减仓至风险敞口与当初一致，而不是维持名义仓位不变。",
+      "knowledge": "risk-position-risk"
+    },
+    {
+      "title": "检查是否因恐慌而低配",
+      "detail": "低风险环境里常见的错误是长期空仓等待「更好的价格」。请确认当前仓位与你的长期配置目标一致，而非由近期情绪决定。",
+      "knowledge": "allocation-asset-allocation"
+    },
+    {
+      "title": "采用分批而非一次性决策",
+      "detail": "低迷期不应重仓押注「这就是底」。分批建仓的价值不在于提高收益，而在于让你在判断错误时仍有余地和心态继续执行计划。",
+      "knowledge": "allocation-position-sizing"
+    },
+    {
+      "title": "记录本次决策",
+      "detail": "写下今天你的判断、依据与操作。一个月后回看，你会清楚看到自己是被逻辑驱动，还是被情绪驱动——这是提升投资能力最有效也最被忽视的方法。",
+      "knowledge": "behavior-hindsight"
+    }
+  ],
+  "trade_date": "2026-09-04",
+  "generated_at": "2026-09-06T09:13:02+08:00",
+  "benchmark": "沪深300",
+  "market_snapshot": {
+    "last_close": 4548.05,
+    "pct": -0.3,
+    "amount_yi": 20306.7,
+    "breadth": {
+      "up": 2290,
+      "down": 2795,
+      "flat": 199,
+      "total": 5284,
+      "up_ratio": 43.34,
+      "up_down_ratio": 0.819
+    },
+    "limit_up_count": 39,
+    "limit_down_count": 16,
+    "max_streak": 5,
+    "main_flow_yi": -433.8,
+    "margin_balance_yi": 26275.2,
+    "margin_change_5d_pct": -0.337,
+    "margin_net_buy_yi": -40.4,
+    "margin_ratio": 2.631647,
+    "rsi14": 41.64,
+    "volatility20": 15.33,
+    "volume_ratio": 0.982,
+    "ma": {
+      "ma5": 4577.023999999992,
+      "ma10": 4583.0530000000035,
+      "ma20": 4624.2175,
+      "ma60": 4723.066500000001
+    },
+    "ma_alignment": "bear",
+    "macd": {
+      "dif": -32.498,
+      "dea": -29.046,
+      "hist": -6.904,
+      "cross": null
+    },
+    "price_percentile_250": 18.4,
+    "ret20": -3.12,
+    "ret60": -3.69,
+    "max_drawdown_250": 10.49
+  },
+  "context": {
+    "trade_date": "2026-09-04",
+    "generated_at": "2026-09-06T09:13:02+08:00",
+    "errors": [],
+    "last_date": "2026-09-04",
+    "last_close": 4548.05,
+    "bars": 250,
+    "ma5": 4577.023999999992,
+    "ma10": 4583.0530000000035,
+    "ma20": 4624.2175,
+    "ma60": 4723.066500000001,
+    "ma120": 4729.509166666667,
+    "ma250": 4671.703679999999,
+    "ma_alignment": "bear",
+    "macd": {
+      "dif": -32.498,
+      "dea": -29.046,
+      "hist": -6.904,
+      "cross": null
+    },
+    "rsi14": 41.64,
+    "atr14": 70.0,
+    "volatility20": 15.33,
+    "volume_ratio": 0.982,
+    "consecutive": -1,
+    "price_percentile_250": 18.4,
+    "amount_percentile_250": null,
+    "volume_percentile_250": 21.6,
+    "ret5": -1.33,
+    "ret20": -3.12,
+    "ret60": -3.69,
+    "ret250": null,
+    "max_drawdown_250": 10.49,
+    "benchmark": "沪深300",
+    "pct": -0.3,
+    "breadth": {
+      "up": 2290,
+      "down": 2795,
+      "flat": 199,
+      "total": 5284,
+      "up_ratio": 43.34,
+      "up_down_ratio": 0.819
+    },
+    "amount_total": 2030667836097.5483,
+    "amount_yi": 20306.7,
+    "limit_up_count": 39,
+    "max_streak": 5,
+    "limit_down_count": 16,
+    "main_flow_yi": -433.8,
+    "margin_change_5d_pct": -0.337,
+    "margin_balance_yi": 26275.2,
+    "margin_net_buy_yi": -40.4,
+    "margin_ratio": 2.631647
+  },
+  "data_errors": [],
+  "engine": "rules"
+}

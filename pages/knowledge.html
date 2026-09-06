@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>投资知识库 · 从原理到实践</title>
+<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="../index.html"><span class="dot"></span>投资辅助站</a>
+    <nav class="nav">
+      <a href="../index.html" data-nav="index">首页</a>
+      <a href="market.html" data-nav="market">行情看板</a>
+      <a href="knowledge.html" data-nav="knowledge">知识库</a>
+      <a href="mindset.html" data-nav="mindset">投资心理</a>
+      <a href="tools.html" data-nav="tools">决策工具</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>投资知识库</h1>
+    <p id="subhead">正在加载…</p>
+  </div>
+
+  <div id="notice"></div>
+
+  <div class="kb-layout">
+    <aside class="kb-side">
+      <input type="text" class="kb-search" id="search" placeholder="搜索条目、标签…">
+      <div id="cats"></div>
+      <div class="small muted" style="margin-top:14px;line-height:1.6">
+        点击标题展开正文。<br>每个条目含核心要点、常见陷阱与关联阅读。
+      </div>
+    </aside>
+
+    <section>
+      <div id="items"></div>
+    </section>
+  </div>
+
+  <div id="disclaimer"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>投资知识库 · 内容仅供学习参考</span>
+    <span id="count"></span>
+  </div>
+</footer>
+
+<script src="../assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  APP.mountNav('knowledge');
+  document.getElementById('disclaimer').innerHTML = APP.disclaimer();
+
+  var DATA = null, activeCat = 'all', keyword = '';
+
+  APP.load('data/content/knowledge.json').then(function (d) {
+    if (!d || !d.items) {
+      document.getElementById('notice').innerHTML =
+        APP.dataNotice(false, '未找到 data/content/knowledge.json');
+      return;
+    }
+    DATA = d;
+    document.getElementById('subhead').textContent =
+      d.items.length + ' 个条目，覆盖 ' + d.categories.length + ' 个主题领域';
+    document.getElementById('count').textContent = '共 ' + d.items.length + ' 条';
+    renderCats();
+    render();
+    // 支持从其他页面跳转定位：knowledge.html#kb-<id>
+    if (location.hash && location.hash.indexOf('#kb-') === 0) {
+      focusItem(location.hash.slice(4));
+    }
+  });
+
+  function countBy(cid) {
+    if (cid === 'all') return DATA.items.length;
+    return DATA.items.filter(function (i) { return i.category === cid; }).length;
+  }
+
+  function renderCats() {
+    var html = '<div class="kb-cat' + (activeCat === 'all' ? ' active' : '') +
+      '" data-cat="all"><span>全部</span><span class="cnt">' + countBy('all') + '</span></div>';
+    html += DATA.categories.map(function (c) {
+      return '<div class="kb-cat' + (activeCat === c.id ? ' active' : '') +
+        '" data-cat="' + c.id + '" title="' + APP.esc(c.desc) + '">' +
+        '<span>' + APP.esc(c.name) + '</span><span class="cnt">' + countBy(c.id) + '</span></div>';
+    }).join('');
+    document.getElementById('cats').innerHTML = html;
+
+    Array.prototype.forEach.call(document.querySelectorAll('.kb-cat'), function (el) {
+      el.addEventListener('click', function () {
+        activeCat = el.getAttribute('data-cat');
+        renderCats();
+        render();
+      });
+    });
+  }
+
+  function filtered() {
+    var kw = keyword.trim().toLowerCase();
+    return DATA.items.filter(function (i) {
+      if (activeCat !== 'all' && i.category !== activeCat) return false;
+      if (!kw) return true;
+      var hay = [i.title, i.summary, i.id, (i.tags || []).join(' ')]
+        .join(' ').toLowerCase();
+      return hay.indexOf(kw) >= 0;
+    });
+  }
+
+  function catName(cid) {
+    var c = DATA.categories.filter(function (x) { return x.id === cid; })[0];
+    return c ? c.name : cid;
+  }
+
+  function render() {
+    var list = filtered();
+    if (!list.length) {
+      document.getElementById('items').innerHTML = APP.empty('未找到匹配的条目');
+      return;
+    }
+    document.getElementById('items').innerHTML = list.map(function (i) {
+      return '<div class="kb-item" id="kb-' + i.id + '" data-id="' + i.id + '">' +
+        '<div class="kb-item-head">' +
+          '<span class="arrow">▶</span>' +
+          '<div style="flex:1">' +
+            '<div class="kb-item-title">' + APP.esc(i.title) +
+              ' <span class="tag tag-neutral" style="margin-left:6px">' + APP.esc(catName(i.category)) + '</span>' +
+              ' <span class="tag ' + (i.level === '入门' ? 'tag-info' : 'tag-warn') + '">' + APP.esc(i.level) + '</span>' +
+            '</div>' +
+            '<div class="kb-item-sum">' + APP.esc(i.summary) + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="kb-item-body">' +
+          '<div class="kb-sec"><h4>核心要点</h4><ul class="kb-points">' +
+            (i.points || []).map(function (p) { return '<li>' + APP.md2html(p) + '</li>'; }).join('') +
+          '</ul></div>' +
+          ((i.pitfalls || []).length
+            ? '<div class="kb-sec"><h4>常见陷阱</h4>' +
+              (i.pitfalls || []).map(function (p) { return '<div class="kb-pitfall">' + APP.md2html(p) + '</div>'; }).join('') +
+              '</div>' : '') +
+          ((i.related || []).length
+            ? '<div class="kb-sec"><h4>关联阅读</h4><div class="kb-related">' +
+              (i.related || []).map(function (r) {
+                return '<button class="kb-rel-link" data-goto="' + r + '">' + APP.esc(r) + '</button>';
+              }).join('') + '</div></div>' : '') +
+          ((i.tags || []).length
+            ? '<div class="kb-tags">' + (i.tags || []).map(function (t) {
+                return '<span class="kb-tag">' + APP.esc(t) + '</span>';
+              }).join('') + '</div>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    // 展开/收起
+    Array.prototype.forEach.call(document.querySelectorAll('.kb-item-head'), function (h) {
+      h.addEventListener('click', function () {
+        h.parentNode.classList.toggle('open');
+      });
+    });
+    // 关联跳转
+    Array.prototype.forEach.call(document.querySelectorAll('.kb-rel-link'), function (b) {
+      b.addEventListener('click', function () {
+        activeCat = 'all';
+        keyword = '';
+        document.getElementById('search').value = '';
+        renderCats();
+        render();
+        focusItem(b.getAttribute('data-goto'));
+      });
+    });
+  }
+
+  function focusItem(id) {
+    var el = document.getElementById('kb-' + id);
+    if (!el) return;
+    el.classList.add('open');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.style.transition = 'box-shadow .3s';
+    el.style.boxShadow = '0 0 0 3px var(--accent-soft)';
+    setTimeout(function () { el.style.boxShadow = ''; }, 1800);
+  }
+
+  document.getElementById('search').addEventListener('input', function (e) {
+    keyword = e.target.value;
+    render();
+  });
+
+  // 站内锚点跳转（从首页/看板页跳来）
+  window.addEventListener('hashchange', function () {
+    if (location.hash.indexOf('#kb-') === 0) focusItem(location.hash.slice(4));
+  });
+})();
+</script>
+</body>
+</html>

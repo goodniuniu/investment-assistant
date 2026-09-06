@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>投资辅助站 · 市场状态与学习中心</title>
+<meta name="description" content="结合 A 股实时数据的投资知识库、市场趋势分析与投资心理辅助工具">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><span class="dot"></span>投资辅助站</a>
+    <nav class="nav">
+      <a href="index.html" data-nav="index">首页</a>
+      <a href="pages/market.html" data-nav="market">行情看板</a>
+      <a href="pages/knowledge.html" data-nav="knowledge">知识库</a>
+      <a href="pages/mindset.html" data-nav="mindset">投资心理</a>
+      <a href="pages/tools.html" data-nav="tools">决策工具</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>今日市场状态</h1>
+    <p id="subhead">正在加载数据…</p>
+  </div>
+
+  <div id="notice"></div>
+
+  <!-- 核心指标 -->
+  <div class="grid grid-4" id="stats"></div>
+
+  <!-- 情绪温度 + 信号 -->
+  <div class="grid" style="grid-template-columns: 1fr 1fr; gap:16px; align-items:start;">
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">情绪温度计 <span class="sub">综合六个维度</span></h2>
+      <div id="gauge"></div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <h2 class="card-title">今日识别到的信号</h2>
+      <div id="signals"></div>
+    </div>
+  </div>
+
+  <!-- 指数概览 -->
+  <div class="card">
+    <h2 class="card-title">指数概览</h2>
+    <div class="chart-box"><table class="tbl" id="idxTable"></table></div>
+  </div>
+
+  <!-- 心理提醒 -->
+  <div class="card">
+    <h2 class="card-title">此刻的心理提醒
+      <span class="sub">根据当前市场环境，这些偏差最容易被触发</span>
+    </h2>
+    <div id="psy"></div>
+  </div>
+
+  <!-- 模块导航 -->
+  <div class="grid grid-4">
+    <a class="stat" href="pages/market.html" style="text-decoration:none;color:inherit">
+      <div class="stat-label">行情看板</div>
+      <div style="font-size:15px;font-weight:600;margin-top:4px">趋势与结构分析</div>
+      <div class="stat-extra">K线、均线、板块轮动、情绪历史</div>
+    </a>
+    <a class="stat" href="pages/knowledge.html" style="text-decoration:none;color:inherit">
+      <div class="stat-label">投资知识库</div>
+      <div style="font-size:15px;font-weight:600;margin-top:4px">54 个知识条目</div>
+      <div class="stat-extra">估值、技术、宏观、配置、风险</div>
+    </a>
+    <a class="stat" href="pages/mindset.html" style="text-decoration:none;color:inherit">
+      <div class="stat-label">投资心理</div>
+      <div style="font-size:15px;font-weight:600;margin-top:4px">10 类认知偏差</div>
+      <div class="stat-extra">自检清单、情绪自评、决策日记</div>
+    </a>
+    <a class="stat" href="pages/tools.html" style="text-decoration:none;color:inherit">
+      <div class="stat-label">决策工具</div>
+      <div style="font-size:15px;font-weight:600;margin-top:4px">仓位与风险计算</div>
+      <div class="stat-extra">凯利公式、回撤、止盈止损</div>
+    </a>
+  </div>
+
+  <div id="disclaimer"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>数据由 GitHub Actions 定时抓取 · 仅用于学习研究</span>
+    <span id="footerTime"></span>
+  </div>
+</footer>
+
+<script src="assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  APP.mountNav('index');
+  document.getElementById('disclaimer').innerHTML = APP.disclaimer();
+
+  Promise.all([
+    APP.load('data/analysis/latest.json'),
+    APP.load('data/market/latest.json')
+  ]).then(function (res) {
+    var analysis = res[0], market = res[1];
+    var ok = !!(analysis && analysis.trade_date);
+    document.getElementById('notice').innerHTML = APP.dataNotice(ok);
+    if (!ok) {
+      document.getElementById('subhead').textContent = '暂无数据';
+      return;
+    }
+
+    var s = analysis.market_snapshot || {};
+    var b = s.breadth || {};
+    document.getElementById('subhead').textContent =
+      '交易日 ' + analysis.trade_date + ' · 基准 ' + (analysis.benchmark || '沪深300') +
+      ' · 生成于 ' + (analysis.generated_at || '').replace('T', ' ').slice(0, 19);
+
+    // ---- 核心指标 ----
+    var stats = [
+      { label: '基准收盘', value: APP.fmt.num(s.last_close, 2),
+        cls: APP.cls(s.pct), extra: APP.fmt.pct(s.pct) + '　' + (analysis.benchmark || '') },
+      { label: '两市成交额', value: APP.fmt.int(s.amount_yi) + ' 亿',
+        cls: '', extra: '量比 ' + APP.fmt.num(s.volume_ratio, 2) },
+      { label: '涨跌家数', value: (b.up || 0) + ' / ' + (b.down || 0),
+        cls: (b.up > b.down ? 'up' : 'down'),
+        extra: '上涨占比 ' + APP.fmt.num(b.up_ratio, 1) + '%' },
+      { label: '涨跌停', value: (s.limit_up_count || 0) + ' / ' + (s.limit_down_count || 0),
+        cls: '', extra: '最高 ' + (s.max_streak || 0) + ' 连板' }
+    ];
+    document.getElementById('stats').innerHTML = stats.map(function (x) {
+      return '<div class="stat"><div class="stat-label">' + x.label + '</div>' +
+        '<div class="stat-value ' + x.cls + '">' + x.value + '</div>' +
+        '<div class="stat-extra">' + APP.esc(x.extra) + '</div></div>';
+    }).join('');
+
+    // ---- 情绪温度计 ----
+    var sc = (analysis.sentiment || {}).score;
+    var pos = sc === null || sc === undefined ? 50 : sc;
+    var comps = (analysis.sentiment || {}).components || [];
+    document.getElementById('gauge').innerHTML =
+      '<div class="gauge-wrap">' +
+        '<div style="flex:1;min-width:240px">' +
+          '<div class="gauge-bar"><div class="gauge-marker" style="left:' + pos + '%"></div></div>' +
+          '<div class="gauge-scale"><span>0 冰点</span><span>50 中性</span><span>100 亢奋</span></div>' +
+        '</div>' +
+        '<div class="gauge-score"><div class="num">' + (sc === null ? '—' : sc) + '</div>' +
+        '<div class="lbl">' + APP.esc(analysis.sentiment_label || '') + '</div></div>' +
+      '</div>' +
+      '<p class="small muted" style="margin:10px 0 12px">' + APP.esc(analysis.sentiment_desc || '') + '</p>' +
+      '<div class="comp-list">' + comps.map(function (c) {
+        var names = { momentum: '价格动量', breadth: '市场宽度', volume: '量能',
+                      profit_effect: '赚钱效应', leverage: '杠杆情绪', fund_flow: '主力资金' };
+        return '<div class="comp-row"><span class="muted">' + (names[c.name] || c.name) + '</span>' +
+          '<span class="bar"><i style="width:' + c.score + '%"></i></span>' +
+          '<span class="val">' + c.score + '</span></div>';
+      }).join('') + '</div>' +
+      (comps.length ? '<p class="small muted mt0" style="margin-top:8px">数据覆盖度 ' +
+        (analysis.sentiment.coverage) + '%，缺失维度已按权重重新归一化。</p>' : '');
+
+    // ---- 信号 ----
+    var sigs = analysis.signals || [];
+    document.getElementById('signals').innerHTML = sigs.length
+      ? sigs.slice(0, 4).map(function (g) {
+          var tagCls = g.type === 'bull' ? 'tag-bull' : g.type === 'bear' ? 'tag-bear' : 'tag-neutral';
+          var tagTxt = g.type === 'bull' ? '偏多' : g.type === 'bear' ? '偏空' : '中性';
+          return '<div class="signal ' + g.type + '">' +
+            '<div class="signal-head"><span class="tag ' + tagCls + '">' + tagTxt + '</span>' +
+            '<span class="signal-title">' + APP.esc(g.title) + '</span></div>' +
+            '<div class="signal-evidence">' + APP.esc(g.evidence) + '</div>' +
+            '<div class="signal-lesson">' + APP.md2html(g.lesson) + '</div>' +
+            '</div>';
+        }).join('') + '<p class="small muted"><a href="pages/market.html">查看完整分析与图表 →</a></p>'
+      : APP.empty('今日未识别到显著信号');
+
+    // ---- 指数概览表 ----
+    var idx = (market && market.indexes) || [];
+    if (idx.length) {
+      document.getElementById('idxTable').innerHTML =
+        '<thead><tr><th>指数</th><th class="num">最新</th><th class="num">涨跌幅</th>' +
+        '<th class="num">成交额</th><th class="num">涨/跌家数</th></tr></thead><tbody>' +
+        idx.map(function (i) {
+          return '<tr><td>' + APP.esc(i.name) + '</td>' +
+            '<td class="num mono">' + APP.fmt.num(i.price, 2) + '</td>' +
+            '<td class="num mono ' + APP.cls(i.pct) + '">' + APP.fmt.pct(i.pct) + '</td>' +
+            '<td class="num mono">' + (i.amount ? APP.fmt.int(i.amount / 1e8) + '亿' : '—') + '</td>' +
+            '<td class="num mono">' +
+              (i.up != null ? '<span class="up">' + i.up + '</span> / <span class="down">' + i.down + '</span>' : '—') +
+            '</td></tr>';
+        }).join('') + '</tbody>';
+    }
+
+    // ---- 心理提醒 ----
+    var psy = analysis.psychology || [];
+    document.getElementById('psy').innerHTML = psy.length
+      ? psy.map(function (p) {
+          var lvl = p.level === 'high' ? 'tag-high' : p.level === 'medium' ? 'tag-warn' : 'tag-neutral';
+          var lvlTxt = p.level === 'high' ? '高' : p.level === 'medium' ? '中' : '低';
+          return '<div class="signal" style="border-left-color:' +
+            (p.level === 'high' ? 'var(--danger)' : p.level === 'medium' ? 'var(--warn)' : 'var(--border-strong)') + '">' +
+            '<div class="signal-head"><span class="tag ' + lvl + '">触发概率 ' + lvlTxt + '</span>' +
+            '<span class="signal-title">' + APP.esc(p.bias.replace('behavior-', '')) + '</span>' +
+            '<a class="btn btn-sm" href="pages/mindset.html#bias-' + p.bias + '">查看偏差卡片</a></div>' +
+            '<div class="signal-lesson">' + APP.md2html(p.text) + '</div></div>';
+        }).join('')
+      : APP.empty('当前环境无特别提示');
+
+    document.getElementById('footerTime').textContent =
+      '本地更新时间 ' + new Date().toLocaleString('zh-CN');
+  });
+})();
+</script>
+</body>
+</html>
