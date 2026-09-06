@@ -178,6 +178,12 @@ E:\MyOutput\AI_Project\个人发展-研究投资-20260906\
 >   （+中证500/科创50；港美股接口实测不可用）。
 > - 导航现为 7 项；回填样本标 backfilled 与实时样本区分；当前总体命中率约 32%（真实数据，
 >   规则并非都靠谱——这正是比对平台的意义）。
+>
+> **✅ 2026-09-06 书单子栏目（后续 AI）**：新页 `pages/books.html` + `data/content/books.json`。
+> 首批 50 本书 × 9 方向（value/fundamental/technical/behavior/macro/allocation/risk/master/china），
+> 每本含导读/核心要点/**上站实践指引**（关联本站具体模块的用法）/关联知识条目 id（引用闭合，
+> 有 pytest 校验）。阅读状态存 `invest_books_status`（已在 mydata.html STORES 登记）。
+> 导航现为 8 项。新增书籍直接往 books.json 追加即可，tests/test_data_files.py 会校验结构。
 
 ### ✅ 已完成
 
