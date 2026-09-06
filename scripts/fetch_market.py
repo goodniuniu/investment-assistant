@@ -277,13 +277,16 @@ def main():
         print(json.dumps(snapshot, ensure_ascii=False)[:1500])
         return 0
 
-    # 幂等保护：非交易日重复运行时，最新交易日不变，跳过写入以免产生空提交
+    # 幂等保护：非交易日 / 数据无变化时跳过写入,避免空 commit。
+    # 这里返回 0(成功跳过)而非非零值——GitHub Actions 不会把退出码 0 当作 failure。
     if not args.force:
         prev = _read_json(os.path.join(MARKET_DIR, "latest.json"))
         if prev and prev.get("trade_date") == snapshot.get("trade_date") and not args.dry_run:
             _log("交易日 %s 的数据已存在且无变化，跳过写入（用 --force 强制覆盖）"
                  % snapshot.get("trade_date"))
-            return 3
+            # 仍写出 step summary 友好的注记,便于 GitHub UI 直接看到
+            print("::notice::数据未变化，已跳过更新（exit code 0 = 成功跳过）")
+            return 0
 
     ctx = build_context(snapshot)
     analysis = rules.build(ctx)

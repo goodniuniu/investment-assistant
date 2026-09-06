@@ -22,6 +22,9 @@ on:
 permissions:
   contents: write
 
+# 防止旧版 Actions 触发 Node 20 deprecation 警告：
+# actions/checkout@v5 与 actions/setup-python@v6 已发布，默认使用 Node 24。
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -29,14 +32,16 @@ jobs:
 
     steps:
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 配置 Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
       - name: 抓取并分析市场数据
+        # 即使脚本未来出现异常,也尝试提交已写出的部分（主要是兜底,大部分错误由日志体现）
+        continue-on-error: true
         env:
           TZ: Asia/Shanghai
           # 以下三个 Secret 均为可选。未配置时脚本自动降级为纯规则引擎输出。
@@ -52,6 +57,7 @@ jobs:
           fi
 
       - name: 提交数据变更
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -59,6 +65,7 @@ jobs:
           # 交易日未变化时脚本会跳过写入，此时暂存区为空，不产生提交
           if git diff --quiet --cached; then
             echo "数据无变化，跳过提交"
+            echo "::notice::本次运行无数据变更，未产生 commit"
           else
             DATE=$(date -u -d '+8 hours' '+%Y-%m-%d %H:%M')
             git commit -m "chore(data): 更新市场数据 ${DATE} CST"
