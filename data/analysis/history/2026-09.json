@@ -116,6 +116,22 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-09-09",
+      "benchmark": "沪深300",
+      "sentiment": 29.9,
+      "sentiment_label": "低迷",
+      "risk_level": "low",
+      "risk_score": 3.4,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
