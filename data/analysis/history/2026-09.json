@@ -132,6 +132,32 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-09-10",
+      "benchmark": "沪深300",
+      "sentiment": 17.8,
+      "sentiment_label": "冰点",
+      "risk_level": "low",
+      "risk_score": 18.0,
+      "signals": [
+        {
+          "id": "ma_bear",
+          "type": "bear",
+          "title": "均线空头排列"
+        },
+        {
+          "id": "breadth_cold",
+          "type": "bear",
+          "title": "普跌格局"
+        },
+        {
+          "id": "fund_outflow",
+          "type": "bear",
+          "title": "主力资金大幅净流出"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
