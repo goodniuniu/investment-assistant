@@ -221,6 +221,37 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-09-16",
+      "benchmark": "沪深300",
+      "sentiment": 64.9,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 5.4,
+      "signals": [
+        {
+          "id": "ma_bear",
+          "type": "bear",
+          "title": "均线空头排列"
+        },
+        {
+          "id": "limit_up_hot",
+          "type": "bear",
+          "title": "涨停家数过热"
+        },
+        {
+          "id": "vol_low",
+          "type": "neutral",
+          "title": "波动率处于低位"
+        },
+        {
+          "id": "fund_inflow",
+          "type": "bull",
+          "title": "主力资金净流入"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
