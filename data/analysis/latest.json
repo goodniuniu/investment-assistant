@@ -1,67 +1,55 @@
 {
   "sentiment": {
-    "score": 64.9,
+    "score": 33.6,
     "components": [
       {
         "name": "momentum",
-        "score": 40.2,
+        "score": 38.0,
         "weight": 22.0
       },
       {
         "name": "breadth",
-        "score": 93.7,
+        "score": 46.1,
         "weight": 20.0
       },
       {
         "name": "volume",
-        "score": 19.2,
+        "score": 15.2,
         "weight": 13.0
       },
       {
         "name": "profit_effect",
-        "score": 98.7,
+        "score": 42.7,
         "weight": 20.0
       },
       {
         "name": "leverage",
-        "score": 19.1,
+        "score": 34.9,
         "weight": 10.0
       },
       {
         "name": "fund_flow",
-        "score": 88.2,
+        "score": 13.5,
         "weight": 15.0
       }
     ],
     "coverage": 100.0
   },
-  "sentiment_label": "温和偏暖",
-  "sentiment_desc": "情绪略偏乐观，结构性机会为主",
+  "sentiment_label": "偏冷",
+  "sentiment_desc": "情绪低迷，观望氛围较浓",
   "risk_level": "low",
-  "risk_score": 5.4,
+  "risk_score": 0.0,
   "signals": [
     {
       "id": "ma_bear",
       "type": "bear",
       "title": "均线空头排列",
-      "evidence": "MA5=4494、MA10=4528、MA20=4561、MA60=4670，收盘 4480",
+      "evidence": "MA5=4476、MA10=4518、MA20=4554、MA60=4661，收盘 4460",
       "lesson": "均线自上而下排列且价格位于最下方，意味着各周期买入者普遍被套，每一次反弹都会遇到解套盘的抛压，趋势具有自我延续性。空头排列中抢反弹的难度显著高于上升趋势中回调买入——因为你面对的不是暂时的获利回吐，而是持续的解套供给。空头排列的终结信号通常是：指数不再创新低、成交量萎缩、随后放量收复短期均线。",
       "knowledge": [
         "tech-moving-average",
         "tech-trend",
         "risk-drawdown"
-      ]
-    },
-    {
-      "id": "limit_up_hot",
-      "type": "bear",
-      "title": "涨停家数过热",
-      "evidence": "涨停 89 家、跌停 5 家，最高连板 6 板",
-      "lesson": "涨停家数是短线情绪最直接的体温计。数量激增说明游资活跃、赚钱效应强，但也意味着市场进入高换手、高博弈阶段。历史经验是：涨停家数从高位快速回落（例如腰斩）时，往往伴随短线情绪退潮与指数调整。因此过热期参与短线，必须预先想好退出条件，而不是等情绪转冷再做决定——那时流动性已消失。",
-      "knowledge": [
-        "sentiment-limit-up",
-        "risk-liquidity",
-        "behavior-herding"
       ]
     },
     {
@@ -74,23 +62,13 @@
         "sentiment-volatility",
         "risk-black-swan"
       ]
-    },
-    {
-      "id": "fund_inflow",
-      "type": "bull",
-      "title": "主力资金净流入",
-      "evidence": "主力资金净流入 306 亿元",
-      "lesson": "资金净流入说明大单主动买入占优。同样要提醒：单日数据噪音极大，参考价值有限；**连续性**才是关键——连续 3-5 日净流入的说服力远高于单日巨额流入。此外，资金流入若伴随股价不涨，需警惕是否有大单在掩护出货。",
-      "knowledge": [
-        "sentiment-fund-flow"
-      ]
     }
   ],
   "psychology": [
     {
-      "bias": "behavior-gambler",
-      "level": "high",
-      "text": "涨停板密集时，「连板规律」「必涨形态」之类的错觉会格外强烈。涨停之间并无统计上的依赖关系，历史序列不产生概率优势。若你发现自己在使用「都涨这么多了该跌了」或「已经跌这么多该反弹了」这类推理，请停下来——这是赌徒谬误。"
+      "bias": "behavior-anchoring",
+      "level": "low",
+      "text": "市场缺乏明确方向时，最容易被「成本价」锚定：涨到成本就想卖，跌破成本就死扛。成本价是你个人的历史数字，市场对此一无所知。请用「当前价格 vs 当前价值」替代「当前价格 vs 我的成本」来思考。"
     }
   ],
   "discipline": [
@@ -227,103 +205,103 @@
       "scope": "单日流向噪音大，连续多日才有意义"
     }
   },
-  "trade_date": "2026-09-16",
-  "generated_at": "2026-09-16T23:09:52+08:00",
+  "trade_date": "2026-09-17",
+  "generated_at": "2026-09-17T23:15:50+08:00",
   "benchmark": "沪深300",
   "market_snapshot": {
-    "last_close": 4480.27,
-    "pct": 0.71,
-    "amount_yi": 18391.2,
+    "last_close": 4460.16,
+    "pct": -0.41,
+    "amount_yi": 18231.3,
     "breadth": {
-      "up": 3935,
-      "down": 1149,
-      "flat": 199,
-      "total": 5283,
-      "up_ratio": 74.48,
-      "up_down_ratio": 3.425
+      "up": 2528,
+      "down": 2594,
+      "flat": 164,
+      "total": 5286,
+      "up_ratio": 47.82,
+      "up_down_ratio": 0.975
     },
-    "limit_up_count": 89,
-    "limit_down_count": 5,
-    "max_streak": 6,
-    "main_flow_yi": 305.5,
-    "margin_balance_yi": 25982.9,
-    "margin_change_5d_pct": -0.928,
-    "margin_net_buy_yi": 5.7,
-    "margin_ratio": 2.66064,
-    "rsi14": 38.42,
-    "volatility20": 10.46,
-    "volume_ratio": 1.02,
+    "limit_up_count": 47,
+    "limit_down_count": 4,
+    "max_streak": 5,
+    "main_flow_yi": -292.4,
+    "margin_balance_yi": 26075.4,
+    "margin_change_5d_pct": -0.453,
+    "margin_net_buy_yi": 92.5,
+    "margin_ratio": 2.645226,
+    "rsi14": 36.64,
+    "volatility20": 10.49,
+    "volume_ratio": 1.054,
     "ma": {
-      "ma5": 4493.787999999991,
-      "ma10": 4527.593000000002,
-      "ma20": 4560.874000000001,
-      "ma60": 4670.182833333334
+      "ma5": 4476.141999999992,
+      "ma10": 4518.351000000001,
+      "ma20": 4554.244500000001,
+      "ma60": 4660.8505000000005
     },
     "ma_alignment": "bear",
     "macd": {
-      "dif": -44.837,
-      "dea": -36.549,
-      "hist": -16.576,
+      "dif": -46.988,
+      "dea": -38.637,
+      "hist": -16.703,
       "cross": null
     },
-    "price_percentile_250": 6.0,
-    "ret20": -2.36,
-    "ret60": -9.36,
+    "price_percentile_250": 3.6,
+    "ret20": -2.89,
+    "ret60": -11.15,
     "max_drawdown_250": 12.05
   },
   "context": {
-    "trade_date": "2026-09-16",
-    "generated_at": "2026-09-16T23:09:52+08:00",
+    "trade_date": "2026-09-17",
+    "generated_at": "2026-09-17T23:15:50+08:00",
     "errors": [],
-    "last_date": "2026-09-16",
-    "last_close": 4480.27,
+    "last_date": "2026-09-17",
+    "last_close": 4460.16,
     "bars": 250,
-    "ma5": 4493.787999999991,
-    "ma10": 4527.593000000002,
-    "ma20": 4560.874000000001,
-    "ma60": 4670.182833333334,
-    "ma120": 4726.40508333333,
-    "ma250": 4673.85104,
+    "ma5": 4476.141999999992,
+    "ma10": 4518.351000000001,
+    "ma20": 4554.244500000001,
+    "ma60": 4660.8505000000005,
+    "ma120": 4726.26033333333,
+    "ma250": 4673.850399999999,
     "ma_alignment": "bear",
     "macd": {
-      "dif": -44.837,
-      "dea": -36.549,
-      "hist": -16.576,
+      "dif": -46.988,
+      "dea": -38.637,
+      "hist": -16.703,
       "cross": null
     },
-    "rsi14": 38.42,
-    "atr14": 61.22,
-    "volatility20": 10.46,
-    "volume_ratio": 1.02,
-    "consecutive": 1,
-    "price_percentile_250": 6.0,
-    "amount_percentile_250": 19.2,
-    "volume_percentile_250": 5.6,
-    "ret5": -2.02,
-    "ret20": -2.36,
-    "ret60": -9.36,
+    "rsi14": 36.64,
+    "atr14": 59.84,
+    "volatility20": 10.49,
+    "volume_ratio": 1.054,
+    "consecutive": -1,
+    "price_percentile_250": 3.6,
+    "amount_percentile_250": 15.2,
+    "volume_percentile_250": 9.6,
+    "ret5": -1.94,
+    "ret20": -2.89,
+    "ret60": -11.15,
     "ret250": null,
     "max_drawdown_250": 12.05,
     "benchmark": "沪深300",
-    "pct": 0.71,
+    "pct": -0.41,
     "breadth": {
-      "up": 3935,
-      "down": 1149,
-      "flat": 199,
-      "total": 5283,
-      "up_ratio": 74.48,
-      "up_down_ratio": 3.425
+      "up": 2528,
+      "down": 2594,
+      "flat": 164,
+      "total": 5286,
+      "up_ratio": 47.82,
+      "up_down_ratio": 0.975
     },
-    "amount_total": 1839121873617.5327,
-    "amount_yi": 18391.2,
-    "limit_up_count": 89,
-    "max_streak": 6,
-    "limit_down_count": 5,
-    "main_flow_yi": 305.5,
-    "margin_change_5d_pct": -0.928,
-    "margin_balance_yi": 25982.9,
-    "margin_net_buy_yi": 5.7,
-    "margin_ratio": 2.66064
+    "amount_total": 1823134270447.2905,
+    "amount_yi": 18231.3,
+    "limit_up_count": 47,
+    "max_streak": 5,
+    "limit_down_count": 4,
+    "main_flow_yi": -292.4,
+    "margin_change_5d_pct": -0.453,
+    "margin_balance_yi": 26075.4,
+    "margin_net_buy_yi": 92.5,
+    "margin_ratio": 2.645226
   },
   "data_errors": [],
   "engine": "rules"
