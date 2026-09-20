@@ -1,0 +1,10 @@
+{
+  "name": "investment-assistant",
+  "version": "1.1.0",
+  "private": true,
+  "description": "投资辅助站 — 纯静态 A 股学习与决策伴侣（GitHub Pages + Actions）",
+  "scripts": {
+    "dev": "python scripts/dev_server.py",
+    "test": "python -m pytest tests/ -q"
+  }
+}

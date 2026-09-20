@@ -68,6 +68,19 @@
     return days.filter(d => (seen.has(d.date) ? false : (seen.add(d.date), true)));
   }
 
+  // 读取纯文本资源（如规则引擎源码 scripts/lib/rules.py），失败返回 null
+  async function loadText(relPath) {
+    const url = asset(relPath);
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.text();
+    } catch (e) {
+      console.warn('[文本加载失败] ' + url, e);
+      return null;
+    }
+  }
+
   // ---------------------------------------------------- 格式化
   const fmt = {
     num: function (v, digits) {
@@ -453,6 +466,6 @@
     freshnessNotice: freshnessNotice,
     fmt: fmt, cls: cls, md2html: md2html, esc: esc,
     chart: chart, mountNav: mountNav, disclaimer: disclaimer,
-    empty: empty, dataNotice: dataNotice, svgEl: svgEl
+    empty: empty, dataNotice: dataNotice, svgEl: svgEl, loadText: loadText
   };
 })(window);

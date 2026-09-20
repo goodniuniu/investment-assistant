@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>投资知识库 · 从原理到实践</title>
 <link rel="stylesheet" href="../assets/css/main.css">
+<style>
+/* 近期市场实例：最小增量样式（配色沿用全局红涨绿跌变量） */
+.kb-inst-dot { display:inline-block; width:8px; height:8px; border-radius:50%;
+  margin-right:7px; vertical-align:1px; }
+.kb-inst-dot.bull { background:var(--up); }
+.kb-inst-dot.bear { background:var(--down); }
+.kb-inst-dot.neutral { background:#b9c0c9; }
+.kb-inst-row { font-size:13px; line-height:2; color:var(--text-2); }
+.kb-inst-row .d { font-family:var(--mono); font-size:12px; color:var(--text-3); margin-right:8px; }
+.kb-only-inst { display:flex; align-items:center; gap:6px; margin:10px 0 2px;
+  font-size:13px; color:var(--text-2); cursor:pointer; user-select:none; }
+</style>
 </head>
 <body>
 
@@ -35,6 +47,9 @@
   <div class="kb-layout">
     <aside class="kb-side">
       <input type="text" class="kb-search" id="search" placeholder="搜索条目、标签…">
+      <label class="kb-only-inst" id="onlyInstWrap" style="display:none">
+        <input type="checkbox" id="onlyInst"> 仅看近期有实例
+      </label>
       <div id="reviewPanel"></div>
       <div id="cats"></div>
       <div class="small muted" style="margin-top:14px;line-height:1.6">
@@ -65,6 +80,8 @@
   document.getElementById('disclaimer').innerHTML = APP.disclaimer();
 
   var DATA = null, activeCat = 'all', keyword = '';
+  var INSTANCES = null;   // { 条目id: { days: 引用交易日数, list: [{date,title,type}] } }，加载失败保持 null 静默降级
+  var onlyInst = false;   // 「仅看近期有实例」开关
 
   // ---------------------------------------------- 间隔复习（简易 SM-2）
   var LS_RV = 'invest_kb_review';
@@ -131,6 +148,80 @@
     }
   });
 
+  // ---------------------------------------------- 近期市场实例（理论 → 实践）
+  // 历史归档的信号只有 id/type/title，knowledge 关联需从规则引擎源码
+  // scripts/lib/rules.py 的 sig.append({... "knowledge": [...]}) 块解析；
+  // latest.json 的信号自带 knowledge 字段，优先使用。任一步失败均静默降级。
+  var INST_DAYS = 60;    // 统计窗口：近 60 个自然日
+  var INST_SHOW = 5;     // 展开区最多列出的实例数
+
+  function parseSignalKnowledge(src) {
+    var map = {};
+    if (!src) return map;
+    var blocks = src.split('sig.append({');
+    for (var i = 1; i < blocks.length; i++) {
+      var blk = blocks[i].split('})')[0];
+      var mid = /"id":\s*"([^"]+)"/.exec(blk);
+      var mkn = /"knowledge":\s*\[([\s\S]*?)\]/.exec(blk);
+      if (!mid || !mkn) continue;
+      var ids = [], km, kr = /"([^"]+)"/g;
+      while ((km = kr.exec(mkn[1]))) ids.push(km[1]);
+      if (ids.length) map[mid[1]] = ids;
+    }
+    return map;
+  }
+
+  function buildInstances(histDays, latest, sigMap) {
+    var byDate = {};
+    (histDays || []).forEach(function (d) {
+      if (d && d.date && Array.isArray(d.signals)) byDate[d.date] = d;
+    });
+    // latest.json 用 trade_date 作为日期；同一天覆盖历史条目（其 signals 带完整 knowledge 字段）
+    if (latest && latest.trade_date && Array.isArray(latest.signals)) {
+      byDate[latest.trade_date] = { date: latest.trade_date, signals: latest.signals };
+    }
+    var cutoff = addDays(-INST_DAYS); // 'YYYY-MM-DD' 可直接字典序比较
+    var out = {};
+    Object.keys(byDate).forEach(function (date) {
+      if (date < cutoff) return;
+      var counted = {}; // 同一交易日同一条目只计 1 次
+      byDate[date].signals.forEach(function (s) {
+        if (!s || !s.id) return;
+        var ks = (Array.isArray(s.knowledge) && s.knowledge.length) ? s.knowledge : (sigMap[s.id] || []);
+        ks.forEach(function (k) {
+          if (!out[k]) out[k] = { days: 0, list: [] };
+          if (!counted[k]) { counted[k] = 1; out[k].days++; }
+          out[k].list.push({
+            date: date,
+            title: s.title || s.id,
+            type: (s.type === 'bull' || s.type === 'bear') ? s.type : 'neutral'
+          });
+        });
+      });
+    });
+    Object.keys(out).forEach(function (k) {
+      out[k].list.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+      out[k].list = out[k].list.slice(0, INST_SHOW);
+    });
+    return out;
+  }
+
+  function loadInstances() {
+    Promise.all([
+      APP.loadAnalysisHistory(3),
+      APP.load('data/analysis/latest.json'),
+      APP.loadText('scripts/lib/rules.py')
+    ]).then(function (rs) {
+      var sigMap = parseSignalKnowledge(rs[2]);
+      var inst = buildInstances(rs[0], rs[1], sigMap);
+      if (!Object.keys(inst).length) return; // 无实例可显示，保持降级
+      INSTANCES = inst;
+      document.getElementById('onlyInstWrap').style.display = '';
+      render();
+    }).catch(function () { /* 静默降级：不显示实例区块 */ });
+  }
+  loadInstances();
+
   function countBy(cid) {
     if (cid === 'all') return DATA.items.length;
     return DATA.items.filter(function (i) { return i.category === cid; }).length;
@@ -162,6 +253,7 @@
     return DATA.items.filter(function (i) {
       if (activeCat === '__due__' && !isDue(i.id)) return false;
       if (activeCat !== 'all' && activeCat !== '__due__' && i.category !== activeCat) return false;
+      if (onlyInst && !(INSTANCES && INSTANCES[i.id])) return false;
       if (!kw) return true;
       var hay = [i.title, i.summary, i.id, (i.tags || []).join(' ')]
         .join(' ').toLowerCase();
@@ -181,6 +273,7 @@
       return;
     }
     document.getElementById('items').innerHTML = list.map(function (i) {
+      var inst = INSTANCES && INSTANCES[i.id];
       return '<div class="kb-item" id="kb-' + i.id + '" data-id="' + i.id + '">' +
         '<div class="kb-item-head">' +
           '<span class="arrow">▶</span>' +
@@ -188,6 +281,8 @@
             '<div class="kb-item-title">' + APP.esc(i.title) +
               ' <span class="tag tag-neutral" style="margin-left:6px">' + APP.esc(catName(i.category)) + '</span>' +
               ' <span class="tag ' + (i.level === '入门' ? 'tag-info' : 'tag-warn') + '">' + APP.esc(i.level) + '</span>' +
+              (inst ? ' <span class="tag tag-info" title="近 ' + INST_DAYS + ' 天内有 ' + inst.days +
+                ' 个交易日的市场信号引用了本条目">近期实例 ×' + inst.days + '</span>' : '') +
             '</div>' +
             '<div class="kb-item-sum">' + APP.esc(i.summary) + '</div>' +
           '</div>' +
@@ -196,6 +291,17 @@
           '<div class="kb-sec"><h4>核心要点</h4><ul class="kb-points">' +
             (i.points || []).map(function (p) { return '<li>' + APP.md2html(p) + '</li>'; }).join('') +
           '</ul></div>' +
+          (inst
+            ? '<div class="kb-sec"><h4>近期市场实例</h4>' +
+              inst.list.map(function (x) {
+                return '<div class="kb-inst-row">' +
+                  '<span class="kb-inst-dot ' + x.type + '"></span>' +
+                  '<span class="d">' + APP.esc(x.date) + '</span>' + APP.esc(x.title) + '</div>';
+              }).join('') +
+              '<div class="small muted" style="margin-top:6px">近 ' + INST_DAYS +
+                ' 天内共 ' + inst.days + ' 个交易日出现 · ' +
+                '<a href="review.html">查看规则复盘 →</a></div>' +
+              '</div>' : '') +
           ((i.pitfalls || []).length
             ? '<div class="kb-sec"><h4>常见陷阱</h4>' +
               (i.pitfalls || []).map(function (p) { return '<div class="kb-pitfall">' + APP.md2html(p) + '</div>'; }).join('') +
@@ -268,6 +374,11 @@
 
   document.getElementById('search').addEventListener('input', function (e) {
     keyword = e.target.value;
+    render();
+  });
+
+  document.getElementById('onlyInst').addEventListener('change', function (e) {
+    onlyInst = e.target.checked;
     render();
   });
 

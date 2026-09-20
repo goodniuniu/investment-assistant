@@ -15,6 +15,9 @@
 | **投资知识库** | 54 个条目,覆盖估值 · 技术分析 · 宏观 · 资产配置 · 风险管理 · 行为金融 |
 | **投资心理** | 10 张认知偏差卡片 · 交易前/卖前清单 · 情绪自评量表 · 决策日记 (本地存储) |
 | **决策工具** | 凯利公式 · 仓位管理 · 止盈止损 · 盈亏比 · 最大回撤推算 |
+| **复盘比对** | 信号×实际 +5/+20 日对照 · 规则战绩榜 · 情绪极端组复盘 |
+| **投资书单** | 50 本经典 × 9 方向 · 导读与核心要点 · 上站实践指引 · 阅读状态跟踪 |
+| **我的数据** | 日记/清单/复习/阅读状态的统一导出 · 导入 · 清除 (均为浏览器本地存储) |
 
 每个市场信号都会**关联到对应的知识条目和心理偏差**——这正是核心设计:把数据、原理、自律串成一条线。
 
@@ -58,8 +61,10 @@ python scripts/fetch_market.py --interval 2.5
 │   │   ┌──────────────┐   │                    │   ├─ pages/market.html    │
 │   │   │ 东方财富/     │   │                    │   ├─ pages/knowledge.html │
 │   │   │ 新浪/腾讯     │   │                    │   ├─ pages/mindset.html   │
-│   │   │ 备用源        │   │                    │   └─ pages/tools.html     │
-│   │   └──────────────┘   │                    │                          │
+│   │   │ 备用源        │   │                    │   ├─ pages/tools.html     │
+│   │   └──────────────┘   │                    │   ├─ pages/review.html    │
+│   │                       │                    │   ├─ pages/books.html     │
+│   │                       │                    │   └─ pages/mydata.html    │
 │   │                       │                    │   assets/ (CSS / JS)     │
 │  rules.py                │   静态读取 JSON     │   data/   (JSON 仓库)     │
 │   ├─ 技术指标            │   渲染图表与解读    │                          │
@@ -77,12 +82,15 @@ python scripts/fetch_market.py --interval 2.5
 
 ```
 .
-├── index.html               # 首页:市场状态+信号+心理提醒
+├── index.html               # 首页:市场状态+信号+心理提醒+新鲜度横幅
 ├── pages/
-│   ├── market.html          # 行情看板:K线/情绪历史/板块
-│   ├── knowledge.html       # 投资知识库(54条)
+│   ├── market.html          # 行情看板:K线/情绪历史/板块/宽基对照
+│   ├── knowledge.html       # 投资知识库(54条,含间隔复习)
 │   ├── mindset.html         # 投资心理:偏差/清单/日记
-│   └── tools.html           # 决策工具:计算器
+│   ├── tools.html           # 决策工具:计算器
+│   ├── review.html          # 复盘比对:信号×实际/规则战绩榜
+│   ├── books.html           # 投资书单(50 本 × 9 方向)
+│   └── mydata.html          # 我的数据:本地存储导出/导入/清除
 ├── assets/
 │   ├── css/main.css         # 浅色主题,红涨绿跌(中国惯例)
 │   └── js/app.js            # 公共:数据加载/格式化/SVG图表引擎
@@ -91,20 +99,28 @@ python scripts/fetch_market.py --interval 2.5
 │   │   ├── latest.json          # 当日快照(125KB,含K线)
 │   │   └── history/YYYY-MM.json # 按月归档(每日轻量数据)
 │   ├── analysis/
-│   │   └── latest.json          # 当日完整解读(情绪/信号/心理)
+│   │   ├── latest.json          # 当日完整解读(情绪/信号/心理/rules_meta)
+│   │   └── history/YYYY-MM.json # 分析留痕按月归档(复盘比对数据源)
+│   ├── meta/
+│   │   └── status.json          # 新鲜度哨兵(last_success_at/ok/errors)
 │   └── content/
 │       ├── knowledge.json       # 知识库(54 条目 × 11 字段)
-│       └── psychology.json      # 心理模块(10 偏差 + 清单 + 量表)
+│       ├── psychology.json      # 心理模块(10 偏差 + 清单 + 量表)
+│       └── books.json           # 书单(50 本,关联知识条目 id)
 ├── scripts/
 │   ├── fetch_market.py      # 主抓取脚本
+│   ├── backfill_analysis.py # 离线回填历史分析(幂等)
 │   ├── ai_comment.py        # 可选 AI 深度解读
 │   └── lib/
 │       ├── http.py              # 节流+多域名轮换+指数退避
 │       ├── eastmoney.py         # 东财接口封装(每个接口可独立降级)
 │       ├── indicators.py        # MA/EMA/MACD/RSI/ATR/分位数
-│       └── rules.py             # 趋势/量能/宽度/情绪/信号/心理
+│       └── rules.py             # 趋势/量能/宽度/情绪/信号/心理(22 条规则含 RULES_META)
+├── tests/                     # pytest 25 用例(指标/规则/数据结构校验)
 ├── .github/workflows/
-│   └── daily-market.yml     # 定时工作流(每日 17:30 北京时间)
+│   ├── daily-market.yml     # 定时工作流(每日 17:30 北京时间)
+│   ├── deploy-pages.yml     # push 到 main 即部署 Pages
+│   └── ci.yml               # push/PR 跑 pytest + 语法检查
 └── README.md
 ```
 
@@ -150,10 +166,12 @@ AI_API_KEY=sk-xxx AI_BASE_URL=https://api.moonshot.cn/v1 \
 
 ## ⏰ GitHub Pages 部署
 
-1. 把本仓库推到 GitHub
-2. Settings → Pages → Build and deployment → Source = **GitHub Actions**
-3. Actions 会自动跑工作流:首次执行后 `data/analysis/latest.json` 与 `data/market/latest.json` 出现,网页立刻可访问
-4. 定时任务在**每个交易日 17:30 北京时间**跑 (cron: `30 9 * * 1-5`,UTC)
+本仓库已按以下方式部署,线上地址 <https://goodniuniu.github.io/investment-assistant/>:
+
+1. Settings → Pages → Build and deployment → Source = **GitHub Actions**
+2. `.github/workflows/deploy-pages.yml` 负责部署:**任何 push 到 main(含每日数据 commit)都会触发一次重新部署**
+3. `daily-market.yml` 定时任务在**每个交易日 17:30 北京时间**跑 (cron: `30 9 * * 1-5`,UTC)
+4. `ci.yml` 在每次 push/PR 时跑 pytest(25 用例)与脚本语法检查
 5. 非交易日和失败时**不会产生空 commit**
 
 ### 手动触发 & 调试
@@ -185,7 +203,8 @@ AI_API_KEY=sk-xxx AI_BASE_URL=https://api.moonshot.cn/v1 \
 ## 🛠️ 本地开发小贴士
 
 ```bash
-# 仅看前端(不更新数据)
+# 仅看前端(不更新数据)——两种方式等价
+npm run dev                  # 默认 http://127.0.0.1:7100/,支持 -- --port/--host 传参
 python -m http.server 8123
 
 # 重新生成当前数据

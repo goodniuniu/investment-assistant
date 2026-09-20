@@ -77,6 +77,14 @@
     <div class="chart-box"><table class="tbl" id="sigTable"></table></div>
   </div>
 
+  <!-- 我的决策复盘（个人层：决策日记 × 实际走势） -->
+  <div class="card">
+    <h2 class="card-title">我的决策复盘
+      <span class="sub">你在「投资心理」页写下的决策日记 × 基准指数实际走势——检验的是你自己，不是规则</span>
+    </h2>
+    <div id="myReviewBody"></div>
+  </div>
+
   <div id="disclaimer"></div>
 </main>
 
@@ -94,12 +102,221 @@
   APP.mountNav('review');
   document.getElementById('disclaimer').innerHTML = APP.disclaimer();
 
+  // ============================================== 我的决策复盘（个人层）
+  // 读取 localStorage 的决策日记（invest_journal），对照基准指数实际走势逐条验证。
+  // 与系统层复盘同口径：以 +5 个交易日基准涨跌判定方向对错。
+  function renderMyReview(market) {
+    var body = document.getElementById('myReviewBody');
+    if (!body) return;
+
+    var list = [];
+    try {
+      var raw = localStorage.getItem('invest_journal');
+      var parsed = raw ? JSON.parse(raw) : [];
+      if (Object.prototype.toString.call(parsed) === '[object Array]') list = parsed;
+    } catch (e) { list = []; }
+    list = list.filter(function (r) { return r && typeof r === 'object'; });
+
+    if (!list.length) {
+      body.innerHTML = APP.empty('还没有决策日记——个人层的复盘闭环从这里开始。') +
+        '<div style="margin-top:12px"><a class="btn btn-primary" href="mindset.html">去「投资心理」写第一条决策日记</a>' +
+        '<span class="small muted" style="margin-left:10px">日记只保存在你自己的浏览器，不会被上传</span></div>';
+      return;
+    }
+
+    // 基准 K 线（与系统层复盘同一基准、同一算法）
+    var kl = (market && market.klines) || {};
+    var benchId = kl['1.000300'] ? '1.000300' : (kl['1.000001'] ? '1.000001' : Object.keys(kl)[0]);
+    var krows = kl[benchId] || [];
+    var kmap = {};
+    krows.forEach(function (r, i) { kmap[r.date] = i; });
+    var benchName = benchId === '1.000300' ? '沪深300' : '上证指数';
+
+    // 动作 → 方向映射表：看多(bull) / 看空(bear) / 不计胜负(skip) / 无法判定(unknown)
+    var ACTION_DIR = {
+      '买入': 'bull', '加仓': 'bull', '补仓': 'bull', '定投': 'bull',
+      '卖出': 'bear', '减仓': 'bear', '清仓': 'bear', '止损': 'bear',
+      '观望': 'skip', '持有': 'skip', '无操作': 'skip', '不动': 'skip'
+    };
+    function dirOf(action) {
+      var a = String(action || '').replace(/\s+/g, '');
+      if (!a) return 'unknown';
+      if (ACTION_DIR[a]) return ACTION_DIR[a];
+      if (/观望|持有|无操作|不动|空仓/.test(a)) return 'skip';
+      if (/买|加仓|补仓/.test(a)) return 'bull';
+      if (/卖|减仓|清仓/.test(a)) return 'bear';
+      return 'unknown';
+    }
+
+    function fwdRet(date, n) {
+      var i = kmap[date];
+      if (i === undefined || i + n >= krows.length || !krows[i].close || !krows[i + n].close) return null;
+      return (krows[i + n].close / krows[i].close - 1) * 100;
+    }
+
+    // 逐条评估：基准日 = 日记 date（缺失时用记录时市场快照的 trade_date）
+    var rows = list.map(function (r) {
+      var mk = r.market || {};
+      var date = r.date || mk.trade_date || '';
+      var dir = dirOf(r.action);
+      var r5 = date ? fwdRet(date, 5) : null;
+      var r20 = date ? fwdRet(date, 20) : null;
+      var i = kmap[date];
+      var matured = i !== undefined && i + 5 < krows.length && !!(krows[i] && krows[i].close);
+      var verdict; // verified / wrong / pending / skip / unknown
+      if (dir === 'skip') verdict = 'skip';
+      else if (dir === 'unknown') verdict = 'unknown';
+      else if (!matured || r5 === null) verdict = 'pending';
+      else verdict = (dir === 'bull' ? r5 > 0 : r5 < 0) ? 'verified' : 'wrong';
+      return { rec: r, mk: mk, date: date, dir: dir, r5: r5, r20: r20, verdict: verdict,
+               conf: parseFloat(r.confidence),
+               senti: (mk.sentiment === null || mk.sentiment === undefined) ? NaN : parseFloat(mk.sentiment) };
+    });
+    rows.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+
+    var VERDICT_HTML = {
+      verified: '<span class="tag tag-bull">判断验证</span>',
+      wrong: '<span class="tag tag-bear">误判</span>',
+      pending: '<span class="tag tag-neutral">待定</span>',
+      skip: '<span class="tag tag-neutral">不计胜负</span>',
+      unknown: '<span class="tag tag-neutral">无法判定</span>'
+    };
+
+    function rateOf(list2) {
+      var ev = list2.filter(function (x) { return x.verdict === 'verified' || x.verdict === 'wrong'; });
+      return { n: ev.length,
+               hit: ev.filter(function (x) { return x.verdict === 'verified'; }).length,
+               rate: ev.length ? Math.round(ev.filter(function (x) { return x.verdict === 'verified'; }).length / ev.length * 100) : null };
+    }
+    function rateCell(g) {
+      return g.rate === null ? '<span class="muted">—</span>' :
+        '<span class="mono ' + (g.rate >= 50 ? 'up' : 'down') + '">' + g.rate + '%</span>' +
+        ' <span class="small muted">(' + g.hit + '/' + g.n + ')</span>';
+    }
+
+    var scored = rows.filter(function (x) { return x.verdict === 'verified' || x.verdict === 'wrong'; });
+    var overall = rateOf(rows);
+    var pendingN = rows.filter(function (x) { return x.verdict === 'pending'; }).length;
+
+    // ---- 总览统计 ----
+    var stats = [
+      { label: '决策总数', value: rows.length, cls: '', extra: '来自浏览器本地日记' },
+      { label: '已到期可判定', value: scored.length, cls: '', extra: '方向明确且已走完 +5 日' },
+      { label: '判断验证率', value: overall.rate === null ? '—' : overall.rate + '%',
+        cls: overall.rate === null ? '' : overall.rate >= 50 ? 'up' : 'down',
+        extra: '按 +5 日基准涨跌判定（' + benchName + '）' },
+      { label: '待定', value: pendingN, cls: '', extra: '尚未走完 5 个交易日' }
+    ];
+    var html = '<div class="grid grid-4" style="margin-bottom:16px">' + stats.map(function (x) {
+      return '<div class="stat"><div class="stat-label">' + x.label + '</div>' +
+        '<div class="stat-value ' + x.cls + '">' + x.value + '</div>' +
+        '<div class="stat-extra">' + APP.esc(x.extra) + '</div></div>';
+    }).join('') + '</div>';
+
+    // ---- 逐条复盘表 ----
+    function clip(s, n) {
+      s = String(s || '');
+      return s.length > n ? s.slice(0, n) + '…' : s;
+    }
+    html += '<div class="chart-box"><table class="tbl">' +
+      '<thead><tr><th>日期</th><th>动作</th><th>当时判断</th><th>当时市场情绪</th>' +
+      '<th class="num">+5日</th><th class="num">+20日</th><th>验证结论</th></tr></thead><tbody>' +
+      rows.map(function (x) {
+        var r = x.rec, mk = x.mk;
+        var judge = clip(r.judgement, 36);
+        var noteLine = r.note ? '<div class="small muted" style="margin-top:3px">复盘备注：' + APP.esc(clip(r.note, 40)) + '</div>' : '';
+        var sentiTxt = (mk.sentiment === null || mk.sentiment === undefined || mk.sentiment === '')
+          ? '<span class="muted">—</span>'
+          : '<span class="mono">' + APP.esc(String(mk.sentiment)) + '</span>' +
+            (mk.sentiment_label ? ' <span class="small muted">' + APP.esc(mk.sentiment_label) + '</span>' : '');
+        return '<tr><td class="mono">' + APP.esc(x.date || '—') + '</td>' +
+          '<td><span class="tag ' + (x.dir === 'bull' ? 'tag-bull' : x.dir === 'bear' ? 'tag-bear' : 'tag-neutral') + '">' +
+            APP.esc(r.action || '未填写') + '</span>' +
+            (isFinite(x.conf) ? '<div class="small muted" style="margin-top:3px">把握 ' + x.conf + '%</div>' : '') + '</td>' +
+          '<td>' + (judge ? APP.esc(judge) : '<span class="muted">—</span>') + noteLine + '</td>' +
+          '<td>' + sentiTxt + '</td>' +
+          '<td class="num mono ' + APP.cls(x.r5) + '">' + APP.fmt.pct(x.r5) + '</td>' +
+          '<td class="num mono ' + APP.cls(x.r20) + '">' + APP.fmt.pct(x.r20) + '</td>' +
+          '<td>' + VERDICT_HTML[x.verdict] + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+
+    // ---- 分组统计：按动作 / 按把握度 / 按记录时情绪 ----
+    var byAction = {};
+    rows.forEach(function (x) {
+      var k = x.rec.action || '未填写';
+      byAction[k] = byAction[k] || [];
+      byAction[k].push(x);
+    });
+    var actionRows = Object.keys(byAction).map(function (k) {
+      var g = rateOf(byAction[k]);
+      return '<tr><td>' + APP.esc(k) + '</td><td class="num mono">' + byAction[k].length + '</td>' +
+        '<td class="num mono">' + g.n + '</td><td class="num">' + rateCell(g) + '</td></tr>';
+    }).join('');
+
+    var confHi = rateOf(scored.filter(function (x) { return isFinite(x.conf) && x.conf >= 70; }));
+    var confLo = rateOf(scored.filter(function (x) { return isFinite(x.conf) && x.conf < 70; }));
+    var sentiHi = rateOf(scored.filter(function (x) { return isFinite(x.senti) && x.senti >= 60; }));
+    var sentiLo = rateOf(scored.filter(function (x) { return isFinite(x.senti) && x.senti <= 40; }));
+
+    html += '<div class="grid" style="grid-template-columns: 1fr 1fr; gap:16px; align-items:start; margin-top:16px">' +
+      '<div><div class="small" style="font-weight:600;margin-bottom:8px">按动作分组</div>' +
+      '<div class="chart-box"><table class="tbl"><thead><tr><th>动作</th><th class="num">次数</th>' +
+      '<th class="num">已到期</th><th class="num">验证率</th></tr></thead><tbody>' +
+      (actionRows || '<tr><td colspan="4" class="muted">—</td></tr>') + '</tbody></table></div></div>' +
+      '<div><div class="small" style="font-weight:600;margin-bottom:8px">按把握度 / 记录时情绪分组</div>' +
+      '<div class="chart-box"><table class="tbl"><thead><tr><th>分组</th><th class="num">已到期</th>' +
+      '<th class="num">验证率</th></tr></thead><tbody>' +
+      '<tr><td>把握 ≥ 70%</td><td class="num mono">' + confHi.n + '</td><td class="num">' + rateCell(confHi) + '</td></tr>' +
+      '<tr><td>把握 &lt; 70%</td><td class="num mono">' + confLo.n + '</td><td class="num">' + rateCell(confLo) + '</td></tr>' +
+      '<tr><td>情绪偏高（≥60）</td><td class="num mono">' + sentiHi.n + '</td><td class="num">' + rateCell(sentiHi) + '</td></tr>' +
+      '<tr><td>情绪偏低（≤40）</td><td class="num mono">' + sentiLo.n + '</td><td class="num">' + rateCell(sentiLo) + '</td></tr>' +
+      '</tbody></table></div></div></div>';
+
+    // ---- 行为洞察：全部基于上面的真实计算；样本不足就明说 ----
+    var MIN_N = 3, DIFF = 15;
+    var insights = [];
+    if (scored.length < MIN_N) {
+      insights.push('已到期可判定的决策只有 <strong>' + scored.length + '</strong> 条，样本不足，当前统计不构成结论。' +
+        '继续记录并等日记到期（+5 个交易日）后再看——这本身就是在对抗' +
+        '<a href="mindset.html#bias-behavior-hindsight">后见之明偏差</a>。');
+    }
+    if (confHi.n >= MIN_N && confLo.n >= MIN_N) {
+      if (confHi.rate + DIFF <= confLo.rate) {
+        insights.push('你在高把握（≥70%）时的验证率（' + confHi.rate + '%）反而低于低把握时（' + confLo.rate +
+          '%）——可能存在<a href="mindset.html#bias-behavior-overconfidence">过度自信偏差</a>：越笃定的时候，越值得回头检查论据。');
+      } else if (confLo.rate + DIFF <= confHi.rate) {
+        insights.push('把握度与验证率正相关（高把握 ' + confHi.rate + '% vs 低把握 ' + confLo.rate +
+          '%）——你的自我校准目前可信，可以继续保持「先报把握、事后对照」的习惯。');
+      }
+    }
+    if (sentiHi.n >= MIN_N && sentiLo.n >= MIN_N) {
+      if (sentiHi.rate + DIFF <= sentiLo.rate) {
+        insights.push('情绪偏高（≥60）时做的决策验证率（' + sentiHi.rate + '%）明显低于情绪偏低时（' + sentiLo.rate +
+          '%）——亢奋时更容易追随人群、放大近期趋势，警惕<a href="mindset.html#bias-behavior-herding">羊群效应</a>与' +
+          '<a href="mindset.html#bias-behavior-recency">近因偏差</a>。');
+      } else if (sentiLo.rate + DIFF <= sentiHi.rate) {
+        insights.push('情绪偏低（≤40）时做的决策验证率（' + sentiLo.rate + '%）明显低于情绪偏高时（' + sentiHi.rate +
+          '%）——恐慌中的判断同样会失真，注意<a href="mindset.html#bias-behavior-loss-aversion">损失厌恶</a>可能主导了你的操作。');
+      }
+    }
+    if (!insights.length) {
+      insights.push('分组样本还不够（每组至少 ' + MIN_N + ' 条已到期决策才做对比，避免被个别样本误导）。' +
+        '保持记录，样本到期后这里会自动生成对比结论。');
+    }
+    html += '<div style="margin-top:16px"><div class="small" style="font-weight:600;margin-bottom:8px">行为洞察（实践 → 理论）</div>' +
+      insights.map(function (t) { return '<p class="small muted" style="margin:0 0 8px">· ' + t + '</p>'; }).join('') +
+      '<div style="margin-top:6px"><a class="btn btn-sm" href="mindset.html">回到投资心理，继续写日记</a></div></div>';
+
+    body.innerHTML = html;
+  }
+
   Promise.all([
     APP.loadAnalysisHistory(12),
     APP.load('data/market/latest.json'),
     APP.load('data/analysis/latest.json')
   ]).then(function (res) {
     var days = res[0] || [], market = res[1], latest = res[2] || {};
+    renderMyReview(market);   // 个人层复盘：独立于系统层历史数据
     if (!days.length) {
       document.getElementById('notice').innerHTML =
         APP.dataNotice(false, '暂无历史分析数据。分析历史从启用留痕之日起累积，也可运行 scripts/backfill_analysis.py 回填。');
