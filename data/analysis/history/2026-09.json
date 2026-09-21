@@ -309,6 +309,47 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-09-21",
+      "benchmark": "沪深300",
+      "sentiment": 68.5,
+      "sentiment_label": "温和偏暖",
+      "risk_level": "low",
+      "risk_score": 0.6,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        },
+        {
+          "id": "macd_golden",
+          "type": "bull",
+          "title": "MACD 金叉"
+        },
+        {
+          "id": "breadth_hot",
+          "type": "bull",
+          "title": "普涨格局"
+        },
+        {
+          "id": "limit_up_hot",
+          "type": "bear",
+          "title": "涨停家数过热"
+        },
+        {
+          "id": "vol_low",
+          "type": "neutral",
+          "title": "波动率处于低位"
+        },
+        {
+          "id": "amount_hot",
+          "type": "neutral",
+          "title": "成交额高企"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
