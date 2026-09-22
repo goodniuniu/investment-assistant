@@ -350,6 +350,37 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-09-22",
+      "benchmark": "沪深300",
+      "sentiment": 43.0,
+      "sentiment_label": "中性",
+      "risk_level": "low",
+      "risk_score": 5.9,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        },
+        {
+          "id": "vol_low",
+          "type": "neutral",
+          "title": "波动率处于低位"
+        },
+        {
+          "id": "amount_hot",
+          "type": "neutral",
+          "title": "成交额高企"
+        },
+        {
+          "id": "fund_outflow",
+          "type": "bear",
+          "title": "主力资金大幅净流出"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
