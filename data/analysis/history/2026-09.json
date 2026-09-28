@@ -412,6 +412,37 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-09-28",
+      "benchmark": "沪深300",
+      "sentiment": 13.6,
+      "sentiment_label": "冰点",
+      "risk_level": "low",
+      "risk_score": 23.0,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        },
+        {
+          "id": "macd_dead",
+          "type": "bear",
+          "title": "MACD 死叉"
+        },
+        {
+          "id": "breadth_cold",
+          "type": "bear",
+          "title": "普跌格局"
+        },
+        {
+          "id": "fund_outflow",
+          "type": "bear",
+          "title": "主力资金大幅净流出"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
