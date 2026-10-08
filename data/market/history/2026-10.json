@@ -1,0 +1,22 @@
+{
+  "month": "2026-10",
+  "days": [
+    {
+      "date": "2026-10-08",
+      "sh_close": 3811.9,
+      "sh_pct": -0.79,
+      "cyb_pct": -3.15,
+      "hs300_pct": -1.09,
+      "amount_yi": 16821.3,
+      "up": 1654,
+      "down": 3516,
+      "up_ratio": 31.29,
+      "limit_up": 43,
+      "limit_down": 53,
+      "max_streak": 8,
+      "main_flow_yi": -480.4,
+      "sentiment": 16.2,
+      "risk_level": "medium"
+    }
+  ]
+}
