@@ -31,6 +31,27 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-10-09",
+      "benchmark": "沪深300",
+      "sentiment": 40.0,
+      "sentiment_label": "偏冷",
+      "risk_level": "low",
+      "risk_score": 25.0,
+      "signals": [
+        {
+          "id": "ma_bear",
+          "type": "bear",
+          "title": "均线空头排列"
+        },
+        {
+          "id": "margin_cold",
+          "type": "bull",
+          "title": "杠杆资金撤离"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
