@@ -1,135 +1,127 @@
 {
-  "generated_at": "2026-10-10T01:11:58+08:00",
-  "trade_date": "2026-10-09",
+  "generated_at": "2026-10-13T04:01:11+08:00",
+  "trade_date": "2026-10-12",
   "indexes": [
     {
       "code": "000001",
       "name": "上证指数",
-      "price": 3813.79,
-      "pct": 0.05,
-      "change": 1.89,
-      "volume": 535149921.0,
-      "amount": 888561198263.9,
-      "up": 1341.0,
-      "down": 956.0,
-      "flat": 60.0
+      "price": 3797.24,
+      "pct": -0.43,
+      "change": -16.55,
+      "volume": 461448981.0,
+      "amount": 714909910722.2,
+      "up": 545.0,
+      "down": 1769.0,
+      "flat": 43.0
     },
     {
       "code": "399001",
       "name": "深证成指",
-      "price": 12641.86,
-      "pct": 0.17,
-      "change": 20.96,
-      "volume": 632657827.0,
-      "amount": 1011994216302.3672,
-      "up": 1698.0,
-      "down": 1166.0,
-      "flat": 66.0
+      "price": 12384.87,
+      "pct": -2.03,
+      "change": -256.99,
+      "volume": 536100368.0,
+      "amount": 822921459018.4391,
+      "up": 581.0,
+      "down": 2313.0,
+      "flat": 38.0
     },
     {
       "code": "399006",
       "name": "创业板指",
-      "price": 3043.33,
-      "pct": 0.22,
-      "change": 6.67,
-      "volume": 197056283.0,
-      "amount": 494823547448.06,
-      "up": 708.0,
-      "down": 677.0,
-      "flat": 22.0
+      "price": 2963.82,
+      "pct": -2.61,
+      "change": -79.51,
+      "volume": 166226688.0,
+      "amount": 394480230843.77,
+      "up": 284.0,
+      "down": 1113.0,
+      "flat": 10.0
     },
     {
       "code": "000688",
       "name": "科创50",
-      "price": 1457.27,
-      "pct": 0.07,
-      "change": 0.95,
-      "volume": 9540742.0,
-      "amount": 91972939475.4,
-      "up": 29.0,
-      "down": 21.0,
+      "price": 1426.72,
+      "pct": -2.1,
+      "change": -30.55,
+      "volume": 6652779.0,
+      "amount": 64617424588.7,
+      "up": 8.0,
+      "down": 42.0,
       "flat": 0.0
     },
     {
       "code": "000300",
       "name": "沪深300",
-      "price": 4317.25,
-      "pct": 0.16,
-      "change": 6.97,
-      "volume": 199187416.0,
-      "amount": 496179130802.4,
-      "up": 179.0,
-      "down": 113.0,
-      "flat": 7.0
+      "price": 4287.98,
+      "pct": -0.68,
+      "change": -29.27,
+      "volume": 180717331.0,
+      "amount": 405573719315.5,
+      "up": 142.0,
+      "down": 152.0,
+      "flat": 5.0
     },
     {
       "code": "399905",
       "name": "中证 500",
-      "price": 7251.01,
-      "pct": 0.04,
-      "change": 2.58,
-      "volume": 164473084.0,
-      "amount": 331446262759.6,
-      "up": 310.0,
-      "down": 178.0,
-      "flat": 10.0
+      "price": 7093.02,
+      "pct": -2.18,
+      "change": -157.99,
+      "volume": 135979766.0,
+      "amount": 257222554302.6,
+      "up": 122.0,
+      "down": 364.0,
+      "flat": 13.0
     },
     {
       "code": "399852",
       "name": "中证1000",
-      "price": 7155.91,
-      "pct": 0.24,
-      "change": 17.33,
-      "volume": 240762141.0,
-      "amount": 386282618623.0,
-      "up": 617.0,
-      "down": 367.0,
-      "flat": 15.0
+      "price": 7021.47,
+      "pct": -1.88,
+      "change": -134.44,
+      "volume": 202898581.0,
+      "amount": 310149982162.3,
+      "up": 286.0,
+      "down": 692.0,
+      "flat": 21.0
     },
     {
       "code": "000016",
       "name": "上证50",
-      "price": 2807.46,
-      "pct": 0.08,
-      "change": 2.34,
-      "volume": 47317545.0,
-      "amount": 138579885126.2,
-      "up": 27.0,
-      "down": 23.0,
+      "price": 2819.41,
+      "pct": 0.43,
+      "change": 11.95,
+      "volume": 43867300.0,
+      "amount": 108555206299.5,
+      "up": 31.0,
+      "down": 19.0,
       "flat": 0.0
     }
   ],
   "breadth": {
-    "up": 3039,
-    "down": 2122,
-    "flat": 126,
-    "total": 5287,
-    "up_ratio": 57.48,
-    "up_down_ratio": 1.432
+    "up": 1126,
+    "down": 4082,
+    "flat": 81,
+    "total": 5289,
+    "up_ratio": 21.29,
+    "up_down_ratio": 0.276
   },
-  "amount_total": 1900555414566.267,
+  "amount_total": 1537831369740.6392,
   "limit_up": {
-    "count": 69,
-    "max_streak": 9,
+    "count": 46,
+    "max_streak": 10,
     "industries": [
       {
-        "name": "电池",
+        "name": "出版",
         "count": 6
       },
       {
-        "name": "出版",
-        "count": 5
-      },
-      {
-        "name": "软件开发",
-        "count": 5
-      },
-      {
-        "name": "一般零售",
+        "name": "影视院线",
         "count": 4
       },
       {
-        "name": "影视院线",
+        "name": "电网设备",
         "count": 4
       },
       {
@@ -141,217 +133,232 @@
         "count": 3
       },
       {
-        "name": "种植业",
-        "count": 3
+        "name": "电视广播",
+        "count": 2
+      },
+      {
+        "name": "电池",
+        "count": 2
+      },
+      {
+        "name": "软件开发",
+        "count": 2
       }
     ],
     "list": [
       {
-        "code": "002058",
-        "name": "紫竹高科",
-        "streak": 4,
-        "industry": "电池"
-      },
-      {
-        "code": "600241",
-        "name": "时代万恒",
-        "streak": 5,
-        "industry": "电池"
-      },
-      {
-        "code": "600825",
-        "name": "新华传媒",
-        "streak": 9,
-        "industry": "出版"
-      },
-      {
-        "code": "001300",
-        "name": "三柏硕",
-        "streak": 2,
-        "industry": "文娱用品"
-      },
-      {
         "code": "002242",
         "name": "九阳股份",
-        "streak": 5,
+        "streak": 6,
         "industry": "小家电"
       },
       {
         "code": "600812",
         "name": "华北制药",
-        "streak": 2,
+        "streak": 3,
         "industry": "化学制药"
       },
       {
-        "code": "002733",
-        "name": "雄韬股份",
+        "code": "600831",
+        "name": "广电网络",
+        "streak": 1,
+        "industry": "电视广播"
+      },
+      {
+        "code": "603096",
+        "name": "新经典",
         "streak": 2,
-        "industry": "电池"
-      },
-      {
-        "code": "002692",
-        "name": "远程股份",
-        "streak": 1,
-        "industry": "电网设备"
-      },
-      {
-        "code": "601811",
-        "name": "新华文轩",
-        "streak": 1,
         "industry": "出版"
       },
       {
         "code": "605136",
         "name": "丽人丽妆",
-        "streak": 1,
+        "streak": 2,
         "industry": "互联网电"
       },
       {
-        "code": "600207",
-        "name": "安彩高科",
-        "streak": 1,
-        "industry": "光伏设备"
-      },
-      {
-        "code": "605399",
-        "name": "晨光新材",
-        "streak": 1,
-        "industry": "化学制品"
-      },
-      {
-        "code": "002805",
-        "name": "丰元股份",
+        "code": "605287",
+        "name": "德才股份",
         "streak": 2,
-        "industry": "电池"
+        "industry": "装修装饰"
       },
       {
-        "code": "001336",
-        "name": "楚环科技",
-        "streak": 2,
-        "industry": "环保设备"
-      },
-      {
-        "code": "600478",
-        "name": "科力远",
-        "streak": 1,
-        "industry": "电池"
-      },
-      {
-        "code": "300821",
-        "name": "东岳硅材",
-        "streak": 1,
-        "industry": "化学制品"
-      },
-      {
-        "code": "603155",
-        "name": "新亚强",
-        "streak": 1,
-        "industry": "化学制品"
-      },
-      {
-        "code": "600843",
-        "name": "上工申贝",
-        "streak": 1,
-        "industry": "专用设备"
-      },
-      {
-        "code": "600127",
-        "name": "金健米业",
-        "streak": 1,
-        "industry": "农产品加"
-      },
-      {
-        "code": "300530",
-        "name": "领湃科技",
-        "streak": 2,
-        "industry": "电池"
-      },
-      {
-        "code": "600629",
-        "name": "华建集团",
-        "streak": 1,
-        "industry": "工程咨询"
-      },
-      {
-        "code": "601086",
-        "name": "国芳集团",
+        "code": "600693",
+        "name": "东百集团",
         "streak": 1,
         "industry": "一般零售"
       },
       {
-        "code": "600371",
-        "name": "万向德农",
-        "streak": 1,
-        "industry": "种植业"
+        "code": "600825",
+        "name": "新华传媒",
+        "streak": 10,
+        "industry": "出版"
       },
       {
-        "code": "603101",
-        "name": "汇嘉时代",
-        "streak": 1,
-        "industry": "一般零售"
+        "code": "002343",
+        "name": "慈文传媒",
+        "streak": 2,
+        "industry": "影视院线"
       },
       {
-        "code": "002675",
-        "name": "东诚药业",
+        "code": "300006",
+        "name": "莱美药业",
         "streak": 1,
         "industry": "化学制药"
       },
       {
-        "code": "600408",
-        "name": "安泰集团",
+        "code": "605577",
+        "name": "龙版传媒",
         "streak": 2,
-        "industry": "焦炭Ⅱ"
+        "industry": "出版"
       },
       {
-        "code": "300981",
-        "name": "中红医疗",
+        "code": "001330",
+        "name": "博纳影业",
+        "streak": 2,
+        "industry": "影视院线"
+      },
+      {
+        "code": "002696",
+        "name": "百洋股份",
+        "streak": 2,
+        "industry": "饲料"
+      },
+      {
+        "code": "600241",
+        "name": "时代万恒",
+        "streak": 6,
+        "industry": "电池"
+      },
+      {
+        "code": "600851",
+        "name": "海欣股份",
         "streak": 1,
-        "industry": "医疗器械"
+        "industry": "化学制药"
       },
       {
-        "code": "000546",
-        "name": "金圆股份",
-        "streak": 1,
-        "industry": "环境治理"
+        "code": "000892",
+        "name": "欢瑞世纪",
+        "streak": 2,
+        "industry": "影视院线"
       },
       {
-        "code": "002480",
-        "name": "新筑股份",
-        "streak": 1,
-        "industry": "电力"
-      },
-      {
-        "code": "300369",
-        "name": "绿盟科技",
+        "code": "603528",
+        "name": "多伦科技",
         "streak": 1,
         "industry": "软件开发"
+      },
+      {
+        "code": "688517",
+        "name": "金冠电气",
+        "streak": 1,
+        "industry": "电网设备"
+      },
+      {
+        "code": "601929",
+        "name": "吉视传媒",
+        "streak": 2,
+        "industry": "电视广播"
+      },
+      {
+        "code": "600192",
+        "name": "长城电工",
+        "streak": 1,
+        "industry": "电网设备"
+      },
+      {
+        "code": "603032",
+        "name": "德新科技",
+        "streak": 1,
+        "industry": "电池"
+      },
+      {
+        "code": "002441",
+        "name": "众业达",
+        "streak": 1,
+        "industry": "电网设备"
+      },
+      {
+        "code": "002576",
+        "name": "通达动力",
+        "streak": 1,
+        "industry": "电机Ⅱ"
+      },
+      {
+        "code": "002531",
+        "name": "天顺风能",
+        "streak": 1,
+        "industry": "风电设备"
+      },
+      {
+        "code": "002692",
+        "name": "远程股份",
+        "streak": 2,
+        "industry": "电网设备"
+      },
+      {
+        "code": "300829",
+        "name": "金丹科技",
+        "streak": 1,
+        "industry": "化学制品"
+      },
+      {
+        "code": "002990",
+        "name": "盛视科技",
+        "streak": 1,
+        "industry": "计算机设"
+      },
+      {
+        "code": "600560",
+        "name": "金自天正",
+        "streak": 1,
+        "industry": "专用设备"
+      },
+      {
+        "code": "601811",
+        "name": "新华文轩",
+        "streak": 2,
+        "industry": "出版"
+      },
+      {
+        "code": "301419",
+        "name": "阿莱德",
+        "streak": 1,
+        "industry": "通信设备"
       }
     ]
   },
   "limit_down": {
-    "count": 15,
-    "count_10": 15,
-    "count_20": 0
+    "count": 42,
+    "count_10": 41,
+    "count_20": 1
   },
   "fund_flow": [
     {
-      "date": "2026-10-09",
-      "main": -17474904064.0,
-      "small": 21594206208.0,
-      "mid": -4119298048.0,
-      "big": -8582451200.0,
-      "huge": -8892452864.0
+      "date": "2026-10-12",
+      "main": -35430731776.0,
+      "small": 32792788992.0,
+      "mid": 2637946880.0,
+      "big": -17499877376.0,
+      "huge": -17930854400.0
     }
   ],
   "margin": {
     "latest": {
-      "date": "2026-10-08",
-      "financing_balance": 2544596119081.0,
-      "financing_net_buy": 4139222104.0,
-      "float_cap": 95799773489745.31,
-      "balance_ratio": 2.656161
+      "date": "2026-10-09",
+      "financing_balance": 2530054744718.0,
+      "financing_net_buy": -14541374323.0,
+      "float_cap": 95944269310569.62,
+      "balance_ratio": 2.637005
     },
     "series": [
+      {
+        "date": "2026-10-09",
+        "financing_balance": 2530054744718.0,
+        "financing_net_buy": -14541374323.0,
+        "float_cap": 95944269310569.62,
+        "balance_ratio": 2.637005
+      },
       {
         "date": "2026-10-08",
         "financing_balance": 2544596119081.0,
@@ -414,255 +421,15 @@
         "financing_net_buy": -1168159925.0,
         "float_cap": 99411833404119.67,
         "balance_ratio": 2.62413
-      },
-      {
-        "date": "2026-09-17",
-        "financing_balance": 2609863623661.0,
-        "financing_net_buy": 2324134306.0,
-        "float_cap": 98255646605950.81,
-        "balance_ratio": 2.656197
       }
     ]
   },
   "sectors": {
-    "industry": [
-      {
-        "code": "BK1296",
-        "name": "视频媒体",
-        "pct": 19.98,
-        "main_flow": 268003552.0,
-        "up": 1.0,
-        "down": 0.0,
-        "leader": "芒果超媒",
-        "leader_pct": 19.98,
-        "leader_code": "300413"
-      },
-      {
-        "code": "BK1298",
-        "name": "文字媒体",
-        "pct": 15.0,
-        "main_flow": 519472336.0,
-        "up": 2.0,
-        "down": 0.0,
-        "leader": "中文在线",
-        "leader_pct": 20.01,
-        "leader_code": "300364"
-      },
-      {
-        "code": "BK1518",
-        "name": "种子",
-        "pct": 7.78,
-        "main_flow": 807839376.0,
-        "up": 10.0,
-        "down": 0.0,
-        "leader": "万向德农",
-        "leader_pct": 9.99,
-        "leader_code": "600371"
-      },
-      {
-        "code": "BK1299",
-        "name": "影视动漫制作",
-        "pct": 7.64,
-        "main_flow": 687581904.0,
-        "up": 14.0,
-        "down": 0.0,
-        "leader": "上海电影",
-        "leader_pct": 10.0,
-        "leader_code": "601595"
-      },
-      {
-        "code": "BK1222",
-        "name": "影视院线",
-        "pct": 7.06,
-        "main_flow": 688566864.0,
-        "up": 18.0,
-        "down": 0.0,
-        "leader": "上海电影",
-        "leader_pct": 10.0,
-        "leader_code": "601595"
-      },
-      {
-        "code": "BK1291",
-        "name": "电视广播Ⅲ",
-        "pct": 6.95,
-        "main_flow": 303046549.0,
-        "up": 13.0,
-        "down": 0.0,
-        "leader": "吉视传媒",
-        "leader_pct": 10.13,
-        "leader_code": "601929"
-      },
-      {
-        "code": "BK1219",
-        "name": "电视广播Ⅱ",
-        "pct": 6.95,
-        "main_flow": 303046549.0,
-        "up": 13.0,
-        "down": 0.0,
-        "leader": "吉视传媒",
-        "leader_pct": 10.13,
-        "leader_code": "601929"
-      },
-      {
-        "code": "BK1221",
-        "name": "数字媒体",
-        "pct": 6.76,
-        "main_flow": 1000306256.0,
-        "up": 15.0,
-        "down": 0.0,
-        "leader": "中文在线",
-        "leader_pct": 20.01,
-        "leader_code": "300364"
-      },
-      {
-        "code": "BK1431",
-        "name": "有机硅",
-        "pct": 6.66,
-        "main_flow": 849066272.0,
-        "up": 9.0,
-        "down": 1.0,
-        "leader": "晨光新材",
-        "leader_pct": 10.03,
-        "leader_code": "605399"
-      },
-      {
-        "code": "BK1448",
-        "name": "横向通用软件",
-        "pct": 6.15,
-        "main_flow": 1019881024.0,
-        "up": 33.0,
-        "down": 1.0,
-        "leader": "绿盟科技",
-        "leader_pct": 20.02,
-        "leader_code": "300369"
-      },
-      {
-        "code": "BK1617",
-        "name": "黄金",
-        "pct": 5.98,
-        "main_flow": 1384875424.0,
-        "up": 10.0,
-        "down": 0.0,
-        "leader": "西部黄金",
-        "leader_pct": 9.98,
-        "leader_code": "601069"
-      },
-      {
-        "code": "BK1289",
-        "name": "大众出版",
-        "pct": 5.88,
-        "main_flow": 379052272.0,
-        "up": 18.0,
-        "down": 0.0,
-        "leader": "新华传媒",
-        "leader_pct": 10.01,
-        "leader_code": "600825"
-      },
-      {
-        "code": "BK1261",
-        "name": "种植业",
-        "pct": 5.84,
-        "main_flow": 1152699264.0,
-        "up": 20.0,
-        "down": 1.0,
-        "leader": "万向德农",
-        "leader_pct": 9.99,
-        "leader_code": "600371"
-      },
-      {
-        "code": "BK1416",
-        "name": "粘胶",
-        "pct": 5.65,
-        "main_flow": 319465818.0,
-        "up": 2.0,
-        "down": 0.0,
-        "leader": "吉林化纤",
-        "leader_pct": 10.12,
-        "leader_code": "000420"
-      },
-      {
-        "code": "BK0486",
-        "name": "传媒",
-        "pct": 5.56,
-        "main_flow": 2919085552.0,
-        "up": 125.0,
-        "down": 3.0,
-        "leader": "新华传媒",
-        "leader_pct": 10.01,
-        "leader_code": "600825"
-      },
-      {
-        "code": "BK1218",
-        "name": "出版",
-        "pct": 5.56,
-        "main_flow": 521268256.0,
-        "up": 28.0,
-        "down": 0.0,
-        "leader": "新华传媒",
-        "leader_pct": 10.01,
-        "leader_code": "600825"
-      },
-      {
-        "code": "BK0732",
-        "name": "贵金属",
-        "pct": 5.42,
-        "main_flow": 1734240240.0,
-        "up": 13.0,
-        "down": 0.0,
-        "leader": "西部黄金",
-        "leader_pct": 9.98,
-        "leader_code": "601069"
-      },
-      {
-        "code": "BK1516",
-        "name": "其他种植业",
-        "pct": 5.28,
-        "main_flow": 298515792.0,
-        "up": 4.0,
-        "down": 1.0,
-        "leader": "海南橡胶",
-        "leader_pct": 9.98,
-        "leader_code": "601118"
-      },
-      {
-        "code": "BK1297",
-        "name": "图片媒体",
-        "pct": 5.15,
-        "main_flow": 21324618.0,
-        "up": 1.0,
-        "down": 0.0,
-        "leader": "视觉中国",
-        "leader_pct": 5.15,
-        "leader_code": "000681"
-      },
-      {
-        "code": "BK1552",
-        "name": "超市",
-        "pct": 5.04,
-        "main_flow": 197815748.0,
-        "up": 7.0,
-        "down": 0.0,
-        "leader": "国光连锁",
-        "leader_pct": 10.02,
-        "leader_code": "605188"
-      }
-    ],
+    "industry": null,
     "concept": null
   },
   "klines": {
     "1.000001": [
-      {
-        "date": "2026-04-13",
-        "open": 3971.2,
-        "close": 3988.56,
-        "high": 3991.26,
-        "low": 3966.2,
-        "volume": 545781768.0,
-        "amount": null,
-        "amplitude": null,
-        "pct": 0.059,
-        "turnover": null
-      },
       {
         "date": "2026-04-14",
         "open": 4006.73,
@@ -2090,21 +1857,21 @@
         "amplitude": null,
         "pct": 0.05,
         "turnover": null
+      },
+      {
+        "date": "2026-10-12",
+        "open": 3806.98,
+        "close": 3797.24,
+        "high": 3828.22,
+        "low": 3791.0,
+        "volume": 461448981.0,
+        "amount": null,
+        "amplitude": null,
+        "pct": -0.434,
+        "turnover": null
       }
     ],
     "0.399006": [
-      {
-        "date": "2026-04-13",
-        "open": 3434.32,
-        "close": 3476.44,
-        "high": 3492.48,
-        "low": 3434.32,
-        "volume": 180013140.0,
-        "amount": null,
-        "amplitude": null,
-        "pct": 0.802,
-        "turnover": null
-      },
       {
         "date": "2026-04-14",
         "open": 3507.11,
@@ -3532,21 +3299,21 @@
         "amplitude": null,
         "pct": 0.22,
         "turnover": null
+      },
+      {
+        "date": "2026-10-12",
+        "open": 3023.51,
+        "close": 2963.82,
+        "high": 3049.34,
+        "low": 2962.24,
+        "volume": 161258304.0,
+        "amount": null,
+        "amplitude": null,
+        "pct": -2.613,
+        "turnover": null
       }
     ],
     "1.000300": [
-      {
-        "date": "2026-04-13",
-        "open": 4615.13,
-        "close": 4646.15,
-        "high": 4653.4,
-        "low": 4615.13,
-        "volume": 196712277.0,
-        "amount": null,
-        "amplitude": null,
-        "pct": 0.207,
-        "turnover": null
-      },
       {
         "date": "2026-04-14",
         "open": 4676.12,
@@ -4974,21 +4741,21 @@
         "amplitude": null,
         "pct": 0.162,
         "turnover": null
+      },
+      {
+        "date": "2026-10-12",
+        "open": 4305.91,
+        "close": 4287.98,
+        "high": 4334.29,
+        "low": 4279.71,
+        "volume": 180717331.0,
+        "amount": null,
+        "amplitude": null,
+        "pct": -0.678,
+        "turnover": null
       }
     ],
     "0.399905": [
-      {
-        "date": "2026-04-13",
-        "open": 7917.92,
-        "close": 7967.7,
-        "high": 7990.98,
-        "low": 7917.92,
-        "volume": 194948695.0,
-        "amount": null,
-        "amplitude": null,
-        "pct": -0.021,
-        "turnover": null
-      },
       {
         "date": "2026-04-14",
         "open": 8039.07,
@@ -6416,21 +6183,21 @@
         "amplitude": null,
         "pct": 0.036,
         "turnover": null
+      },
+      {
+        "date": "2026-10-12",
+        "open": 7226.07,
+        "close": 7093.02,
+        "high": 7236.78,
+        "low": 7085.92,
+        "volume": 135979766.0,
+        "amount": null,
+        "amplitude": null,
+        "pct": -2.179,
+        "turnover": null
       }
     ],
     "1.000688": [
-      {
-        "date": "2026-04-13",
-        "open": 1358.46,
-        "close": 1375.29,
-        "high": 1396.0,
-        "low": 1358.46,
-        "volume": 9018894.0,
-        "amount": null,
-        "amplitude": null,
-        "pct": 0.792,
-        "turnover": null
-      },
       {
         "date": "2026-04-14",
         "open": 1398.4,
@@ -7858,10 +7625,23 @@
         "amplitude": null,
         "pct": 0.065,
         "turnover": null
+      },
+      {
+        "date": "2026-10-12",
+        "open": 1443.81,
+        "close": 1426.72,
+        "high": 1473.44,
+        "low": 1425.31,
+        "volume": 6652779.0,
+        "amount": null,
+        "amplitude": null,
+        "pct": -2.096,
+        "turnover": null
       }
     ]
   },
   "errors": [
+    "sectors:industry",
     "sectors:concept"
   ],
   "klines_note": "仅保留最近 120 个交易日"
