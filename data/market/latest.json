@@ -1,357 +1,364 @@
 {
-  "generated_at": "2026-10-21T23:33:40+08:00",
-  "trade_date": "2026-10-21",
+  "generated_at": "2026-10-22T23:33:53+08:00",
+  "trade_date": "2026-10-22",
   "indexes": [
     {
       "code": "000001",
       "name": "上证指数",
-      "price": 3713.03,
-      "pct": -0.6,
-      "change": -22.34,
-      "volume": 378286389.0,
-      "amount": 642751560386.8,
-      "up": 840.0,
-      "down": 1405.0,
-      "flat": 112.0
+      "price": 3658.03,
+      "pct": -1.48,
+      "change": -55.0,
+      "volume": 437691963.0,
+      "amount": 706095648847.8,
+      "up": 219.0,
+      "down": 2121.0,
+      "flat": 17.0
     },
     {
       "code": "399001",
       "name": "深证成指",
-      "price": 11704.35,
-      "pct": -0.82,
-      "change": -96.94,
-      "volume": 471214992.0,
-      "amount": 786596915404.3442,
-      "up": 1127.0,
-      "down": 1687.0,
-      "flat": 122.0
+      "price": 11357.32,
+      "pct": -2.96,
+      "change": -347.03,
+      "volume": 525836834.0,
+      "amount": 822618050432.5358,
+      "up": 231.0,
+      "down": 2690.0,
+      "flat": 17.0
     },
     {
       "code": "399006",
       "name": "创业板指",
-      "price": 2694.71,
-      "pct": -1.62,
-      "change": -44.49,
-      "volume": 154598959.0,
-      "amount": 399853621224.86,
-      "up": 517.0,
-      "down": 862.0,
-      "flat": 30.0
+      "price": 2576.9,
+      "pct": -4.37,
+      "change": -117.81,
+      "volume": 165224702.0,
+      "amount": 406179350022.01,
+      "up": 101.0,
+      "down": 1309.0,
+      "flat": 0.0
     },
     {
       "code": "000688",
       "name": "科创50",
-      "price": 1343.28,
-      "pct": 0.06,
-      "change": 0.86,
-      "volume": 6651319.0,
-      "amount": 62632843956.8,
-      "up": 21.0,
-      "down": 26.0,
-      "flat": 3.0
+      "price": 1305.87,
+      "pct": -2.78,
+      "change": -37.41,
+      "volume": 8427524.0,
+      "amount": 72810415054.0,
+      "up": 11.0,
+      "down": 38.0,
+      "flat": 1.0
     },
     {
       "code": "000300",
       "name": "沪深300",
-      "price": 4111.93,
-      "pct": -0.97,
-      "change": -40.18,
-      "volume": 144303527.0,
-      "amount": 387929791444.1,
-      "up": 89.0,
-      "down": 199.0,
-      "flat": 12.0
+      "price": 4036.3,
+      "pct": -1.84,
+      "change": -75.63,
+      "volume": 178043852.0,
+      "amount": 435084135835.0,
+      "up": 55.0,
+      "down": 240.0,
+      "flat": 5.0
     },
     {
       "code": "399905",
       "name": "中证 500",
-      "price": 6840.56,
-      "pct": -0.01,
-      "change": -0.88,
-      "volume": 111776428.0,
-      "amount": 242862547981.5,
-      "up": 166.0,
-      "down": 302.0,
-      "flat": 32.0
+      "price": 6655.25,
+      "pct": -2.71,
+      "change": -185.31,
+      "volume": 125988061.0,
+      "amount": 253792966128.2,
+      "up": 48.0,
+      "down": 450.0,
+      "flat": 2.0
     },
     {
       "code": "399852",
       "name": "中证1000",
-      "price": 6780.26,
-      "pct": 0.2,
-      "change": 13.36,
-      "volume": 175326782.0,
-      "amount": 280406406778.2,
-      "up": 417.0,
-      "down": 545.0,
-      "flat": 37.0
+      "price": 6578.27,
+      "pct": -2.98,
+      "change": -201.99,
+      "volume": 194685417.0,
+      "amount": 291337337566.7,
+      "up": 93.0,
+      "down": 898.0,
+      "flat": 8.0
     },
     {
       "code": "000016",
       "name": "上证50",
-      "price": 2747.05,
-      "pct": -0.68,
-      "change": -18.72,
-      "volume": 39410045.0,
-      "amount": 104558686108.0,
-      "up": 15.0,
-      "down": 33.0,
+      "price": 2724.81,
+      "pct": -0.81,
+      "change": -22.24,
+      "volume": 51985061.0,
+      "amount": 132973489608.0,
+      "up": 16.0,
+      "down": 32.0,
       "flat": 2.0
     }
   ],
   "breadth": {
-    "up": 1967,
-    "down": 3092,
-    "flat": 234,
-    "total": 5293,
-    "up_ratio": 37.16,
-    "up_down_ratio": 0.636
+    "up": 450,
+    "down": 4811,
+    "flat": 34,
+    "total": 5295,
+    "up_ratio": 8.5,
+    "up_down_ratio": 0.094
   },
-  "amount_total": 1429348475791.1443,
+  "amount_total": 1528713699280.336,
   "limit_up": {
-    "count": 50,
-    "max_streak": 4,
+    "count": 33,
+    "max_streak": 5,
     "industries": [
       {
-        "name": "IT服务Ⅱ",
-        "count": 5
+        "name": "电机Ⅱ",
+        "count": 7
       },
       {
         "name": "通用设备",
         "count": 4
       },
       {
-        "name": "通信设备",
-        "count": 3
-      },
-      {
-        "name": "出版",
+        "name": "专用设备",
         "count": 3
       },
       {
         "name": "照明设备",
-        "count": 2
-      },
-      {
-        "name": "化学制药",
-        "count": 2
-      },
-      {
-        "name": "计算机设",
-        "count": 1
+        "count": 3
       },
       {
         "name": "汽车零部",
+        "count": 3
+      },
+      {
+        "name": "工程机械",
+        "count": 2
+      },
+      {
+        "name": "玻璃玻纤",
+        "count": 1
+      },
+      {
+        "name": "IT服务Ⅱ",
         "count": 1
       }
     ],
     "list": [
       {
-        "code": "002313",
-        "name": "日海智能",
-        "streak": 2,
-        "industry": "通信设备"
-      },
-      {
-        "code": "002347",
-        "name": "泰尔股份",
-        "streak": 2,
-        "industry": "通用设备"
-      },
-      {
-        "code": "002724",
-        "name": "海洋王",
-        "streak": 4,
-        "industry": "照明设备"
-      },
-      {
-        "code": "002835",
-        "name": "同为股份",
-        "streak": 2,
-        "industry": "计算机设"
-      },
-      {
-        "code": "600178",
-        "name": "东安动力",
-        "streak": 4,
-        "industry": "汽车零部"
-      },
-      {
-        "code": "603278",
-        "name": "大业股份",
-        "streak": 4,
-        "industry": "通用设备"
-      },
-      {
-        "code": "600293",
-        "name": "三峡新材",
-        "streak": 2,
-        "industry": "玻璃玻纤"
+        "code": "001360",
+        "name": "南矿集团",
+        "streak": 1,
+        "industry": "专用设备"
       },
       {
         "code": "002076",
         "name": "星光股份",
-        "streak": 2,
+        "streak": 3,
         "industry": "照明设备"
       },
       {
-        "code": "603332",
-        "name": "苏州龙杰",
-        "streak": 1,
-        "industry": "化学纤维"
+        "code": "002724",
+        "name": "海洋王",
+        "streak": 5,
+        "industry": "照明设备"
       },
       {
-        "code": "001239",
-        "name": "永达股份",
-        "streak": 2,
-        "industry": "工程机械"
+        "code": "600293",
+        "name": "三峡新材",
+        "streak": 3,
+        "industry": "玻璃玻纤"
       },
       {
         "code": "603138",
         "name": "海量数据",
-        "streak": 1,
+        "streak": 2,
         "industry": "IT服务Ⅱ"
+      },
+      {
+        "code": "002307",
+        "name": "北新路桥",
+        "streak": 1,
+        "industry": "基础建设"
+      },
+      {
+        "code": "003021",
+        "name": "兆威机电",
+        "streak": 1,
+        "industry": "电机Ⅱ"
+      },
+      {
+        "code": "603278",
+        "name": "大业股份",
+        "streak": 5,
+        "industry": "通用设备"
+      },
+      {
+        "code": "000530",
+        "name": "冰山冷热",
+        "streak": 1,
+        "industry": "通用设备"
       },
       {
         "code": "601999",
         "name": "出版传媒",
-        "streak": 1,
-        "industry": "出版"
-      },
-      {
-        "code": "002181",
-        "name": "粤 传 媒",
         "streak": 2,
         "industry": "出版"
       },
       {
-        "code": "002565",
-        "name": "顺灏股份",
-        "streak": 1,
-        "industry": "包装印刷"
-      },
-      {
-        "code": "002086",
-        "name": "东方海洋",
-        "streak": 1,
-        "industry": "农产品加"
-      },
-      {
-        "code": "301102",
-        "name": "兆讯传媒",
-        "streak": 1,
-        "industry": "广告营销"
-      },
-      {
-        "code": "600715",
-        "name": "文投控股",
-        "streak": 1,
-        "industry": "游戏Ⅱ"
-      },
-      {
-        "code": "600252",
-        "name": "中恒集团",
-        "streak": 1,
-        "industry": "中药Ⅱ"
-      },
-      {
-        "code": "002591",
-        "name": "恒大高新",
-        "streak": 1,
-        "industry": "化学制品"
-      },
-      {
-        "code": "002929",
-        "name": "润建股份",
-        "streak": 3,
-        "industry": "通信服务"
-      },
-      {
-        "code": "002696",
-        "name": "百洋股份",
+        "code": "600202",
+        "name": "哈空调",
         "streak": 2,
-        "industry": "饲料"
+        "industry": "通用设备"
       },
       {
-        "code": "603330",
-        "name": "天洋新材",
+        "code": "300839",
+        "name": "博汇股份",
         "streak": 1,
-        "industry": "塑料"
+        "industry": "炼化及贸"
       },
       {
-        "code": "601566",
-        "name": "九牧王",
+        "code": "002535",
+        "name": "林州重机",
         "streak": 1,
-        "industry": "服装家纺"
+        "industry": "专用设备"
       },
       {
-        "code": "600802",
-        "name": "福建水泥",
+        "code": "600261",
+        "name": "阳光照明",
         "streak": 1,
-        "industry": "水泥"
+        "industry": "照明设备"
       },
       {
-        "code": "300006",
-        "name": "莱美药业",
+        "code": "603028",
+        "name": "赛福天",
         "streak": 1,
-        "industry": "化学制药"
+        "industry": "通用设备"
+      },
+      {
+        "code": "603350",
+        "name": "安乃达",
+        "streak": 1,
+        "industry": "电机Ⅱ"
+      },
+      {
+        "code": "002249",
+        "name": "大洋电机",
+        "streak": 1,
+        "industry": "电机Ⅱ"
+      },
+      {
+        "code": "301502",
+        "name": "华阳智能",
+        "streak": 1,
+        "industry": "电机Ⅱ"
+      },
+      {
+        "code": "601091",
+        "name": "沈鼓集团",
+        "streak": 1,
+        "industry": "专用设备"
+      },
+      {
+        "code": "603728",
+        "name": "鸣志电器",
+        "streak": 1,
+        "industry": "电机Ⅱ"
+      },
+      {
+        "code": "603280",
+        "name": "南方路机",
+        "streak": 1,
+        "industry": "工程机械"
+      },
+      {
+        "code": "002097",
+        "name": "山河智能",
+        "streak": 1,
+        "industry": "工程机械"
+      },
+      {
+        "code": "603089",
+        "name": "正裕工业",
+        "streak": 1,
+        "industry": "汽车零部"
+      },
+      {
+        "code": "000678",
+        "name": "襄阳轴承",
+        "streak": 1,
+        "industry": "汽车零部"
+      },
+      {
+        "code": "600192",
+        "name": "长城电工",
+        "streak": 1,
+        "industry": "电网设备"
+      },
+      {
+        "code": "600698",
+        "name": "湖南天雁",
+        "streak": 1,
+        "industry": "汽车零部"
       },
       {
         "code": "600838",
         "name": "上海九百",
-        "streak": 1,
+        "streak": 2,
         "industry": "一般零售"
       },
       {
-        "code": "603236",
-        "name": "移远通信",
+        "code": "301023",
+        "name": "奕帆传动",
+        "streak": 1,
+        "industry": "电机Ⅱ"
+      },
+      {
+        "code": "603528",
+        "name": "多伦科技",
+        "streak": 1,
+        "industry": "软件开发"
+      },
+      {
+        "code": "603330",
+        "name": "天洋新材",
         "streak": 2,
-        "industry": "通信设备"
-      },
-      {
-        "code": "001201",
-        "name": "东瑞股份",
-        "streak": 1,
-        "industry": "养殖业"
-      },
-      {
-        "code": "002792",
-        "name": "通宇通讯",
-        "streak": 1,
-        "industry": "通信设备"
-      },
-      {
-        "code": "001216",
-        "name": "华瓷股份",
-        "streak": 1,
-        "industry": "家居用品"
+        "industry": "塑料"
       }
     ]
   },
   "limit_down": {
-    "count": 11,
-    "count_10": 11,
-    "count_20": 0
+    "count": 93,
+    "count_10": 91,
+    "count_20": 2
   },
   "fund_flow": [
     {
-      "date": "2026-10-21",
-      "main": -8784084992.0,
-      "small": 11280699392.0,
-      "mid": -2496606208.0,
-      "big": -9781481472.0,
-      "huge": 997396480.0
+      "date": "2026-10-22",
+      "main": -63251701760.0,
+      "small": 48253415424.0,
+      "mid": 14998290432.0,
+      "big": -27441008640.0,
+      "huge": -35810693120.0
     }
   ],
   "margin": {
     "latest": {
-      "date": "2026-10-20",
-      "financing_balance": 2451244937988.0,
-      "financing_net_buy": -2129301935.0,
-      "float_cap": 92602721094947.83,
-      "balance_ratio": 2.647055
+      "date": "2026-10-21",
+      "financing_balance": 2450277179446.0,
+      "financing_net_buy": -967758544.0,
+      "float_cap": 92129136245437.97,
+      "balance_ratio": 2.659612
     },
     "series": [
+      {
+        "date": "2026-10-21",
+        "financing_balance": 2450277179446.0,
+        "financing_net_buy": -967758544.0,
+        "float_cap": 92129136245437.97,
+        "balance_ratio": 2.659612
+      },
       {
         "date": "2026-10-20",
         "financing_balance": 2451244937988.0,
@@ -414,13 +421,6 @@
         "financing_net_buy": 4139222104.0,
         "float_cap": 95799773489745.31,
         "balance_ratio": 2.656161
-      },
-      {
-        "date": "2026-09-30",
-        "financing_balance": 2540456896977.0,
-        "financing_net_buy": -39232207824.0,
-        "float_cap": 96849390164162.6,
-        "balance_ratio": 2.623101
       }
     ]
   },
@@ -430,18 +430,6 @@
   },
   "klines": {
     "1.000001": [
-      {
-        "date": "2026-04-23",
-        "open": 4110.79,
-        "close": 4093.25,
-        "high": 4114.84,
-        "low": 4070.46,
-        "volume": 671166092.0,
-        "amount": 1234396207619.2,
-        "amplitude": 1.08,
-        "pct": -0.32,
-        "turnover": 1.38
-      },
       {
         "date": "2026-04-24",
         "open": 4081.03,
@@ -1869,21 +1857,21 @@
         "amplitude": 1.07,
         "pct": -0.6,
         "turnover": 0.78
+      },
+      {
+        "date": "2026-10-22",
+        "open": 3714.48,
+        "close": 3658.03,
+        "high": 3714.48,
+        "low": 3649.86,
+        "volume": 437691963.0,
+        "amount": 706095648847.8,
+        "amplitude": 1.74,
+        "pct": -1.48,
+        "turnover": 0.9
       }
     ],
     "0.399006": [
-      {
-        "date": "2026-04-23",
-        "open": 3769.02,
-        "close": 3720.25,
-        "high": 3785.23,
-        "low": 3681.57,
-        "volume": 234554114.0,
-        "amount": null,
-        "amplitude": null,
-        "pct": -0.866,
-        "turnover": null
-      },
       {
         "date": "2026-04-24",
         "open": 3682.5,
@@ -3311,21 +3299,21 @@
         "amplitude": null,
         "pct": -1.624,
         "turnover": null
+      },
+      {
+        "date": "2026-10-22",
+        "open": 2687.94,
+        "close": 2576.9,
+        "high": 2688.11,
+        "low": 2576.9,
+        "volume": 160292629.0,
+        "amount": null,
+        "amplitude": null,
+        "pct": -4.372,
+        "turnover": null
       }
     ],
     "1.000300": [
-      {
-        "date": "2026-04-23",
-        "open": 4816.03,
-        "close": 4786.33,
-        "high": 4823.47,
-        "low": 4759.86,
-        "volume": 232865736.0,
-        "amount": null,
-        "amplitude": null,
-        "pct": -0.277,
-        "turnover": null
-      },
       {
         "date": "2026-04-24",
         "open": 4771.73,
@@ -4753,21 +4741,21 @@
         "amplitude": null,
         "pct": -0.968,
         "turnover": null
+      },
+      {
+        "date": "2026-10-22",
+        "open": 4110.65,
+        "close": 4036.3,
+        "high": 4110.65,
+        "low": 4022.87,
+        "volume": 178043852.0,
+        "amount": null,
+        "amplitude": null,
+        "pct": -1.839,
+        "turnover": null
       }
     ],
     "0.399905": [
-      {
-        "date": "2026-04-23",
-        "open": 8387.76,
-        "close": 8295.21,
-        "high": 8401.5,
-        "low": 8220.95,
-        "volume": 249486989.0,
-        "amount": null,
-        "amplitude": null,
-        "pct": -0.967,
-        "turnover": null
-      },
       {
         "date": "2026-04-24",
         "open": 8244.78,
@@ -6195,21 +6183,21 @@
         "amplitude": null,
         "pct": -0.013,
         "turnover": null
+      },
+      {
+        "date": "2026-10-22",
+        "open": 6841.53,
+        "close": 6655.25,
+        "high": 6842.87,
+        "low": 6652.78,
+        "volume": 125988061.0,
+        "amount": null,
+        "amplitude": null,
+        "pct": -2.709,
+        "turnover": null
       }
     ],
     "1.000688": [
-      {
-        "date": "2026-04-23",
-        "open": 1466.12,
-        "close": 1432.59,
-        "high": 1467.7,
-        "low": 1419.01,
-        "volume": 11446540.0,
-        "amount": null,
-        "amplitude": null,
-        "pct": -1.278,
-        "turnover": null
-      },
       {
         "date": "2026-04-24",
         "open": 1443.04,
@@ -7636,6 +7624,18 @@
         "amount": null,
         "amplitude": null,
         "pct": 0.064,
+        "turnover": null
+      },
+      {
+        "date": "2026-10-22",
+        "open": 1346.96,
+        "close": 1305.87,
+        "high": 1346.96,
+        "low": 1302.39,
+        "volume": 8427524.0,
+        "amount": null,
+        "amplitude": null,
+        "pct": -2.785,
         "turnover": null
       }
     ]
