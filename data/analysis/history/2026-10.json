@@ -326,6 +326,42 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-10-23",
+      "benchmark": "沪深300",
+      "sentiment": 54.2,
+      "sentiment_label": "中性",
+      "risk_level": "low",
+      "risk_score": 19.0,
+      "signals": [
+        {
+          "id": "ma_bear",
+          "type": "bear",
+          "title": "均线空头排列"
+        },
+        {
+          "id": "rsi_oversold",
+          "type": "bull",
+          "title": "RSI 超卖"
+        },
+        {
+          "id": "breadth_hot",
+          "type": "bull",
+          "title": "普涨格局"
+        },
+        {
+          "id": "limit_up_hot",
+          "type": "bear",
+          "title": "涨停家数过热"
+        },
+        {
+          "id": "margin_cold",
+          "type": "bull",
+          "title": "杠杆资金撤离"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
