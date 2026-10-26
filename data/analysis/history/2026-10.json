@@ -362,6 +362,32 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-10-26",
+      "benchmark": "沪深300",
+      "sentiment": 22.9,
+      "sentiment_label": "低迷",
+      "risk_level": "medium",
+      "risk_score": 34.3,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        },
+        {
+          "id": "rsi_oversold",
+          "type": "bull",
+          "title": "RSI 超卖"
+        },
+        {
+          "id": "margin_cold",
+          "type": "bull",
+          "title": "杠杆资金撤离"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }

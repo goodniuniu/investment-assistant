@@ -1,25 +1,25 @@
 {
   "sentiment": {
-    "score": 54.2,
+    "score": 22.9,
     "components": [
       {
         "name": "momentum",
-        "score": 16.8,
+        "score": 12.7,
         "weight": 22.0
       },
       {
         "name": "breadth",
-        "score": 100.0,
+        "score": 31.9,
         "weight": 20.0
       },
       {
         "name": "volume",
-        "score": 49.6,
+        "score": 28.8,
         "weight": 13.0
       },
       {
         "name": "profit_effect",
-        "score": 82.3,
+        "score": 38.3,
         "weight": 20.0
       },
       {
@@ -29,34 +29,34 @@
       },
       {
         "name": "fund_flow",
-        "score": 50.4,
+        "score": 15.2,
         "weight": 15.0
       }
     ],
     "coverage": 100.0
   },
-  "sentiment_label": "中性",
-  "sentiment_desc": "多空力量相对均衡，缺乏明确方向",
-  "risk_level": "low",
-  "risk_score": 19.0,
+  "sentiment_label": "低迷",
+  "sentiment_desc": "市场悲观，抛压主导，但也意味着定价开始有吸引力",
+  "risk_level": "medium",
+  "risk_score": 34.3,
   "signals": [
     {
-      "id": "ma_bear",
-      "type": "bear",
-      "title": "均线空头排列",
-      "evidence": "MA5=4116、MA10=4170、MA20=4296、MA60=4497，收盘 4105",
-      "lesson": "均线自上而下排列且价格位于最下方，意味着各周期买入者普遍被套，每一次反弹都会遇到解套盘的抛压，趋势具有自我延续性。空头排列中抢反弹的难度显著高于上升趋势中回调买入——因为你面对的不是暂时的获利回吐，而是持续的解套供给。空头排列的终结信号通常是：指数不再创新低、成交量萎缩、随后放量收复短期均线。",
+      "id": "ma_mixed",
+      "type": "neutral",
+      "title": "均线交织，趋势不明",
+      "evidence": "MA5=4102、MA10=4151、MA20=4276、MA60=4488，收盘 4104",
+      "lesson": "均线相互缠绕说明各周期成本趋于一致，市场处于无趋势的震荡状态。这是趋势跟踪策略最容易反复止损亏钱的阶段——信号频繁出现又频繁失效。应对方式有二：降低仓位等待方向明朗，或改用区间思路（高抛低吸）并严格控制单次风险敞口。识别震荡市本身，就是一种能力。",
       "knowledge": [
-        "tech-moving-average",
         "tech-trend",
-        "risk-drawdown"
+        "tech-limits",
+        "allocation-position-sizing"
       ]
     },
     {
       "id": "rsi_oversold",
       "type": "bull",
       "title": "RSI 超卖",
-      "evidence": "RSI(14) = 28.1，处于 30 以下超卖区",
+      "evidence": "RSI(14) = 28.0，处于 30 以下超卖区",
       "lesson": "超卖说明短期抛压释放较充分，但同样不等于见底。在单边下跌趋势中，RSI 会反复钝化——屡次超卖而价格继续新低，俗称「超卖之后还有超卖」。真正有参考价值的是**底背离**：价格创出新低，而 RSI 未同步创出新低，说明下跌动能在衰弱。抄底前请确认这一点，而不是看到 RSI 低于 30 就行动。",
       "knowledge": [
         "tech-rsi",
@@ -65,33 +65,10 @@
       ]
     },
     {
-      "id": "breadth_hot",
-      "type": "bull",
-      "title": "普涨格局",
-      "evidence": "全市场 4239 家上涨 / 913 家下跌，上涨占比 80.0%",
-      "lesson": "市场宽度衡量的是**参与度**，它比指数涨跌更真实。指数由权重股决定，可以在多数个股下跌时依然收红；而宽度指标反映的是赚钱效应是否扩散到多数股票。普涨说明行情基础扎实。但要留意：持续极端普涨（上涨占比连续超过 80%）往往出现在情绪周期的高潮阶段，此时更应关注风险而非收益。",
-      "knowledge": [
-        "sentiment-market-breadth",
-        "sentiment-cycle"
-      ]
-    },
-    {
-      "id": "limit_up_hot",
-      "type": "bear",
-      "title": "涨停家数过热",
-      "evidence": "涨停 82 家、跌停 18 家，最高连板 6 板",
-      "lesson": "涨停家数是短线情绪最直接的体温计。数量激增说明游资活跃、赚钱效应强，但也意味着市场进入高换手、高博弈阶段。历史经验是：涨停家数从高位快速回落（例如腰斩）时，往往伴随短线情绪退潮与指数调整。因此过热期参与短线，必须预先想好退出条件，而不是等情绪转冷再做决定——那时流动性已消失。",
-      "knowledge": [
-        "sentiment-limit-up",
-        "risk-liquidity",
-        "behavior-herding"
-      ]
-    },
-    {
       "id": "margin_cold",
       "type": "bull",
       "title": "杠杆资金撤离",
-      "evidence": "融资余额近 5 日变化 -1.91%",
+      "evidence": "融资余额近 5 日变化 -2.32%",
       "lesson": "融资资金撤离意味着杠杆盘在去化，市场脆弱性下降。这通常是筑底过程中的必要一环——不把杠杆清洗干净，反弹就缺乏持续性。但去杠杆的过程本身是痛苦的，往往伴随持续的阴跌。因此这是一个**观察确认项**而非**买入信号**。",
       "knowledge": [
         "sentiment-margin",
@@ -101,21 +78,26 @@
   ],
   "psychology": [
     {
-      "bias": "behavior-gambler",
+      "bias": "behavior-loss-aversion",
       "level": "high",
-      "text": "涨停板密集时，「连板规律」「必涨形态」之类的错觉会格外强烈。涨停之间并无统计上的依赖关系，历史序列不产生概率优势。若你发现自己在使用「都涨这么多了该跌了」或「已经跌这么多该反弹了」这类推理，请停下来——这是赌徒谬误。"
+      "text": "亏损带来的痛苦约为同等盈利快感的两倍，这在低迷期会被放大到让人无法理性思考。若你已经不敢打开账户，请先把「要不要卖」这个问题推迟 24 小时，并把决策标准写成文字：卖出理由应该是**逻辑变了**，而不是**价格跌了**。"
+    },
+    {
+      "bias": "behavior-recency",
+      "level": "medium",
+      "text": "连续下跌后，大脑会默认这种状态将永远持续。请主动回看历史：每一次市场冰点之后都出现了修复，区别只在于耗时。把当前情绪温度与一年前的读数做对比，用数据校正直觉。"
     }
   ],
   "discipline": [
     {
       "title": "核对仓位与风险预算",
-      "detail": "当前波动率 16.0%。若波动率较你建仓时明显抬升，同等仓位承担的风险已经变大，应考虑减仓至风险敞口与当初一致，而不是维持名义仓位不变。",
+      "detail": "当前波动率 15.1%。若波动率较你建仓时明显抬升，同等仓位承担的风险已经变大，应考虑减仓至风险敞口与当初一致，而不是维持名义仓位不变。",
       "knowledge": "risk-position-risk"
     },
     {
-      "title": "检查是否因恐慌而低配",
-      "detail": "低风险环境里常见的错误是长期空仓等待「更好的价格」。请确认当前仓位与你的长期配置目标一致，而非由近期情绪决定。",
-      "knowledge": "allocation-asset-allocation"
+      "title": "采用分批而非一次性决策",
+      "detail": "低迷期不应重仓押注「这就是底」。分批建仓的价值不在于提高收益，而在于让你在判断错误时仍有余地和心态继续执行计划。",
+      "knowledge": "allocation-position-sizing"
     },
     {
       "title": "记录本次决策",
@@ -240,106 +222,106 @@
       "scope": "单日流向噪音大，连续多日才有意义"
     }
   },
-  "trade_date": "2026-10-23",
-  "generated_at": "2026-10-23T23:27:00+08:00",
+  "trade_date": "2026-10-26",
+  "generated_at": "2026-10-27T00:56:22+08:00",
   "benchmark": "沪深300",
   "market_snapshot": {
-    "last_close": 4105.33,
-    "pct": 0.89,
-    "amount_yi": 19562.8,
+    "last_close": 4103.54,
+    "pct": 0.19,
+    "amount_yi": 16087.9,
     "breadth": {
-      "up": 4239,
-      "down": 913,
-      "flat": 144,
-      "total": 5296,
-      "up_ratio": 80.04,
-      "up_down_ratio": 4.643
+      "up": 2110,
+      "down": 3033,
+      "flat": 151,
+      "total": 5294,
+      "up_ratio": 39.86,
+      "up_down_ratio": 0.696
     },
-    "limit_up_count": 82,
-    "limit_down_count": 18,
-    "max_streak": 6,
-    "main_flow_yi": 2.8,
-    "margin_balance_yi": 24269.1,
-    "margin_change_5d_pct": -1.911,
-    "margin_net_buy_yi": -233.6,
-    "margin_ratio": 2.688715,
-    "rsi14": 28.15,
-    "volatility20": 15.99,
-    "volume_ratio": 1.402,
+    "limit_up_count": 55,
+    "limit_down_count": 50,
+    "max_streak": 4,
+    "main_flow_yi": -278.7,
+    "margin_balance_yi": 24026.6,
+    "margin_change_5d_pct": -2.319,
+    "margin_net_buy_yi": -242.5,
+    "margin_ratio": 2.623578,
+    "rsi14": 28.04,
+    "volatility20": 15.12,
+    "volume_ratio": 1.102,
     "ma": {
-      "ma5": 4116.039999999989,
-      "ma10": 4169.816000000001,
-      "ma20": 4295.8625,
-      "ma60": 4497.406500000004
+      "ma5": 4101.84199999999,
+      "ma10": 4151.372000000001,
+      "ma20": 4275.67,
+      "ma60": 4488.312333333338
     },
-    "ma_alignment": "bear",
+    "ma_alignment": "mixed",
     "macd": {
-      "dif": -114.604,
-      "dea": -98.963,
-      "hist": -31.283,
+      "dif": -113.034,
+      "dea": -101.777,
+      "hist": -22.515,
       "cross": null
     },
     "price_percentile_250": 0.4,
-    "ret20": -7.96,
-    "ret60": -13.17,
+    "ret20": -8.96,
+    "ret60": -11.74,
     "max_drawdown_250": 20.23
   },
   "context": {
-    "trade_date": "2026-10-23",
-    "generated_at": "2026-10-23T23:27:00+08:00",
+    "trade_date": "2026-10-26",
+    "generated_at": "2026-10-27T00:56:22+08:00",
     "errors": [
       "sectors:industry",
       "sectors:concept"
     ],
-    "last_date": "2026-10-23",
-    "last_close": 4105.33,
+    "last_date": "2026-10-26",
+    "last_close": 4103.54,
     "bars": 250,
-    "ma5": 4116.039999999989,
-    "ma10": 4169.816000000001,
-    "ma20": 4295.8625,
-    "ma60": 4497.406500000004,
-    "ma120": 4671.337083333334,
-    "ma250": 4653.6806000000015,
-    "ma_alignment": "bear",
+    "ma5": 4101.84199999999,
+    "ma10": 4151.372000000001,
+    "ma20": 4275.67,
+    "ma60": 4488.312333333338,
+    "ma120": 4665.775333333336,
+    "ma250": 4651.938520000002,
+    "ma_alignment": "mixed",
     "macd": {
-      "dif": -114.604,
-      "dea": -98.963,
-      "hist": -31.283,
+      "dif": -113.034,
+      "dea": -101.777,
+      "hist": -22.515,
       "cross": null
     },
-    "rsi14": 28.15,
-    "atr14": 73.38,
-    "volatility20": 15.99,
-    "volume_ratio": 1.402,
-    "consecutive": 1,
+    "rsi14": 28.04,
+    "atr14": 71.73,
+    "volatility20": 15.12,
+    "volume_ratio": 1.102,
+    "consecutive": -1,
     "price_percentile_250": 0.4,
     "amount_percentile_250": null,
-    "volume_percentile_250": 49.6,
-    "ret5": -1.57,
-    "ret20": -7.96,
-    "ret60": -13.17,
+    "volume_percentile_250": 28.8,
+    "ret5": -1.7,
+    "ret20": -8.96,
+    "ret60": -11.74,
     "ret250": null,
     "max_drawdown_250": 20.23,
     "benchmark": "沪深300",
-    "pct": 0.89,
+    "pct": 0.19,
     "breadth": {
-      "up": 4239,
-      "down": 913,
-      "flat": 144,
-      "total": 5296,
-      "up_ratio": 80.04,
-      "up_down_ratio": 4.643
+      "up": 2110,
+      "down": 3033,
+      "flat": 151,
+      "total": 5294,
+      "up_ratio": 39.86,
+      "up_down_ratio": 0.696
     },
-    "amount_total": 1956283848435.181,
-    "amount_yi": 19562.8,
-    "limit_up_count": 82,
-    "max_streak": 6,
-    "limit_down_count": 18,
-    "main_flow_yi": 2.8,
-    "margin_change_5d_pct": -1.911,
-    "margin_balance_yi": 24269.1,
-    "margin_net_buy_yi": -233.6,
-    "margin_ratio": 2.688715
+    "amount_total": 1608793371577.656,
+    "amount_yi": 16087.9,
+    "limit_up_count": 55,
+    "max_streak": 4,
+    "limit_down_count": 50,
+    "main_flow_yi": -278.7,
+    "margin_change_5d_pct": -2.319,
+    "margin_balance_yi": 24026.6,
+    "margin_net_buy_yi": -242.5,
+    "margin_ratio": 2.623578
   },
   "data_errors": [
     "sectors:industry",
