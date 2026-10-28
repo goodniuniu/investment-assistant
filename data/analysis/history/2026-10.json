@@ -424,6 +424,27 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-10-28",
+      "benchmark": "沪深300",
+      "sentiment": 48.4,
+      "sentiment_label": "中性",
+      "risk_level": "low",
+      "risk_score": 25.5,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        },
+        {
+          "id": "margin_cold",
+          "type": "bull",
+          "title": "杠杆资金撤离"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
