@@ -1,0 +1,22 @@
+{
+  "month": "2026-11",
+  "days": [
+    {
+      "date": "2026-11-02",
+      "sh_close": 3638.03,
+      "sh_pct": 1.08,
+      "cyb_pct": 1.87,
+      "hs300_pct": 0.79,
+      "amount_yi": 17837.0,
+      "up": 4429,
+      "down": 790,
+      "up_ratio": 83.66,
+      "limit_up": 125,
+      "limit_down": null,
+      "max_streak": 6,
+      "main_flow_yi": 117.4,
+      "sentiment": 58.9,
+      "risk_level": "low"
+    }
+  ]
+}
