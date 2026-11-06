@@ -149,6 +149,37 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-11-06",
+      "benchmark": "沪深300",
+      "sentiment": 12.1,
+      "sentiment_label": "冰点",
+      "risk_level": "medium",
+      "risk_score": 53.3,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        },
+        {
+          "id": "breadth_cold",
+          "type": "bear",
+          "title": "普跌格局"
+        },
+        {
+          "id": "margin_cold",
+          "type": "bull",
+          "title": "杠杆资金撤离"
+        },
+        {
+          "id": "fund_outflow",
+          "type": "bear",
+          "title": "主力资金大幅净流出"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
