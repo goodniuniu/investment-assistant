@@ -1,8 +1,8 @@
 {
-  "last_success_at": "2026-11-10T04:59:56+08:00",
-  "trade_date": "2026-11-09",
+  "last_success_at": "2026-11-11T02:07:47+08:00",
+  "trade_date": "2026-11-10",
   "errors": [],
   "ok": true,
-  "sentiment": 33.6,
+  "sentiment": 57.1,
   "risk_level": "low"
 }
