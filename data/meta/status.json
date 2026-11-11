@@ -1,8 +1,11 @@
 {
-  "last_success_at": "2026-11-11T02:07:47+08:00",
-  "trade_date": "2026-11-10",
-  "errors": [],
-  "ok": true,
-  "sentiment": 57.1,
+  "last_success_at": "2026-11-12T02:02:24+08:00",
+  "trade_date": "2026-11-11",
+  "errors": [
+    "sectors:industry",
+    "sectors:concept"
+  ],
+  "ok": false,
+  "sentiment": 58.3,
   "risk_level": "low"
 }
