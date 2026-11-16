@@ -1,10 +1,10 @@
 {
   "sentiment": {
-    "score": 18.1,
+    "score": 15.7,
     "components": [
       {
         "name": "momentum",
-        "score": 34.6,
+        "score": 30.6,
         "weight": 22.0
       },
       {
@@ -14,17 +14,17 @@
       },
       {
         "name": "volume",
-        "score": 25.6,
+        "score": 16.4,
         "weight": 13.0
       },
       {
         "name": "profit_effect",
-        "score": 14.3,
+        "score": 7.7,
         "weight": 20.0
       },
       {
         "name": "leverage",
-        "score": 43.1,
+        "score": 53.3,
         "weight": 10.0
       },
       {
@@ -35,16 +35,16 @@
     ],
     "coverage": 100.0
   },
-  "sentiment_label": "低迷",
-  "sentiment_desc": "市场悲观，抛压主导，但也意味着定价开始有吸引力",
+  "sentiment_label": "冰点",
+  "sentiment_desc": "极度悲观，往往是长期投资者逐步布局的窗口，但需承受继续下跌的心理压力",
   "risk_level": "low",
-  "risk_score": 20.0,
+  "risk_score": 23.2,
   "signals": [
     {
       "id": "ma_bear",
       "type": "bear",
       "title": "均线空头排列",
-      "evidence": "MA5=4050、MA10=4055、MA20=4070、MA60=4352，收盘 4016",
+      "evidence": "MA5=4035、MA10=4051、MA20=4060、MA60=4341，收盘 3980",
       "lesson": "均线自上而下排列且价格位于最下方，意味着各周期买入者普遍被套，每一次反弹都会遇到解套盘的抛压，趋势具有自我延续性。空头排列中抢反弹的难度显著高于上升趋势中回调买入——因为你面对的不是暂时的获利回吐，而是持续的解套供给。空头排列的终结信号通常是：指数不再创新低、成交量萎缩、随后放量收复短期均线。",
       "knowledge": [
         "tech-moving-average",
@@ -56,7 +56,7 @@
       "id": "breadth_cold",
       "type": "bear",
       "title": "普跌格局",
-      "evidence": "全市场 755 家上涨 / 4472 家下跌，上涨占比 14.3%",
+      "evidence": "全市场 1126 家上涨 / 4072 家下跌，上涨占比 21.3%",
       "lesson": "多数个股下跌说明是系统性抛压，而非个别板块的问题。此时分散持仓无法规避风险——因为所有资产的相关性在下跌中趋近于 1，这正是分散化在极端行情中失效的原因。真正能保护你的是**仓位**与**资产类别配置**（如股债搭配），而不是在股票内部换仓。",
       "knowledge": [
         "sentiment-market-breadth",
@@ -68,7 +68,7 @@
       "id": "fund_outflow",
       "type": "bear",
       "title": "主力资金大幅净流出",
-      "evidence": "主力资金净流出 600 亿元",
+      "evidence": "主力资金净流出 644 亿元",
       "lesson": "资金流数据由逐笔成交按单子大小分类统计而来，它反映的是**大单的方向**，机构真实意图无法直接观测——大单可以通过拆单隐藏，也可以通过对倒制造假象。因此资金流是参考而非结论。持续净流出结合价格下跌，才是较为可靠的弱势信号；若资金流出而价格不跌，则说明承接力量强，反而值得关注。",
       "knowledge": [
         "sentiment-fund-flow",
@@ -96,7 +96,7 @@
   "discipline": [
     {
       "title": "核对仓位与风险预算",
-      "detail": "当前波动率 16.9%。若波动率较你建仓时明显抬升，同等仓位承担的风险已经变大，应考虑减仓至风险敞口与当初一致，而不是维持名义仓位不变。",
+      "detail": "当前波动率 17.0%。若波动率较你建仓时明显抬升，同等仓位承担的风险已经变大，应考虑减仓至风险敞口与当初一致，而不是维持名义仓位不变。",
       "knowledge": "risk-position-risk"
     },
     {
@@ -232,103 +232,103 @@
       "scope": "单日流向噪音大，连续多日才有意义"
     }
   },
-  "trade_date": "2026-11-13",
-  "generated_at": "2026-11-14T01:59:40+08:00",
+  "trade_date": "2026-11-16",
+  "generated_at": "2026-11-17T04:39:19+08:00",
   "benchmark": "沪深300",
   "market_snapshot": {
-    "last_close": 4016.29,
-    "pct": -0.59,
-    "amount_yi": 16556.7,
+    "last_close": 3979.8,
+    "pct": -0.87,
+    "amount_yi": 14844.9,
     "breadth": {
-      "up": 755,
-      "down": 4472,
-      "flat": 66,
-      "total": 5293,
-      "up_ratio": 14.26,
-      "up_down_ratio": 0.169
+      "up": 1126,
+      "down": 4072,
+      "flat": 96,
+      "total": 5294,
+      "up_ratio": 21.27,
+      "up_down_ratio": 0.277
     },
-    "limit_up_count": 37,
-    "limit_down_count": 86,
+    "limit_up_count": 32,
+    "limit_down_count": 100,
     "max_streak": 4,
-    "main_flow_yi": -600.2,
-    "margin_balance_yi": 22738.3,
-    "margin_change_5d_pct": -0.206,
-    "margin_net_buy_yi": 6.9,
-    "margin_ratio": 2.519195,
-    "rsi14": 35.35,
-    "volatility20": 16.88,
-    "volume_ratio": 1.071,
+    "main_flow_yi": -643.8,
+    "margin_balance_yi": 22572.0,
+    "margin_change_5d_pct": 0.1,
+    "margin_net_buy_yi": -166.3,
+    "margin_ratio": 2.527937,
+    "rsi14": 32.5,
+    "volatility20": 17.04,
+    "volume_ratio": 1.124,
     "ma": {
-      "ma5": 4050.2299999999896,
-      "ma10": 4054.5969999999993,
-      "ma20": 4069.523499999998,
-      "ma60": 4352.110833333337
+      "ma5": 4034.9679999999908,
+      "ma10": 4050.885000000001,
+      "ma20": 4059.786999999998,
+      "ma60": 4340.676166666671
     },
     "ma_alignment": "bear",
     "macd": {
-      "dif": -69.741,
-      "dea": -83.12,
-      "hist": 26.758,
+      "dif": -71.179,
+      "dea": -80.732,
+      "hist": 19.106,
       "cross": null
     },
-    "price_percentile_250": 0.8,
-    "ret20": -3.7,
-    "ret60": -13.89,
-    "max_drawdown_250": 21.23
+    "price_percentile_250": 0.0,
+    "ret20": -4.66,
+    "ret60": -14.7,
+    "max_drawdown_250": 21.34
   },
   "context": {
-    "trade_date": "2026-11-13",
-    "generated_at": "2026-11-14T01:59:40+08:00",
+    "trade_date": "2026-11-16",
+    "generated_at": "2026-11-17T04:39:19+08:00",
     "errors": [],
-    "last_date": "2026-11-13",
-    "last_close": 4016.29,
+    "last_date": "2026-11-16",
+    "last_close": 3979.8,
     "bars": 250,
-    "ma5": 4050.2299999999896,
-    "ma10": 4054.5969999999993,
-    "ma20": 4069.523499999998,
-    "ma60": 4352.110833333337,
-    "ma120": 4569.707250000004,
-    "ma250": 4619.1477200000045,
+    "ma5": 4034.9679999999908,
+    "ma10": 4050.885000000001,
+    "ma20": 4059.786999999998,
+    "ma60": 4340.676166666671,
+    "ma120": 4563.013083333338,
+    "ma250": 4616.592120000005,
     "ma_alignment": "bear",
     "macd": {
-      "dif": -69.741,
-      "dea": -83.12,
-      "hist": 26.758,
+      "dif": -71.179,
+      "dea": -80.732,
+      "hist": 19.106,
       "cross": null
     },
-    "rsi14": 35.35,
-    "atr14": 64.33,
-    "volatility20": 16.88,
-    "volume_ratio": 1.071,
-    "consecutive": -2,
-    "price_percentile_250": 0.8,
-    "amount_percentile_250": 25.6,
-    "volume_percentile_250": 21.2,
-    "ret5": -0.94,
-    "ret20": -3.7,
-    "ret60": -13.89,
+    "rsi14": 32.5,
+    "atr14": 63.76,
+    "volatility20": 17.04,
+    "volume_ratio": 1.124,
+    "consecutive": -3,
+    "price_percentile_250": 0.0,
+    "amount_percentile_250": 16.4,
+    "volume_percentile_250": 26.4,
+    "ret5": -1.88,
+    "ret20": -4.66,
+    "ret60": -14.7,
     "ret250": null,
-    "max_drawdown_250": 21.23,
+    "max_drawdown_250": 21.34,
     "benchmark": "沪深300",
-    "pct": -0.59,
+    "pct": -0.87,
     "breadth": {
-      "up": 755,
-      "down": 4472,
-      "flat": 66,
-      "total": 5293,
-      "up_ratio": 14.26,
-      "up_down_ratio": 0.169
+      "up": 1126,
+      "down": 4072,
+      "flat": 96,
+      "total": 5294,
+      "up_ratio": 21.27,
+      "up_down_ratio": 0.277
     },
-    "amount_total": 1655668211827.8386,
-    "amount_yi": 16556.7,
-    "limit_up_count": 37,
+    "amount_total": 1484490459246.3408,
+    "amount_yi": 14844.9,
+    "limit_up_count": 32,
     "max_streak": 4,
-    "limit_down_count": 86,
-    "main_flow_yi": -600.2,
-    "margin_change_5d_pct": -0.206,
-    "margin_balance_yi": 22738.3,
-    "margin_net_buy_yi": 6.9,
-    "margin_ratio": 2.519195
+    "limit_down_count": 100,
+    "main_flow_yi": -643.8,
+    "margin_change_5d_pct": 0.1,
+    "margin_balance_yi": 22572.0,
+    "margin_net_buy_yi": -166.3,
+    "margin_ratio": 2.527937
   },
   "data_errors": [],
   "engine": "rules"
