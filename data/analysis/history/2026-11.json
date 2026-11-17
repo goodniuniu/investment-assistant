@@ -341,6 +341,32 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-11-17",
+      "benchmark": "沪深300",
+      "sentiment": 14.8,
+      "sentiment_label": "冰点",
+      "risk_level": "medium",
+      "risk_score": 35.3,
+      "signals": [
+        {
+          "id": "ma_bear",
+          "type": "bear",
+          "title": "均线空头排列"
+        },
+        {
+          "id": "breadth_cold",
+          "type": "bear",
+          "title": "普跌格局"
+        },
+        {
+          "id": "margin_cold",
+          "type": "bull",
+          "title": "杠杆资金撤离"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
