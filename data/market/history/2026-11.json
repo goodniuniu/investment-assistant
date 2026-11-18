@@ -204,6 +204,23 @@
       "main_flow_yi": -266.1,
       "sentiment": 14.8,
       "risk_level": "medium"
+    },
+    {
+      "date": "2026-11-18",
+      "sh_close": 3587.83,
+      "sh_pct": 0.09,
+      "cyb_pct": 0.85,
+      "hs300_pct": 0.18,
+      "amount_yi": 13697.0,
+      "up": 1310,
+      "down": 3853,
+      "up_ratio": 24.74,
+      "limit_up": 41,
+      "limit_down": 60,
+      "max_streak": 4,
+      "main_flow_yi": -85.0,
+      "sentiment": 19.9,
+      "risk_level": "medium"
     }
   ]
 }
