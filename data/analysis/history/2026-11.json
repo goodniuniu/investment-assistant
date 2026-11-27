@@ -574,6 +574,42 @@
         }
       ],
       "ai_headline": null
+    },
+    {
+      "date": "2026-11-27",
+      "benchmark": "沪深300",
+      "sentiment": 75.0,
+      "sentiment_label": "偏热",
+      "risk_level": "medium",
+      "risk_score": 40.6,
+      "signals": [
+        {
+          "id": "ma_mixed",
+          "type": "neutral",
+          "title": "均线交织，趋势不明"
+        },
+        {
+          "id": "breadth_hot",
+          "type": "bull",
+          "title": "普涨格局"
+        },
+        {
+          "id": "limit_up_hot",
+          "type": "bear",
+          "title": "涨停家数过热"
+        },
+        {
+          "id": "margin_cold",
+          "type": "bull",
+          "title": "杠杆资金撤离"
+        },
+        {
+          "id": "fund_inflow",
+          "type": "bull",
+          "title": "主力资金净流入"
+        }
+      ],
+      "ai_headline": null
     }
   ]
 }
